@@ -9463,14 +9463,19 @@ union cavm_gsercx_common_phy_ctrl_bcfg
                                                                    0x3 = Reserved. */
         uint64_t reserved_19           : 1;
         uint64_t cm0_rst               : 1;  /**< [ 18: 18](R/W) CMU reset, active high. */
-        uint64_t phy_ctrl_rate2        : 6;  /**< [ 17: 12](R/W) Phy configuration for rate 2:
+        uint64_t phy_ctrl_rate2        : 6;  /**< [ 17: 12](R/W) Phy configuration for rate 2.
+                                                                   CPRI Rates:
+                                                                   0x11 = 6.144 Gbps.
+                                                                   0x12 = 9.8304 Gbps.
+                                                                   Ethernet Rates:
                                                                    0x23 = 10.3125 Gbps (Default).
                                                                    0x24 = 10.20 Gbps (At-speed scan mode).
                                                                    0x26 = 8.5 Gbps.
                                                                    0x28 = 6.25 Gbps.
                                                                    0x2A = 5 Gbps.
                                                                    _ Others = Reserved. */
-        uint64_t phy_ctrl_rate1        : 6;  /**< [ 11:  6](R/W) Phy configuration for rate 1:
+        uint64_t phy_ctrl_rate1        : 6;  /**< [ 11:  6](R/W) Phy configuration for rate 1.
+                                                                   Ethernet Rates:
                                                                    0x00 = 30 Gbps.
                                                                    0x01 = 28.05 Gbps.
                                                                    0x0B = 28 Gbps.
@@ -9489,7 +9494,9 @@ union cavm_gsercx_common_phy_ctrl_bcfg
                                                                    _ Others = Reserved. */
         uint64_t phy_ctrl_refclk       : 5;  /**< [  5:  1](R/W) Phy configuration for the ref clock frequency:
                                                                    0x0A = 212.5 MHz.
-                                                                   0x0E = 156.25 MHz (Default).
+                                                                   0x0E = 156.25 MHz Ethernet (Default).
+                                                                   0x15 = 245.76 MHz.
+                                                                   0x14 = 122.88 MHz CPRI.
                                                                    Ox13 = 200 MHz.
                                                                    _ Others = Reserved. */
         uint64_t por                   : 1;  /**< [  0:  0](R/W) Power on reset signal, active high. */
@@ -9497,10 +9504,13 @@ union cavm_gsercx_common_phy_ctrl_bcfg
         uint64_t por                   : 1;  /**< [  0:  0](R/W) Power on reset signal, active high. */
         uint64_t phy_ctrl_refclk       : 5;  /**< [  5:  1](R/W) Phy configuration for the ref clock frequency:
                                                                    0x0A = 212.5 MHz.
-                                                                   0x0E = 156.25 MHz (Default).
+                                                                   0x0E = 156.25 MHz Ethernet (Default).
+                                                                   0x15 = 245.76 MHz.
+                                                                   0x14 = 122.88 MHz CPRI.
                                                                    Ox13 = 200 MHz.
                                                                    _ Others = Reserved. */
-        uint64_t phy_ctrl_rate1        : 6;  /**< [ 11:  6](R/W) Phy configuration for rate 1:
+        uint64_t phy_ctrl_rate1        : 6;  /**< [ 11:  6](R/W) Phy configuration for rate 1.
+                                                                   Ethernet Rates:
                                                                    0x00 = 30 Gbps.
                                                                    0x01 = 28.05 Gbps.
                                                                    0x0B = 28 Gbps.
@@ -9517,7 +9527,11 @@ union cavm_gsercx_common_phy_ctrl_bcfg
                                                                    0x23 = 10.3125 Gbps.
                                                                    0x25 = 10 Gbps.
                                                                    _ Others = Reserved. */
-        uint64_t phy_ctrl_rate2        : 6;  /**< [ 17: 12](R/W) Phy configuration for rate 2:
+        uint64_t phy_ctrl_rate2        : 6;  /**< [ 17: 12](R/W) Phy configuration for rate 2.
+                                                                   CPRI Rates:
+                                                                   0x11 = 6.144 Gbps.
+                                                                   0x12 = 9.8304 Gbps.
+                                                                   Ethernet Rates:
                                                                    0x23 = 10.3125 Gbps (Default).
                                                                    0x24 = 10.20 Gbps (At-speed scan mode).
                                                                    0x26 = 8.5 Gbps.
@@ -10045,14 +10059,18 @@ union cavm_gsercx_lanex_control_bcfg
     struct cavm_gsercx_lanex_control_bcfg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_45_63        : 19;
+        uint64_t reserved_46_63        : 18;
+        uint64_t rx_bitstrip_mode      : 1;  /**< [ 45: 45](R/W) Selects the bitstrip div mode
+                                                                   0x0 = div 2 bitstripping
+                                                                   0x1 = div 4 bitstripping */
         uint64_t cfg_cpri              : 1;  /**< [ 44: 44](R/W) Select for the lane tx clock and data muxes:
                                                                    0x0 = Ethernet ln_txclk and ln_txdata
                                                                    0x1 = CPRI ln_txclk and ln_txdata */
-        uint64_t rx_bitstrip_cfg       : 1;  /**< [ 43: 43](R/W) Configures the sampling position for the div 4 bit stripping logic at the 2.4G CPRI rate:
+        uint64_t rx_bitstrip_cfg       : 1;  /**< [ 43: 43](R/W) Configures the sampling position for the div 4 bit stripping logic at the 2.4576Gbps CPRI rate:
                                                                    0x0 = 135 degree sample.
                                                                    0x1 = 225 degree sample. */
-        uint64_t rx_bitstrip_en        : 1;  /**< [ 42: 42](R/W) Enables the bit stripping logic used in the 2.4G CPRI rate.  Clear to a 0 to reset the bit strip
+        uint64_t rx_bitstrip_en        : 1;  /**< [ 42: 42](R/W) Enables the bit stripping logic used in the 2.4576Gbps CPRI rate.  Clear to a 0
+                                                                 to reset the bit strip
                                                                  pattern lock FSM. */
         uint64_t rx_wpk_order          : 1;  /**< [ 41: 41](R/W) Receiver word packing order. Used when the GSERC()_LANE()_CONTROL_BCFG[LN_CTRL_RX_WIDTH]
                                                                  is set to 0x3 to configure the GSERC PHY to 20-bit receive path data width
@@ -10098,7 +10116,8 @@ union cavm_gsercx_lanex_control_bcfg
                                                                  When [CGX_DUAL] is set, GSERC bundles lanes 0 and 1 for one CGX controller and bundles
                                                                  lanes 2 and 3 for another CGX controller. [CGX_DUAL] must only be set for the RXAUI
                                                                  protocol. */
-        uint64_t cfg_cgx               : 1;  /**< [ 33: 33](R/W) Enables SCLK to the CGX TX and RX data path to CGX. */
+        uint64_t cfg_cgx               : 1;  /**< [ 33: 33](R/W) Enables SCLK to the CGX TX and RX data path to CGX in Ethernet mode.
+                                                                 For CPRI set CFG_CGX = 0. */
         uint64_t reserved_32           : 1;
         uint64_t ln_tx_clk_gate_en     : 1;  /**< [ 31: 31](R/W) When set to 0 disables the ln_tx_clk clock from the ln_tx_clk clock mux.
                                                                  Use to disable the ln_tx_clk for power savings.
@@ -10167,14 +10186,16 @@ union cavm_gsercx_lanex_control_bcfg
                                                                    0x3 = 20 bit 40G,10G,DXAUI,RXAUI,XAUI,QSGMII,SGMII.
                                                                    0x4 = 32 bit Reserved.
                                                                    0x5 = 40 bit 25G,50G,100G data rates (Default).
-                                                                   _ Others = Reserved. */
+                                                                   Others = Reserved.
+                                                                   For CPRI select 0x3 = 20 bit. */
         uint64_t ln_ctrl_tx_width      : 3;  /**< [ 12: 10](R/W) TX data word width selector:
                                                                    0x1 = 10 bit Reserved.
                                                                    0x2 = 16 bit 40G,10G,DXAUI,RXAUI,XAUI,QSGMII,SGMII
                                                                    0x3 = 20 bit Reserved.
                                                                    0x4 = 32 bit 25G,50G,100G data rate (Default).
                                                                    0x5 = 40 bit Reserved.
-                                                                   Others - Reserved. */
+                                                                   Others - Reserved.
+                                                                   For CPRI select 0x3 = 20 bit. */
         uint64_t ln_ctrl_rx_rate       : 3;  /**< [  9:  7](R/W) RX data rate selector:
                                                                    0x0 = Rate 1 (PHY_CTRL_RATE1).
                                                                    0x1 = Rate 2 (PHY_CTRL_RATE2).
@@ -10182,7 +10203,10 @@ union cavm_gsercx_lanex_control_bcfg
                                                                    0x4 = Divide-by-2 of Rate 1.
                                                                    0x5 = Divide-by-2 of Rate 2.
                                                                    0x6 = Divide-by-2 of Rate 3.
-                                                                   Others = Reserved. */
+                                                                   Others = Reserved.
+                                                                   For CPRI select:
+                                                                   0x1 = Rate 2 for the 9.8304 Gbps, 6.144Gbps, and 2.4576Gbps rates.
+                                                                   0x5 = Divided-by-2 of Rate 2 for the 4.9152 Gbps, and 3.072 Gbps rates. */
         uint64_t ln_ctrl_tx_rate       : 3;  /**< [  6:  4](R/W) TX data rate selector:
                                                                    0x0 = Rate 1 (PHY_CTRL_RATE1).
                                                                    0x1 = Rate 2 (PHY_CTRL_RATE2).
@@ -10190,7 +10214,9 @@ union cavm_gsercx_lanex_control_bcfg
                                                                    0x4 = Divide-by-2 of Rate 1.
                                                                    0x5 = Divide-by-2 of Rate 2.
                                                                    0x6 = Divide-by-2 of Rate 3.
-                                                                   Others = Reserved. */
+                                                                   Others = Reserved.
+                                                                   For CPRI select:
+                                                                   0x1 = Rate 2 for all CPRI rates. */
         uint64_t ln_ctrl_tx_en         : 1;  /**< [  3:  3](R/W) Transmit enable:
                                                                    0x0 = Data on LN_TXDATA will not be transmitted, transmitter placed into
                                                                          electrical idle.
@@ -10219,7 +10245,9 @@ union cavm_gsercx_lanex_control_bcfg
                                                                    0x4 = Divide-by-2 of Rate 1.
                                                                    0x5 = Divide-by-2 of Rate 2.
                                                                    0x6 = Divide-by-2 of Rate 3.
-                                                                   Others = Reserved. */
+                                                                   Others = Reserved.
+                                                                   For CPRI select:
+                                                                   0x1 = Rate 2 for all CPRI rates. */
         uint64_t ln_ctrl_rx_rate       : 3;  /**< [  9:  7](R/W) RX data rate selector:
                                                                    0x0 = Rate 1 (PHY_CTRL_RATE1).
                                                                    0x1 = Rate 2 (PHY_CTRL_RATE2).
@@ -10227,21 +10255,26 @@ union cavm_gsercx_lanex_control_bcfg
                                                                    0x4 = Divide-by-2 of Rate 1.
                                                                    0x5 = Divide-by-2 of Rate 2.
                                                                    0x6 = Divide-by-2 of Rate 3.
-                                                                   Others = Reserved. */
+                                                                   Others = Reserved.
+                                                                   For CPRI select:
+                                                                   0x1 = Rate 2 for the 9.8304 Gbps, 6.144Gbps, and 2.4576Gbps rates.
+                                                                   0x5 = Divided-by-2 of Rate 2 for the 4.9152 Gbps, and 3.072 Gbps rates. */
         uint64_t ln_ctrl_tx_width      : 3;  /**< [ 12: 10](R/W) TX data word width selector:
                                                                    0x1 = 10 bit Reserved.
                                                                    0x2 = 16 bit 40G,10G,DXAUI,RXAUI,XAUI,QSGMII,SGMII
                                                                    0x3 = 20 bit Reserved.
                                                                    0x4 = 32 bit 25G,50G,100G data rate (Default).
                                                                    0x5 = 40 bit Reserved.
-                                                                   Others - Reserved. */
+                                                                   Others - Reserved.
+                                                                   For CPRI select 0x3 = 20 bit. */
         uint64_t ln_ctrl_rx_width      : 3;  /**< [ 15: 13](R/W) RX data word width selector:
                                                                    0x1 = 10 bit Reserved.
                                                                    0x2 = 16 bit Reserved.
                                                                    0x3 = 20 bit 40G,10G,DXAUI,RXAUI,XAUI,QSGMII,SGMII.
                                                                    0x4 = 32 bit Reserved.
                                                                    0x5 = 40 bit 25G,50G,100G data rates (Default).
-                                                                   _ Others = Reserved. */
+                                                                   Others = Reserved.
+                                                                   For CPRI select 0x3 = 20 bit. */
         uint64_t ln_ctrl_rxpolarity    : 1;  /**< [ 16: 16](R/W) RX data polarity inversion:
                                                                    0x0 = No polarity inversion.
                                                                    0x1 = Polarity inversion. */
@@ -10304,7 +10337,8 @@ union cavm_gsercx_lanex_control_bcfg
                                                                  Use to disable the ln_tx_clk for power savings.
                                                                  For normal operation set [LN_TX_CLK_GATE_EN] to 1. */
         uint64_t reserved_32           : 1;
-        uint64_t cfg_cgx               : 1;  /**< [ 33: 33](R/W) Enables SCLK to the CGX TX and RX data path to CGX. */
+        uint64_t cfg_cgx               : 1;  /**< [ 33: 33](R/W) Enables SCLK to the CGX TX and RX data path to CGX in Ethernet mode.
+                                                                 For CPRI set CFG_CGX = 0. */
         uint64_t cgx_dual              : 1;  /**< [ 34: 34](R/W) When set, indicates the QLM is in CGX dual aggregation mode. [CGX_DUAL] must only be
                                                                  set when GSERN()_LANE()_SRCMX_BCFG[TX_DATA_SEL]=CGX is set and
                                                                  GSERN()_LANE()_SRCMX_BCFG[TX_CTRL_SEL]=CGX is set and [CGX_QUAD] is clear.
@@ -10349,15 +10383,19 @@ union cavm_gsercx_lanex_control_bcfg
                                                                  When [RX_WPK_ORDER] is cleared to 0 the 20-bit word packing order within the 40-bit word
                                                                  is swapped. Set [RX_WUP_ORDER] to 1 for normal Ethernet receive data to the CGX Ethernet MAC.
                                                                  For diagnostic use only. */
-        uint64_t rx_bitstrip_en        : 1;  /**< [ 42: 42](R/W) Enables the bit stripping logic used in the 2.4G CPRI rate.  Clear to a 0 to reset the bit strip
+        uint64_t rx_bitstrip_en        : 1;  /**< [ 42: 42](R/W) Enables the bit stripping logic used in the 2.4576Gbps CPRI rate.  Clear to a 0
+                                                                 to reset the bit strip
                                                                  pattern lock FSM. */
-        uint64_t rx_bitstrip_cfg       : 1;  /**< [ 43: 43](R/W) Configures the sampling position for the div 4 bit stripping logic at the 2.4G CPRI rate:
+        uint64_t rx_bitstrip_cfg       : 1;  /**< [ 43: 43](R/W) Configures the sampling position for the div 4 bit stripping logic at the 2.4576Gbps CPRI rate:
                                                                    0x0 = 135 degree sample.
                                                                    0x1 = 225 degree sample. */
         uint64_t cfg_cpri              : 1;  /**< [ 44: 44](R/W) Select for the lane tx clock and data muxes:
                                                                    0x0 = Ethernet ln_txclk and ln_txdata
                                                                    0x1 = CPRI ln_txclk and ln_txdata */
-        uint64_t reserved_45_63        : 19;
+        uint64_t rx_bitstrip_mode      : 1;  /**< [ 45: 45](R/W) Selects the bitstrip div mode
+                                                                   0x0 = div 2 bitstripping
+                                                                   0x1 = div 4 bitstripping */
+        uint64_t reserved_46_63        : 18;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gsercx_lanex_control_bcfg_s cn; */
@@ -15135,6 +15173,43 @@ static inline uint64_t CAVM_GSERCX_LNX_BIST_TX_BER_CTRL6(unsigned long a, unsign
 #define device_bar_CAVM_GSERCX_LNX_BIST_TX_BER_CTRL6(a,b) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_GSERCX_LNX_BIST_TX_BER_CTRL6(a,b) (a)
 #define arguments_CAVM_GSERCX_LNX_BIST_TX_BER_CTRL6(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL32b) gserc#_ln#_bist_tx_ber_ctrl7
+ *
+ * GSERC Ln Bist Tx Ber Ctrl7 Register
+ */
+union cavm_gsercx_lnx_bist_tx_ber_ctrl7
+{
+    uint32_t u;
+    struct cavm_gsercx_lnx_bist_tx_ber_ctrl7_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
+        uint32_t bit_error_field_39_32 : 8;  /**< [  7:  0](R/W/H) Sets the Tx data bits to be flipped. */
+#else /* Word 0 - Little Endian */
+        uint32_t bit_error_field_39_32 : 8;  /**< [  7:  0](R/W/H) Sets the Tx data bits to be flipped. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_gsercx_lnx_bist_tx_ber_ctrl7_s cn; */
+};
+typedef union cavm_gsercx_lnx_bist_tx_ber_ctrl7 cavm_gsercx_lnx_bist_tx_ber_ctrl7_t;
+
+static inline uint64_t CAVM_GSERCX_LNX_BIST_TX_BER_CTRL7(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_GSERCX_LNX_BIST_TX_BER_CTRL7(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=4) && (b<=1)))
+        return 0x87e0a8012c60ll + 0x1000000ll * ((a) & 0x7) + 0x4000ll * ((b) & 0x1);
+    __cavm_csr_fatal("GSERCX_LNX_BIST_TX_BER_CTRL7", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_GSERCX_LNX_BIST_TX_BER_CTRL7(a,b) cavm_gsercx_lnx_bist_tx_ber_ctrl7_t
+#define bustype_CAVM_GSERCX_LNX_BIST_TX_BER_CTRL7(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_GSERCX_LNX_BIST_TX_BER_CTRL7(a,b) "GSERCX_LNX_BIST_TX_BER_CTRL7"
+#define device_bar_CAVM_GSERCX_LNX_BIST_TX_BER_CTRL7(a,b) 0x0 /* PF_BAR0 */
+#define busnum_CAVM_GSERCX_LNX_BIST_TX_BER_CTRL7(a,b) (a)
+#define arguments_CAVM_GSERCX_LNX_BIST_TX_BER_CTRL7(a,b) (a),(b),-1,-1
 
 /**
  * Register (RSL32b) gserc#_ln#_bist_tx_ctrl
@@ -34615,15 +34690,19 @@ union cavm_gsercx_lnx_top_afe_rxdp_ctrl1
     struct cavm_gsercx_lnx_top_afe_rxdp_ctrl1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_1_31         : 31;
-        uint32_t rxdp_data_width       : 1;  /**< [  0:  0](R/W/H) AFE RXDP data width
-                                                                 0 = 16 Bit
-                                                                 1 = 32 Bit */
+        uint32_t reserved_2_31         : 30;
+        uint32_t rxdp_data_width       : 2;  /**< [  1:  0](R/W/H) AFE RXDP data width
+                                                                 00 = 16 Bit
+                                                                 01 = 20 Bit
+                                                                 10 = 32 Bit
+                                                                 11 = not used */
 #else /* Word 0 - Little Endian */
-        uint32_t rxdp_data_width       : 1;  /**< [  0:  0](R/W/H) AFE RXDP data width
-                                                                 0 = 16 Bit
-                                                                 1 = 32 Bit */
-        uint32_t reserved_1_31         : 31;
+        uint32_t rxdp_data_width       : 2;  /**< [  1:  0](R/W/H) AFE RXDP data width
+                                                                 00 = 16 Bit
+                                                                 01 = 20 Bit
+                                                                 10 = 32 Bit
+                                                                 11 = not used */
+        uint32_t reserved_2_31         : 30;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gsercx_lnx_top_afe_rxdp_ctrl1_s cn; */
@@ -35113,15 +35192,19 @@ union cavm_gsercx_lnx_top_afe_txdp_ctrl0
     struct cavm_gsercx_lnx_top_afe_txdp_ctrl0_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_1_31         : 31;
-        uint32_t txdp_data_width       : 1;  /**< [  0:  0](R/W/H) AFE TXDP data width
-                                                                 0 = 16 Bit
-                                                                 1 = 32 Bit */
+        uint32_t reserved_2_31         : 30;
+        uint32_t txdp_data_width       : 2;  /**< [  1:  0](R/W/H) AFE TXDP data width
+                                                                 00 = 16 Bit
+                                                                 01 = 20 Bit
+                                                                 10 = 32 Bit
+                                                                 11 = not used */
 #else /* Word 0 - Little Endian */
-        uint32_t txdp_data_width       : 1;  /**< [  0:  0](R/W/H) AFE TXDP data width
-                                                                 0 = 16 Bit
-                                                                 1 = 32 Bit */
-        uint32_t reserved_1_31         : 31;
+        uint32_t txdp_data_width       : 2;  /**< [  1:  0](R/W/H) AFE TXDP data width
+                                                                 00 = 16 Bit
+                                                                 01 = 20 Bit
+                                                                 10 = 32 Bit
+                                                                 11 = not used */
+        uint32_t reserved_2_31         : 30;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gsercx_lnx_top_afe_txdp_ctrl0_s cn; */

@@ -9818,37 +9818,15 @@ union cavm_rst_refc_ctl
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
-        uint64_t cclk2_sel             : 2;  /**< [  8:  7](R/W) Common clock 2 termination select.
-                                                                 0x0 = No termination.
-                                                                 0x1 = LVPECL termination.
-                                                                 0x2 = Reserved.
-                                                                 0x3 = Reserved.
-
-                                                                 The field is initialized on a cold domain reset. */
-        uint64_t cclk2_pwdn            : 1;  /**< [  6:  6](R/W) Common clock 2 receiver power down.
-                                                                 When set, receiver is powered down.
-                                                                 The field is initialized on a cold domain reset.
-
-                                                                 Internal:
-                                                                 The receiver is also forced into powerdown when jtg__rst_pll.iddq_mode is set. */
-        uint64_t cclk1_sel             : 2;  /**< [  5:  4](R/W) Common clock 1 termination select.
-                                                                 0x0 = No termination.
-                                                                 0x1 = LVPECL termination.
-                                                                 0x2 = Reserved.
-                                                                 0x3 = Reserved.
-
-                                                                 The field is initialized on a cold domain reset. */
-        uint64_t cclk1_pwdn            : 1;  /**< [  3:  3](R/W) Common clock 1 receiver power down.
-                                                                 When set, receiver is powered down.
-                                                                 The field is initialized on a cold domain reset.
-
-                                                                 Internal:
-                                                                 The receiver is also forced into powerdown when jtg__rst_pll.iddq_mode is set. */
+        uint64_t cclk2_sel             : 2;  /**< [  8:  7](R/W) Reserved.  See GSERR()_COMMON_PHY_CTRL_BCFG[REFCLK_HIZ_ENA]. */
+        uint64_t cclk2_pwdn            : 1;  /**< [  6:  6](R/W) Reserved.  See GSERR()_COMMON_PHY_CTRL_BCFG[REFCLK_PAD_ENA]. */
+        uint64_t cclk1_sel             : 2;  /**< [  5:  4](R/W) Reserved.  See GSERP()_COMMON_PHY_CTRL_BCFG[REFCLK_HIZ_ENA]. */
+        uint64_t cclk1_pwdn            : 1;  /**< [  3:  3](R/W) Reserved.  See GSERP()_COMMON_PHY_CTRL_BCFG[REFCLK_PAD_ENA]. */
         uint64_t cclk0_sel             : 2;  /**< [  2:  1](RO/H) Common clock 0 termination select determined by hardware.
                                                                  0x0 = No termination.
                                                                  0x1 = LVPECL termination.
                                                                  0x2 = Reserved.
-                                                                 0x3 = HCSL termination.
+                                                                 0x3 = Reserved.
 
                                                                  The value is determined at DC_OK assertion from the straps
                                                                  GPIO_STRAP_PIN_E::GSER_CLK0_TERM_SEL0 and 1. */
@@ -9861,43 +9839,91 @@ union cavm_rst_refc_ctl
                                                                  0x0 = No termination.
                                                                  0x1 = LVPECL termination.
                                                                  0x2 = Reserved.
-                                                                 0x3 = HCSL termination.
+                                                                 0x3 = Reserved.
 
                                                                  The value is determined at DC_OK assertion from the straps
                                                                  GPIO_STRAP_PIN_E::GSER_CLK0_TERM_SEL0 and 1. */
-        uint64_t cclk1_pwdn            : 1;  /**< [  3:  3](R/W) Common clock 1 receiver power down.
-                                                                 When set, receiver is powered down.
-                                                                 The field is initialized on a cold domain reset.
-
-                                                                 Internal:
-                                                                 The receiver is also forced into powerdown when jtg__rst_pll.iddq_mode is set. */
-        uint64_t cclk1_sel             : 2;  /**< [  5:  4](R/W) Common clock 1 termination select.
-                                                                 0x0 = No termination.
-                                                                 0x1 = LVPECL termination.
-                                                                 0x2 = Reserved.
-                                                                 0x3 = Reserved.
-
-                                                                 The field is initialized on a cold domain reset. */
-        uint64_t cclk2_pwdn            : 1;  /**< [  6:  6](R/W) Common clock 2 receiver power down.
-                                                                 When set, receiver is powered down.
-                                                                 The field is initialized on a cold domain reset.
-
-                                                                 Internal:
-                                                                 The receiver is also forced into powerdown when jtg__rst_pll.iddq_mode is set. */
-        uint64_t cclk2_sel             : 2;  /**< [  8:  7](R/W) Common clock 2 termination select.
-                                                                 0x0 = No termination.
-                                                                 0x1 = LVPECL termination.
-                                                                 0x2 = Reserved.
-                                                                 0x3 = Reserved.
-
-                                                                 The field is initialized on a cold domain reset. */
+        uint64_t cclk1_pwdn            : 1;  /**< [  3:  3](R/W) Reserved.  See GSERP()_COMMON_PHY_CTRL_BCFG[REFCLK_PAD_ENA]. */
+        uint64_t cclk1_sel             : 2;  /**< [  5:  4](R/W) Reserved.  See GSERP()_COMMON_PHY_CTRL_BCFG[REFCLK_HIZ_ENA]. */
+        uint64_t cclk2_pwdn            : 1;  /**< [  6:  6](R/W) Reserved.  See GSERR()_COMMON_PHY_CTRL_BCFG[REFCLK_PAD_ENA]. */
+        uint64_t cclk2_sel             : 2;  /**< [  8:  7](R/W) Reserved.  See GSERR()_COMMON_PHY_CTRL_BCFG[REFCLK_HIZ_ENA]. */
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } cn96xxp3;
     /* struct cavm_rst_refc_ctl_cn96xxp3 cn98xx; */
     /* struct cavm_rst_refc_ctl_s cnf95xxp1; */
-    /* struct cavm_rst_refc_ctl_cn96xxp3 cnf95xxp2; */
-    /* struct cavm_rst_refc_ctl_cn96xxp3 loki; */
+    struct cavm_rst_refc_ctl_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_9_63         : 55;
+        uint64_t cclk2_sel             : 2;  /**< [  8:  7](R/W) Reserved. */
+        uint64_t cclk2_pwdn            : 1;  /**< [  6:  6](R/W) Reserved. */
+        uint64_t cclk1_sel             : 2;  /**< [  5:  4](R/W) Reserved. */
+        uint64_t cclk1_pwdn            : 1;  /**< [  3:  3](R/W) Reserved. */
+        uint64_t cclk0_sel             : 2;  /**< [  2:  1](RO/H) Common clock 0 termination select determined by hardware.
+                                                                 0x0 = No termination.
+                                                                 0x1 = LVPECL termination.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+
+                                                                 The value is determined at DC_OK assertion from the straps
+                                                                 GPIO_STRAP_PIN_E::GSER_CLK0_TERM_SEL0 and 1. */
+        uint64_t cclk0_pwdn            : 1;  /**< [  0:  0](RAZ) Common clock 0 receiver power down.
+                                                                 Never powered down.  Reads as zero. */
+#else /* Word 0 - Little Endian */
+        uint64_t cclk0_pwdn            : 1;  /**< [  0:  0](RAZ) Common clock 0 receiver power down.
+                                                                 Never powered down.  Reads as zero. */
+        uint64_t cclk0_sel             : 2;  /**< [  2:  1](RO/H) Common clock 0 termination select determined by hardware.
+                                                                 0x0 = No termination.
+                                                                 0x1 = LVPECL termination.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+
+                                                                 The value is determined at DC_OK assertion from the straps
+                                                                 GPIO_STRAP_PIN_E::GSER_CLK0_TERM_SEL0 and 1. */
+        uint64_t cclk1_pwdn            : 1;  /**< [  3:  3](R/W) Reserved. */
+        uint64_t cclk1_sel             : 2;  /**< [  5:  4](R/W) Reserved. */
+        uint64_t cclk2_pwdn            : 1;  /**< [  6:  6](R/W) Reserved. */
+        uint64_t cclk2_sel             : 2;  /**< [  8:  7](R/W) Reserved. */
+        uint64_t reserved_9_63         : 55;
+#endif /* Word 0 - End */
+    } cnf95xxp2;
+    struct cavm_rst_refc_ctl_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_9_63         : 55;
+        uint64_t cclk2_sel             : 2;  /**< [  8:  7](R/W) Reserved.  See GSERR/GSERC()_COMMON_PHY_CTRL_BCFG[REFCLK_HIZ_ENA]. */
+        uint64_t cclk2_pwdn            : 1;  /**< [  6:  6](R/W) Reserved.  See GSERR/GSERC()_COMMON_PHY_CTRL_BCFG[REFCLK_PAD_ENA]. */
+        uint64_t cclk1_sel             : 2;  /**< [  5:  4](R/W) Reserved.  See GSERP()_COMMON_PHY_CTRL_BCFG[REFCLK_HIZ_ENA]. */
+        uint64_t cclk1_pwdn            : 1;  /**< [  3:  3](R/W) Reserved.  See GSERP()_COMMON_PHY_CTRL_BCFG[REFCLK_PAD_ENA]. */
+        uint64_t cclk0_sel             : 2;  /**< [  2:  1](RO/H) Common clock 0 termination select determined by hardware.
+                                                                 0x0 = No termination.
+                                                                 0x1 = LVPECL termination.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+
+                                                                 The value is determined at DC_OK assertion from the straps
+                                                                 GPIO_STRAP_PIN_E::GSER_CLK0_TERM_SEL0 and 1. */
+        uint64_t cclk0_pwdn            : 1;  /**< [  0:  0](RAZ) Common clock 0 receiver power down.
+                                                                 Never powered down.  Reads as zero. */
+#else /* Word 0 - Little Endian */
+        uint64_t cclk0_pwdn            : 1;  /**< [  0:  0](RAZ) Common clock 0 receiver power down.
+                                                                 Never powered down.  Reads as zero. */
+        uint64_t cclk0_sel             : 2;  /**< [  2:  1](RO/H) Common clock 0 termination select determined by hardware.
+                                                                 0x0 = No termination.
+                                                                 0x1 = LVPECL termination.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+
+                                                                 The value is determined at DC_OK assertion from the straps
+                                                                 GPIO_STRAP_PIN_E::GSER_CLK0_TERM_SEL0 and 1. */
+        uint64_t cclk1_pwdn            : 1;  /**< [  3:  3](R/W) Reserved.  See GSERP()_COMMON_PHY_CTRL_BCFG[REFCLK_PAD_ENA]. */
+        uint64_t cclk1_sel             : 2;  /**< [  5:  4](R/W) Reserved.  See GSERP()_COMMON_PHY_CTRL_BCFG[REFCLK_HIZ_ENA]. */
+        uint64_t cclk2_pwdn            : 1;  /**< [  6:  6](R/W) Reserved.  See GSERR/GSERC()_COMMON_PHY_CTRL_BCFG[REFCLK_PAD_ENA]. */
+        uint64_t cclk2_sel             : 2;  /**< [  8:  7](R/W) Reserved.  See GSERR/GSERC()_COMMON_PHY_CTRL_BCFG[REFCLK_HIZ_ENA]. */
+        uint64_t reserved_9_63         : 55;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rst_refc_ctl cavm_rst_refc_ctl_t;
 

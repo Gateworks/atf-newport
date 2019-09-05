@@ -1,5 +1,5 @@
-#ifndef __CAVM_CSRS_MDAB_DSP_H__
-#define __CAVM_CSRS_MDAB_DSP_H__
+#ifndef __CAVM_CSRS_CBP_H__
+#define __CAVM_CSRS_CBP_H__
 /* This file is auto-generated. Do not edit */
 
 /***********************license start***********************************
@@ -13,21 +13,21 @@
  * @file
  *
  * Configuration and status register (CSR) address and type definitions for
- * OcteonTX MDAB_DSP.
+ * OcteonTX CBP.
  *
  * This file is auto generated. Do not edit.
  *
  */
 
 /**
- * Register (RSL32b) mdab_dsp#_ap_dtap
+ * Register (RSL32b) cbp#_ap_dtap
  *
- * MDAB Dsp Ap Dtap Register
+ * CBP Ap Dtap Register
  */
-union cavm_mdab_dspx_ap_dtap
+union cavm_cbpx_ap_dtap
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ap_dtap_s
+    struct cavm_cbpx_ap_dtap_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_3_31         : 29;
@@ -37,33 +37,33 @@ union cavm_mdab_dspx_ap_dtap
         uint32_t reserved_3_31         : 29;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ap_dtap_s cn; */
+    /* struct cavm_cbpx_ap_dtap_s cn; */
 };
-typedef union cavm_mdab_dspx_ap_dtap cavm_mdab_dspx_ap_dtap_t;
+typedef union cavm_cbpx_ap_dtap cavm_cbpx_ap_dtap_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_AP_DTAP(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_AP_DTAP(unsigned long a)
+static inline uint64_t CAVM_CBPX_AP_DTAP(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_AP_DTAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482324cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_AP_DTAP", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_AP_DTAP", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_AP_DTAP(a) cavm_mdab_dspx_ap_dtap_t
-#define bustype_CAVM_MDAB_DSPX_AP_DTAP(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_AP_DTAP(a) "MDAB_DSPX_AP_DTAP"
-#define busnum_CAVM_MDAB_DSPX_AP_DTAP(a) (a)
-#define arguments_CAVM_MDAB_DSPX_AP_DTAP(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_AP_DTAP(a) cavm_cbpx_ap_dtap_t
+#define bustype_CAVM_CBPX_AP_DTAP(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_AP_DTAP(a) "CBPX_AP_DTAP"
+#define busnum_CAVM_CBPX_AP_DTAP(a) (a)
+#define arguments_CAVM_CBPX_AP_DTAP(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ap_mapar
+ * Register (RSL32b) cbp#_ap_mapar
  *
- * MDAB Dsp Ap Mapar Register
+ * CBP Ap Mapar Register
  */
-union cavm_mdab_dspx_ap_mapar
+union cavm_cbpx_ap_mapar
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ap_mapar_s
+    struct cavm_cbpx_ap_mapar_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t mapa                  : 32; /**< [ 31:  0](RO) Memory Access Protection Address
@@ -79,33 +79,33 @@ union cavm_mdab_dspx_ap_mapar
                                                                  address that caused the violation. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ap_mapar_s cn; */
+    /* struct cavm_cbpx_ap_mapar_s cn; */
 };
-typedef union cavm_mdab_dspx_ap_mapar cavm_mdab_dspx_ap_mapar_t;
+typedef union cavm_cbpx_ap_mapar cavm_cbpx_ap_mapar_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_AP_MAPAR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_AP_MAPAR(unsigned long a)
+static inline uint64_t CAVM_CBPX_AP_MAPAR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_AP_MAPAR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823244ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_AP_MAPAR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_AP_MAPAR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_AP_MAPAR(a) cavm_mdab_dspx_ap_mapar_t
-#define bustype_CAVM_MDAB_DSPX_AP_MAPAR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_AP_MAPAR(a) "MDAB_DSPX_AP_MAPAR"
-#define busnum_CAVM_MDAB_DSPX_AP_MAPAR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_AP_MAPAR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_AP_MAPAR(a) cavm_cbpx_ap_mapar_t
+#define bustype_CAVM_CBPX_AP_MAPAR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_AP_MAPAR(a) "CBPX_AP_MAPAR"
+#define busnum_CAVM_CBPX_AP_MAPAR(a) (a)
+#define arguments_CAVM_CBPX_AP_MAPAR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ap_mapsr
+ * Register (RSL32b) cbp#_ap_mapsr
  *
- * MDAB Dsp Ap Mapsr Register
+ * CBP Ap Mapsr Register
  */
-union cavm_mdab_dspx_ap_mapsr
+union cavm_cbpx_ap_mapsr
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ap_mapsr_s
+    struct cavm_cbpx_ap_mapsr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -121,7 +121,7 @@ union cavm_mdab_dspx_ap_mapsr
                                                                  01  User0 Mode
                                                                  10  Reserved
                                                                  11  User1 Mode */
-        uint32_t mapv                  : 1;  /**< [  0:  0](R/W) Memory Access Protection Violation occurred, MAPAR and MAPSR registers valid
+        uint32_t mapv                  : 1;  /**< [  0:  0](R/W/H) Memory Access Protection Violation occurred, MAPAR and MAPSR registers valid
                                                                  0  Not valid (no protection violation)
                                                                  1  Valid (protection violation occurred)
                                                                  During an access protection violation, the MAPAR and MAPSR registers are written
@@ -129,7 +129,7 @@ union cavm_mdab_dspx_ap_mapsr
                                                                  be written by hardware unless the valid bit is cleared, and therefore, software
                                                                  is responsible for clearing this bit after a protection violation occurs. */
 #else /* Word 0 - Little Endian */
-        uint32_t mapv                  : 1;  /**< [  0:  0](R/W) Memory Access Protection Violation occurred, MAPAR and MAPSR registers valid
+        uint32_t mapv                  : 1;  /**< [  0:  0](R/W/H) Memory Access Protection Violation occurred, MAPAR and MAPSR registers valid
                                                                  0  Not valid (no protection violation)
                                                                  1  Valid (protection violation occurred)
                                                                  During an access protection violation, the MAPAR and MAPSR registers are written
@@ -151,33 +151,33 @@ union cavm_mdab_dspx_ap_mapsr
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ap_mapsr_s cn; */
+    /* struct cavm_cbpx_ap_mapsr_s cn; */
 };
-typedef union cavm_mdab_dspx_ap_mapsr cavm_mdab_dspx_ap_mapsr_t;
+typedef union cavm_cbpx_ap_mapsr cavm_cbpx_ap_mapsr_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_AP_MAPSR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_AP_MAPSR(unsigned long a)
+static inline uint64_t CAVM_CBPX_AP_MAPSR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_AP_MAPSR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823248ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_AP_MAPSR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_AP_MAPSR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_AP_MAPSR(a) cavm_mdab_dspx_ap_mapsr_t
-#define bustype_CAVM_MDAB_DSPX_AP_MAPSR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_AP_MAPSR(a) "MDAB_DSPX_AP_MAPSR"
-#define busnum_CAVM_MDAB_DSPX_AP_MAPSR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_AP_MAPSR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_AP_MAPSR(a) cavm_cbpx_ap_mapsr_t
+#define bustype_CAVM_CBPX_AP_MAPSR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_AP_MAPSR(a) "CBPX_AP_MAPSR"
+#define busnum_CAVM_CBPX_AP_MAPSR(a) (a)
+#define arguments_CAVM_CBPX_AP_MAPSR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b#_full_empty_ctl_reg
+ * Register (RSL32b) cbp#_buffermanager_b#_full_empty_ctl_reg
  *
- * MDAB Dsp Buffermanager B Full Empty Ctl Reg Register
+ * CBP Buffermanager B Full Empty Ctl Reg Register
  */
-union cavm_mdab_dspx_buffermanager_bx_full_empty_ctl_reg
+union cavm_cbpx_buffermanager_bx_full_empty_ctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_bx_full_empty_ctl_reg_s
+    struct cavm_cbpx_buffermanager_bx_full_empty_ctl_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_30_31        : 2;
@@ -241,151 +241,79 @@ union cavm_mdab_dspx_buffermanager_bx_full_empty_ctl_reg
         uint32_t reserved_30_31        : 2;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_bx_full_empty_ctl_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_bx_full_empty_ctl_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_bx_full_empty_ctl_reg cavm_mdab_dspx_buffermanager_bx_full_empty_ctl_reg_t;
+typedef union cavm_cbpx_buffermanager_bx_full_empty_ctl_reg cavm_cbpx_buffermanager_bx_full_empty_ctl_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822c10ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(a,b) cavm_mdab_dspx_buffermanager_bx_full_empty_ctl_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(a,b) "MDAB_DSPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(a,b) cavm_cbpx_buffermanager_bx_full_empty_ctl_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(a,b) "CBPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(a,b) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_BX_FULL_EMPTY_CTL_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b#_inc_ptr_ctl_reg
+ * Register (RSL32b) cbp#_buffermanager_b#_rptr_reg
  *
- * MDAB Dsp Buffermanager B Inc Ptr Ctl Reg Register
+ * CBP Buffermanager B Rptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_bx_inc_ptr_ctl_reg
+union cavm_cbpx_buffermanager_bx_rptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_bx_inc_ptr_ctl_reg_s
+    struct cavm_cbpx_buffermanager_bx_rptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_14_31        : 18;
-        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
-                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
-                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
-                                                                 Changing the value of this field is restricted when BMAN is active and
-                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
-                                                                 connected to a sniffer at external memory */
-        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
-                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
-                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
-                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
-                                                                 external memory */
-        uint32_t reserved_10_11        : 2;
-        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
-                                                                 or when BX_PTR_INC is written with 1
-                                                                 This register is also user for setting the number of bytes read/write from/to
-                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
-                                                                 Changing the value of this field is restricted when BMAN is active and
-                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
-                                                                 connected to a sniffer at external memory */
-#else /* Word 0 - Little Endian */
-        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
-                                                                 or when BX_PTR_INC is written with 1
-                                                                 This register is also user for setting the number of bytes read/write from/to
-                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
-                                                                 Changing the value of this field is restricted when BMAN is active and
-                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
-                                                                 connected to a sniffer at external memory */
-        uint32_t reserved_10_11        : 2;
-        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
-                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
-                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
-                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
-                                                                 external memory */
-        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
-                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
-                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
-                                                                 Changing the value of this field is restricted when BMAN is active and
-                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
-                                                                 connected to a sniffer at external memory */
-        uint32_t reserved_14_31        : 18;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mdab_dspx_buffermanager_bx_inc_ptr_ctl_reg_s cn; */
-};
-typedef union cavm_mdab_dspx_buffermanager_bx_inc_ptr_ctl_reg cavm_mdab_dspx_buffermanager_bx_inc_ptr_ctl_reg_t;
-
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_INC_PTR_CTL_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_INC_PTR_CTL_REG(unsigned long a, unsigned long b)
-{
-    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
-        return 0x87e044822c08ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_BX_INC_PTR_CTL_REG", 2, a, b, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_INC_PTR_CTL_REG(a,b) cavm_mdab_dspx_buffermanager_bx_inc_ptr_ctl_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_INC_PTR_CTL_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_INC_PTR_CTL_REG(a,b) "MDAB_DSPX_BUFFERMANAGER_BX_INC_PTR_CTL_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_INC_PTR_CTL_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_INC_PTR_CTL_REG(a,b) (a),(b),-1,-1
-
-/**
- * Register (RSL32b) mdab_dsp#_buffermanager_b#_rptr_reg
- *
- * MDAB Dsp Buffermanager B Rptr Reg Register
- */
-union cavm_mdab_dspx_buffermanager_bx_rptr_reg
-{
-    uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_bx_rptr_reg_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t bx_afull              : 1;  /**< [ 31: 31](RO) Buffer almost full.
+        uint32_t bx_afull              : 1;  /**< [ 31: 31](RO/H) Buffer almost full.
                                                                  Reflects the status of the bX_afull output signal. */
         uint32_t reserved_18_30        : 13;
-        uint32_t bx_rptr               : 18; /**< [ 17:  0](R/W) Read pointer for buffer X
+        uint32_t bx_rptr               : 18; /**< [ 17:  0](R/W/H) Read pointer for buffer X
                                                                  This register points to the next valid byte in the buffer.
                                                                  This register gets the value of 0 after BX_RST is set.
                                                                  Writing to this register is prohibited and is reserved for future use. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_rptr               : 18; /**< [ 17:  0](R/W) Read pointer for buffer X
+        uint32_t bx_rptr               : 18; /**< [ 17:  0](R/W/H) Read pointer for buffer X
                                                                  This register points to the next valid byte in the buffer.
                                                                  This register gets the value of 0 after BX_RST is set.
                                                                  Writing to this register is prohibited and is reserved for future use. */
         uint32_t reserved_18_30        : 13;
-        uint32_t bx_afull              : 1;  /**< [ 31: 31](RO) Buffer almost full.
+        uint32_t bx_afull              : 1;  /**< [ 31: 31](RO/H) Buffer almost full.
                                                                  Reflects the status of the bX_afull output signal. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_bx_rptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_bx_rptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_bx_rptr_reg cavm_mdab_dspx_buffermanager_bx_rptr_reg_t;
+typedef union cavm_cbpx_buffermanager_bx_rptr_reg cavm_cbpx_buffermanager_bx_rptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_RPTR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_RPTR_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_BX_RPTR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_BX_RPTR_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822c1cll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_BX_RPTR_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_BX_RPTR_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_RPTR_REG(a,b) cavm_mdab_dspx_buffermanager_bx_rptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_RPTR_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_RPTR_REG(a,b) "MDAB_DSPX_BUFFERMANAGER_BX_RPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_RPTR_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_RPTR_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_BX_RPTR_REG(a,b) cavm_cbpx_buffermanager_bx_rptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_BX_RPTR_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_BX_RPTR_REG(a,b) "CBPX_BUFFERMANAGER_BX_RPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_BX_RPTR_REG(a,b) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_BX_RPTR_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b#_size_reg
+ * Register (RSL32b) cbp#_buffermanager_b#_size_reg
  *
- * MDAB Dsp Buffermanager B Size Reg Register
+ * CBP Buffermanager B Size Reg Register
  */
-union cavm_mdab_dspx_buffermanager_bx_size_reg
+union cavm_cbpx_buffermanager_bx_size_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_bx_size_reg_s
+    struct cavm_cbpx_buffermanager_bx_size_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
@@ -405,33 +333,33 @@ union cavm_mdab_dspx_buffermanager_bx_size_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_bx_size_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_bx_size_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_bx_size_reg cavm_mdab_dspx_buffermanager_bx_size_reg_t;
+typedef union cavm_cbpx_buffermanager_bx_size_reg cavm_cbpx_buffermanager_bx_size_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SIZE_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SIZE_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_BX_SIZE_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_BX_SIZE_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822c04ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_BX_SIZE_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_BX_SIZE_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SIZE_REG(a,b) cavm_mdab_dspx_buffermanager_bx_size_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SIZE_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SIZE_REG(a,b) "MDAB_DSPX_BUFFERMANAGER_BX_SIZE_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SIZE_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SIZE_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_BX_SIZE_REG(a,b) cavm_cbpx_buffermanager_bx_size_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_BX_SIZE_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_BX_SIZE_REG(a,b) "CBPX_BUFFERMANAGER_BX_SIZE_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_BX_SIZE_REG(a,b) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_BX_SIZE_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b#_snifer_out_acc_reg
+ * Register (RSL32b) cbp#_buffermanager_b#_snifer_out_acc_reg
  *
- * MDAB Dsp Buffermanager B Snifer Out Acc Reg Register
+ * CBP Buffermanager B Snifer Out Acc Reg Register
  */
-union cavm_mdab_dspx_buffermanager_bx_snifer_out_acc_reg
+union cavm_cbpx_buffermanager_bx_snifer_out_acc_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_bx_snifer_out_acc_reg_s
+    struct cavm_cbpx_buffermanager_bx_snifer_out_acc_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_10_31        : 22;
@@ -441,88 +369,44 @@ union cavm_mdab_dspx_buffermanager_bx_snifer_out_acc_reg
         uint32_t reserved_10_31        : 22;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_bx_snifer_out_acc_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_bx_snifer_out_acc_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_bx_snifer_out_acc_reg cavm_mdab_dspx_buffermanager_bx_snifer_out_acc_reg_t;
+typedef union cavm_cbpx_buffermanager_bx_snifer_out_acc_reg cavm_cbpx_buffermanager_bx_snifer_out_acc_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822c28ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(a,b) cavm_mdab_dspx_buffermanager_bx_snifer_out_acc_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(a,b) "MDAB_DSPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(a,b) cavm_cbpx_buffermanager_bx_snifer_out_acc_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(a,b) "CBPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(a,b) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_BX_SNIFER_OUT_ACC_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b#_wptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b0_e0pctd_rptr_reg
  *
- * MDAB Dsp Buffermanager B Wptr Reg Register
+ * CBP Buffermanager B0 E0pctd Rptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_bx_wptr_reg
+union cavm_cbpx_buffermanager_b0_e0pctd_rptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_bx_wptr_reg_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO) Buffer almost empty.
-                                                                 Reflects the status of the bX_aempty output signal. */
-        uint32_t reserved_18_30        : 13;
-        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
-                                                                 This register gets the value of 0 after BX_RST is set
-                                                                 Writing to this register is prohibited and is reserved for future use. */
-#else /* Word 0 - Little Endian */
-        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
-                                                                 This register gets the value of 0 after BX_RST is set
-                                                                 Writing to this register is prohibited and is reserved for future use. */
-        uint32_t reserved_18_30        : 13;
-        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO) Buffer almost empty.
-                                                                 Reflects the status of the bX_aempty output signal. */
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mdab_dspx_buffermanager_bx_wptr_reg_s cn; */
-};
-typedef union cavm_mdab_dspx_buffermanager_bx_wptr_reg cavm_mdab_dspx_buffermanager_bx_wptr_reg_t;
-
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_WPTR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_BX_WPTR_REG(unsigned long a, unsigned long b)
-{
-    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
-        return 0x87e044822c18ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_BX_WPTR_REG", 2, a, b, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_WPTR_REG(a,b) cavm_mdab_dspx_buffermanager_bx_wptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_WPTR_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_WPTR_REG(a,b) "MDAB_DSPX_BUFFERMANAGER_BX_WPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_WPTR_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_BX_WPTR_REG(a,b) (a),(b),-1,-1
-
-/**
- * Register (RSL32b) mdab_dsp#_buffermanager_b0_e0pctd_rptr_reg
- *
- * MDAB Dsp Buffermanager B0 E0pctd Rptr Reg Register
- */
-union cavm_mdab_dspx_buffermanager_b0_e0pctd_rptr_reg
-{
-    uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b0_e0pctd_rptr_reg_s
+    struct cavm_cbpx_buffermanager_b0_e0pctd_rptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
                                                                  or expected) indicates buffer is empty.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
@@ -531,44 +415,44 @@ union cavm_mdab_dspx_buffermanager_b0_e0pctd_rptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b0_e0pctd_rptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b0_e0pctd_rptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b0_e0pctd_rptr_reg cavm_mdab_dspx_buffermanager_b0_e0pctd_rptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b0_e0pctd_rptr_reg cavm_cbpx_buffermanager_b0_e0pctd_rptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822c24ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(a) cavm_mdab_dspx_buffermanager_b0_e0pctd_rptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(a) cavm_cbpx_buffermanager_b0_e0pctd_rptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(a) "CBPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_RPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b0_e0pctd_wptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b0_e0pctd_wptr_reg
  *
- * MDAB Dsp Buffermanager B0 E0pctd Wptr Reg Register
+ * CBP Buffermanager B0 E0pctd Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b0_e0pctd_wptr_reg
+union cavm_cbpx_buffermanager_b0_e0pctd_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b0_e0pctd_wptr_reg_s
+    struct cavm_cbpx_buffermanager_b0_e0pctd_wptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
                                                                  expected) indicates buffer is full.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
@@ -577,33 +461,33 @@ union cavm_mdab_dspx_buffermanager_b0_e0pctd_wptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b0_e0pctd_wptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b0_e0pctd_wptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b0_e0pctd_wptr_reg cavm_mdab_dspx_buffermanager_b0_e0pctd_wptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b0_e0pctd_wptr_reg cavm_cbpx_buffermanager_b0_e0pctd_wptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822c20ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(a) cavm_mdab_dspx_buffermanager_b0_e0pctd_wptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(a) cavm_cbpx_buffermanager_b0_e0pctd_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(a) "CBPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B0_E0PCTD_WPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b0_e0t_inc_dir_reg
+ * Register (RSL32b) cbp#_buffermanager_b0_e0t_inc_dir_reg
  *
- * MDAB Dsp Buffermanager B0 E0t Inc Dir Reg Register
+ * CBP Buffermanager B0 E0t Inc Dir Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b0_e0t_inc_dir_reg
+union cavm_cbpx_buffermanager_b0_e0t_inc_dir_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b0_e0t_inc_dir_reg_s
+    struct cavm_cbpx_buffermanager_b0_e0t_inc_dir_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_1_31         : 31;
@@ -633,33 +517,105 @@ union cavm_mdab_dspx_buffermanager_b0_e0t_inc_dir_reg
         uint32_t reserved_1_31         : 31;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b0_e0t_inc_dir_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b0_e0t_inc_dir_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b0_e0t_inc_dir_reg cavm_mdab_dspx_buffermanager_b0_e0t_inc_dir_reg_t;
+typedef union cavm_cbpx_buffermanager_b0_e0t_inc_dir_reg cavm_cbpx_buffermanager_b0_e0t_inc_dir_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822c0cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(a) cavm_mdab_dspx_buffermanager_b0_e0t_inc_dir_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(a) cavm_cbpx_buffermanager_b0_e0t_inc_dir_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(a) "CBPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B0_E0T_INC_DIR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b0_start_addr_reg
+ * Register (RSL32b) cbp#_buffermanager_b0_inc_ptr_ctl_reg
  *
- * MDAB Dsp Buffermanager B0 Start Addr Reg Register
+ * CBP Buffermanager B0 Inc Ptr Ctl Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b0_start_addr_reg
+union cavm_cbpx_buffermanager_b0_inc_ptr_ctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b0_start_addr_reg_s
+    struct cavm_cbpx_buffermanager_b0_inc_ptr_ctl_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_14_31        : 18;
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_14_31        : 18;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b0_inc_ptr_ctl_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b0_inc_ptr_ctl_reg cavm_cbpx_buffermanager_b0_inc_ptr_ctl_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_INC_PTR_CTL_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_INC_PTR_CTL_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822c08ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B0_INC_PTR_CTL_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B0_INC_PTR_CTL_REG(a) cavm_cbpx_buffermanager_b0_inc_ptr_ctl_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B0_INC_PTR_CTL_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B0_INC_PTR_CTL_REG(a) "CBPX_BUFFERMANAGER_B0_INC_PTR_CTL_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B0_INC_PTR_CTL_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B0_INC_PTR_CTL_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b0_start_addr_reg
+ *
+ * CBP Buffermanager B0 Start Addr Reg Register
+ */
+union cavm_cbpx_buffermanager_b0_start_addr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b0_start_addr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t bx_start_addr         : 26; /**< [ 31:  6](R/W) Start address of buffer X
@@ -673,44 +629,88 @@ union cavm_mdab_dspx_buffermanager_b0_start_addr_reg
                                                                  Writing to this register is restricted when BMAN is active  (see BMAN_RST_REG ) */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b0_start_addr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b0_start_addr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b0_start_addr_reg cavm_mdab_dspx_buffermanager_b0_start_addr_reg_t;
+typedef union cavm_cbpx_buffermanager_b0_start_addr_reg cavm_cbpx_buffermanager_b0_start_addr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B0_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B0_START_ADDR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_START_ADDR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822c00ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B0_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B0_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_START_ADDR_REG(a) cavm_mdab_dspx_buffermanager_b0_start_addr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_START_ADDR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_START_ADDR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B0_START_ADDR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_START_ADDR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B0_START_ADDR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B0_START_ADDR_REG(a) cavm_cbpx_buffermanager_b0_start_addr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B0_START_ADDR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B0_START_ADDR_REG(a) "CBPX_BUFFERMANAGER_B0_START_ADDR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B0_START_ADDR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B0_START_ADDR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b1_e1pctd_rptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b0_wptr_reg
  *
- * MDAB Dsp Buffermanager B1 E1pctd Rptr Reg Register
+ * CBP Buffermanager B0 Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b1_e1pctd_rptr_reg
+union cavm_cbpx_buffermanager_b0_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b1_e1pctd_rptr_reg_s
+    struct cavm_cbpx_buffermanager_b0_wptr_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W/H) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W/H) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b0_wptr_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b0_wptr_reg cavm_cbpx_buffermanager_b0_wptr_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B0_WPTR_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822c18ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B0_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B0_WPTR_REG(a) cavm_cbpx_buffermanager_b0_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B0_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B0_WPTR_REG(a) "CBPX_BUFFERMANAGER_B0_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B0_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B0_WPTR_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b1_e1pctd_rptr_reg
+ *
+ * CBP Buffermanager B1 E1pctd Rptr Reg Register
+ */
+union cavm_cbpx_buffermanager_b1_e1pctd_rptr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b1_e1pctd_rptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
                                                                  or expected) indicates buffer is empty.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
@@ -719,44 +719,44 @@ union cavm_mdab_dspx_buffermanager_b1_e1pctd_rptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b1_e1pctd_rptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b1_e1pctd_rptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b1_e1pctd_rptr_reg cavm_mdab_dspx_buffermanager_b1_e1pctd_rptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b1_e1pctd_rptr_reg cavm_cbpx_buffermanager_b1_e1pctd_rptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822c64ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(a) cavm_mdab_dspx_buffermanager_b1_e1pctd_rptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(a) cavm_cbpx_buffermanager_b1_e1pctd_rptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(a) "CBPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_RPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b1_e1pctd_wptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b1_e1pctd_wptr_reg
  *
- * MDAB Dsp Buffermanager B1 E1pctd Wptr Reg Register
+ * CBP Buffermanager B1 E1pctd Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b1_e1pctd_wptr_reg
+union cavm_cbpx_buffermanager_b1_e1pctd_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b1_e1pctd_wptr_reg_s
+    struct cavm_cbpx_buffermanager_b1_e1pctd_wptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
                                                                  expected) indicates buffer is full.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
@@ -765,33 +765,33 @@ union cavm_mdab_dspx_buffermanager_b1_e1pctd_wptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b1_e1pctd_wptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b1_e1pctd_wptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b1_e1pctd_wptr_reg cavm_mdab_dspx_buffermanager_b1_e1pctd_wptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b1_e1pctd_wptr_reg cavm_cbpx_buffermanager_b1_e1pctd_wptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822c60ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(a) cavm_mdab_dspx_buffermanager_b1_e1pctd_wptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(a) cavm_cbpx_buffermanager_b1_e1pctd_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(a) "CBPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B1_E1PCTD_WPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b1_e1t_inc_dir_reg
+ * Register (RSL32b) cbp#_buffermanager_b1_e1t_inc_dir_reg
  *
- * MDAB Dsp Buffermanager B1 E1t Inc Dir Reg Register
+ * CBP Buffermanager B1 E1t Inc Dir Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b1_e1t_inc_dir_reg
+union cavm_cbpx_buffermanager_b1_e1t_inc_dir_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b1_e1t_inc_dir_reg_s
+    struct cavm_cbpx_buffermanager_b1_e1t_inc_dir_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_1_31         : 31;
@@ -821,33 +821,105 @@ union cavm_mdab_dspx_buffermanager_b1_e1t_inc_dir_reg
         uint32_t reserved_1_31         : 31;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b1_e1t_inc_dir_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b1_e1t_inc_dir_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b1_e1t_inc_dir_reg cavm_mdab_dspx_buffermanager_b1_e1t_inc_dir_reg_t;
+typedef union cavm_cbpx_buffermanager_b1_e1t_inc_dir_reg cavm_cbpx_buffermanager_b1_e1t_inc_dir_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822c4cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(a) cavm_mdab_dspx_buffermanager_b1_e1t_inc_dir_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(a) cavm_cbpx_buffermanager_b1_e1t_inc_dir_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(a) "CBPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B1_E1T_INC_DIR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b1_start_addr_reg
+ * Register (RSL32b) cbp#_buffermanager_b1_inc_ptr_ctl_reg
  *
- * MDAB Dsp Buffermanager B1 Start Addr Reg Register
+ * CBP Buffermanager B1 Inc Ptr Ctl Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b1_start_addr_reg
+union cavm_cbpx_buffermanager_b1_inc_ptr_ctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b1_start_addr_reg_s
+    struct cavm_cbpx_buffermanager_b1_inc_ptr_ctl_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_14_31        : 18;
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_14_31        : 18;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b1_inc_ptr_ctl_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b1_inc_ptr_ctl_reg cavm_cbpx_buffermanager_b1_inc_ptr_ctl_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_INC_PTR_CTL_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_INC_PTR_CTL_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822c48ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B1_INC_PTR_CTL_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B1_INC_PTR_CTL_REG(a) cavm_cbpx_buffermanager_b1_inc_ptr_ctl_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B1_INC_PTR_CTL_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B1_INC_PTR_CTL_REG(a) "CBPX_BUFFERMANAGER_B1_INC_PTR_CTL_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B1_INC_PTR_CTL_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B1_INC_PTR_CTL_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b1_start_addr_reg
+ *
+ * CBP Buffermanager B1 Start Addr Reg Register
+ */
+union cavm_cbpx_buffermanager_b1_start_addr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b1_start_addr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t bx_start_addr         : 26; /**< [ 31:  6](R/W) Start address of buffer X
@@ -861,44 +933,88 @@ union cavm_mdab_dspx_buffermanager_b1_start_addr_reg
                                                                  Writing to this register is restricted when BMAN is active  (see BMAN_RST_REG ) */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b1_start_addr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b1_start_addr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b1_start_addr_reg cavm_mdab_dspx_buffermanager_b1_start_addr_reg_t;
+typedef union cavm_cbpx_buffermanager_b1_start_addr_reg cavm_cbpx_buffermanager_b1_start_addr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B1_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B1_START_ADDR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_START_ADDR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822c40ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B1_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B1_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_START_ADDR_REG(a) cavm_mdab_dspx_buffermanager_b1_start_addr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_START_ADDR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_START_ADDR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B1_START_ADDR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_START_ADDR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B1_START_ADDR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B1_START_ADDR_REG(a) cavm_cbpx_buffermanager_b1_start_addr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B1_START_ADDR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B1_START_ADDR_REG(a) "CBPX_BUFFERMANAGER_B1_START_ADDR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B1_START_ADDR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B1_START_ADDR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b2_e2pctd_rptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b1_wptr_reg
  *
- * MDAB Dsp Buffermanager B2 E2pctd Rptr Reg Register
+ * CBP Buffermanager B1 Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b2_e2pctd_rptr_reg
+union cavm_cbpx_buffermanager_b1_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b2_e2pctd_rptr_reg_s
+    struct cavm_cbpx_buffermanager_b1_wptr_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b1_wptr_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b1_wptr_reg cavm_cbpx_buffermanager_b1_wptr_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B1_WPTR_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822c58ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B1_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B1_WPTR_REG(a) cavm_cbpx_buffermanager_b1_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B1_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B1_WPTR_REG(a) "CBPX_BUFFERMANAGER_B1_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B1_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B1_WPTR_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b2_e2pctd_rptr_reg
+ *
+ * CBP Buffermanager B2 E2pctd Rptr Reg Register
+ */
+union cavm_cbpx_buffermanager_b2_e2pctd_rptr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b2_e2pctd_rptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
                                                                  or expected) indicates buffer is empty.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
@@ -907,44 +1023,44 @@ union cavm_mdab_dspx_buffermanager_b2_e2pctd_rptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b2_e2pctd_rptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b2_e2pctd_rptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b2_e2pctd_rptr_reg cavm_mdab_dspx_buffermanager_b2_e2pctd_rptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b2_e2pctd_rptr_reg cavm_cbpx_buffermanager_b2_e2pctd_rptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822ca4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(a) cavm_mdab_dspx_buffermanager_b2_e2pctd_rptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(a) cavm_cbpx_buffermanager_b2_e2pctd_rptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(a) "CBPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_RPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b2_e2pctd_wptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b2_e2pctd_wptr_reg
  *
- * MDAB Dsp Buffermanager B2 E2pctd Wptr Reg Register
+ * CBP Buffermanager B2 E2pctd Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b2_e2pctd_wptr_reg
+union cavm_cbpx_buffermanager_b2_e2pctd_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b2_e2pctd_wptr_reg_s
+    struct cavm_cbpx_buffermanager_b2_e2pctd_wptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
                                                                  expected) indicates buffer is full.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
@@ -953,33 +1069,33 @@ union cavm_mdab_dspx_buffermanager_b2_e2pctd_wptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b2_e2pctd_wptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b2_e2pctd_wptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b2_e2pctd_wptr_reg cavm_mdab_dspx_buffermanager_b2_e2pctd_wptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b2_e2pctd_wptr_reg cavm_cbpx_buffermanager_b2_e2pctd_wptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822ca0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(a) cavm_mdab_dspx_buffermanager_b2_e2pctd_wptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(a) cavm_cbpx_buffermanager_b2_e2pctd_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(a) "CBPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B2_E2PCTD_WPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b2_e2t_inc_dir_reg
+ * Register (RSL32b) cbp#_buffermanager_b2_e2t_inc_dir_reg
  *
- * MDAB Dsp Buffermanager B2 E2t Inc Dir Reg Register
+ * CBP Buffermanager B2 E2t Inc Dir Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b2_e2t_inc_dir_reg
+union cavm_cbpx_buffermanager_b2_e2t_inc_dir_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b2_e2t_inc_dir_reg_s
+    struct cavm_cbpx_buffermanager_b2_e2t_inc_dir_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_1_31         : 31;
@@ -1009,33 +1125,105 @@ union cavm_mdab_dspx_buffermanager_b2_e2t_inc_dir_reg
         uint32_t reserved_1_31         : 31;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b2_e2t_inc_dir_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b2_e2t_inc_dir_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b2_e2t_inc_dir_reg cavm_mdab_dspx_buffermanager_b2_e2t_inc_dir_reg_t;
+typedef union cavm_cbpx_buffermanager_b2_e2t_inc_dir_reg cavm_cbpx_buffermanager_b2_e2t_inc_dir_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822c8cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(a) cavm_mdab_dspx_buffermanager_b2_e2t_inc_dir_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(a) cavm_cbpx_buffermanager_b2_e2t_inc_dir_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(a) "CBPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B2_E2T_INC_DIR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b2_start_addr_reg
+ * Register (RSL32b) cbp#_buffermanager_b2_inc_ptr_ctl_reg
  *
- * MDAB Dsp Buffermanager B2 Start Addr Reg Register
+ * CBP Buffermanager B2 Inc Ptr Ctl Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b2_start_addr_reg
+union cavm_cbpx_buffermanager_b2_inc_ptr_ctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b2_start_addr_reg_s
+    struct cavm_cbpx_buffermanager_b2_inc_ptr_ctl_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_14_31        : 18;
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_14_31        : 18;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b2_inc_ptr_ctl_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b2_inc_ptr_ctl_reg cavm_cbpx_buffermanager_b2_inc_ptr_ctl_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_INC_PTR_CTL_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_INC_PTR_CTL_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822c88ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B2_INC_PTR_CTL_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B2_INC_PTR_CTL_REG(a) cavm_cbpx_buffermanager_b2_inc_ptr_ctl_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B2_INC_PTR_CTL_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B2_INC_PTR_CTL_REG(a) "CBPX_BUFFERMANAGER_B2_INC_PTR_CTL_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B2_INC_PTR_CTL_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B2_INC_PTR_CTL_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b2_start_addr_reg
+ *
+ * CBP Buffermanager B2 Start Addr Reg Register
+ */
+union cavm_cbpx_buffermanager_b2_start_addr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b2_start_addr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t bx_start_addr         : 26; /**< [ 31:  6](R/W) Start address of buffer X
@@ -1049,44 +1237,88 @@ union cavm_mdab_dspx_buffermanager_b2_start_addr_reg
                                                                  Writing to this register is restricted when BMAN is active  (see BMAN_RST_REG ) */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b2_start_addr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b2_start_addr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b2_start_addr_reg cavm_mdab_dspx_buffermanager_b2_start_addr_reg_t;
+typedef union cavm_cbpx_buffermanager_b2_start_addr_reg cavm_cbpx_buffermanager_b2_start_addr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B2_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B2_START_ADDR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_START_ADDR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822c80ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B2_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B2_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_START_ADDR_REG(a) cavm_mdab_dspx_buffermanager_b2_start_addr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_START_ADDR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_START_ADDR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B2_START_ADDR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_START_ADDR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B2_START_ADDR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B2_START_ADDR_REG(a) cavm_cbpx_buffermanager_b2_start_addr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B2_START_ADDR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B2_START_ADDR_REG(a) "CBPX_BUFFERMANAGER_B2_START_ADDR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B2_START_ADDR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B2_START_ADDR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b3_e3pctd_rptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b2_wptr_reg
  *
- * MDAB Dsp Buffermanager B3 E3pctd Rptr Reg Register
+ * CBP Buffermanager B2 Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b3_e3pctd_rptr_reg
+union cavm_cbpx_buffermanager_b2_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b3_e3pctd_rptr_reg_s
+    struct cavm_cbpx_buffermanager_b2_wptr_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b2_wptr_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b2_wptr_reg cavm_cbpx_buffermanager_b2_wptr_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B2_WPTR_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822c98ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B2_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B2_WPTR_REG(a) cavm_cbpx_buffermanager_b2_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B2_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B2_WPTR_REG(a) "CBPX_BUFFERMANAGER_B2_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B2_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B2_WPTR_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b3_e3pctd_rptr_reg
+ *
+ * CBP Buffermanager B3 E3pctd Rptr Reg Register
+ */
+union cavm_cbpx_buffermanager_b3_e3pctd_rptr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b3_e3pctd_rptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
                                                                  or expected) indicates buffer is empty.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
@@ -1095,44 +1327,44 @@ union cavm_mdab_dspx_buffermanager_b3_e3pctd_rptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b3_e3pctd_rptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b3_e3pctd_rptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b3_e3pctd_rptr_reg cavm_mdab_dspx_buffermanager_b3_e3pctd_rptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b3_e3pctd_rptr_reg cavm_cbpx_buffermanager_b3_e3pctd_rptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822ce4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(a) cavm_mdab_dspx_buffermanager_b3_e3pctd_rptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(a) cavm_cbpx_buffermanager_b3_e3pctd_rptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(a) "CBPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_RPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b3_e3pctd_wptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b3_e3pctd_wptr_reg
  *
- * MDAB Dsp Buffermanager B3 E3pctd Wptr Reg Register
+ * CBP Buffermanager B3 E3pctd Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b3_e3pctd_wptr_reg
+union cavm_cbpx_buffermanager_b3_e3pctd_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b3_e3pctd_wptr_reg_s
+    struct cavm_cbpx_buffermanager_b3_e3pctd_wptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
                                                                  expected) indicates buffer is full.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
@@ -1141,33 +1373,33 @@ union cavm_mdab_dspx_buffermanager_b3_e3pctd_wptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b3_e3pctd_wptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b3_e3pctd_wptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b3_e3pctd_wptr_reg cavm_mdab_dspx_buffermanager_b3_e3pctd_wptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b3_e3pctd_wptr_reg cavm_cbpx_buffermanager_b3_e3pctd_wptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822ce0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(a) cavm_mdab_dspx_buffermanager_b3_e3pctd_wptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(a) cavm_cbpx_buffermanager_b3_e3pctd_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(a) "CBPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B3_E3PCTD_WPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b3_e3t_inc_dir_reg
+ * Register (RSL32b) cbp#_buffermanager_b3_e3t_inc_dir_reg
  *
- * MDAB Dsp Buffermanager B3 E3t Inc Dir Reg Register
+ * CBP Buffermanager B3 E3t Inc Dir Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b3_e3t_inc_dir_reg
+union cavm_cbpx_buffermanager_b3_e3t_inc_dir_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b3_e3t_inc_dir_reg_s
+    struct cavm_cbpx_buffermanager_b3_e3t_inc_dir_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_1_31         : 31;
@@ -1197,33 +1429,105 @@ union cavm_mdab_dspx_buffermanager_b3_e3t_inc_dir_reg
         uint32_t reserved_1_31         : 31;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b3_e3t_inc_dir_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b3_e3t_inc_dir_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b3_e3t_inc_dir_reg cavm_mdab_dspx_buffermanager_b3_e3t_inc_dir_reg_t;
+typedef union cavm_cbpx_buffermanager_b3_e3t_inc_dir_reg cavm_cbpx_buffermanager_b3_e3t_inc_dir_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822cccll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(a) cavm_mdab_dspx_buffermanager_b3_e3t_inc_dir_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(a) cavm_cbpx_buffermanager_b3_e3t_inc_dir_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(a) "CBPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B3_E3T_INC_DIR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b3_start_addr_reg
+ * Register (RSL32b) cbp#_buffermanager_b3_inc_ptr_ctl_reg
  *
- * MDAB Dsp Buffermanager B3 Start Addr Reg Register
+ * CBP Buffermanager B3 Inc Ptr Ctl Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b3_start_addr_reg
+union cavm_cbpx_buffermanager_b3_inc_ptr_ctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b3_start_addr_reg_s
+    struct cavm_cbpx_buffermanager_b3_inc_ptr_ctl_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_14_31        : 18;
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_14_31        : 18;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b3_inc_ptr_ctl_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b3_inc_ptr_ctl_reg cavm_cbpx_buffermanager_b3_inc_ptr_ctl_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_INC_PTR_CTL_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_INC_PTR_CTL_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822cc8ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B3_INC_PTR_CTL_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B3_INC_PTR_CTL_REG(a) cavm_cbpx_buffermanager_b3_inc_ptr_ctl_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B3_INC_PTR_CTL_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B3_INC_PTR_CTL_REG(a) "CBPX_BUFFERMANAGER_B3_INC_PTR_CTL_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B3_INC_PTR_CTL_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B3_INC_PTR_CTL_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b3_start_addr_reg
+ *
+ * CBP Buffermanager B3 Start Addr Reg Register
+ */
+union cavm_cbpx_buffermanager_b3_start_addr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b3_start_addr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t bx_start_addr         : 26; /**< [ 31:  6](R/W) Start address of buffer X
@@ -1237,44 +1541,88 @@ union cavm_mdab_dspx_buffermanager_b3_start_addr_reg
                                                                  Writing to this register is restricted when BMAN is active  (see BMAN_RST_REG ) */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b3_start_addr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b3_start_addr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b3_start_addr_reg cavm_mdab_dspx_buffermanager_b3_start_addr_reg_t;
+typedef union cavm_cbpx_buffermanager_b3_start_addr_reg cavm_cbpx_buffermanager_b3_start_addr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B3_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B3_START_ADDR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_START_ADDR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822cc0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B3_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B3_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_START_ADDR_REG(a) cavm_mdab_dspx_buffermanager_b3_start_addr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_START_ADDR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_START_ADDR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B3_START_ADDR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_START_ADDR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B3_START_ADDR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B3_START_ADDR_REG(a) cavm_cbpx_buffermanager_b3_start_addr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B3_START_ADDR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B3_START_ADDR_REG(a) "CBPX_BUFFERMANAGER_B3_START_ADDR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B3_START_ADDR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B3_START_ADDR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b4_e4pctd_rptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b3_wptr_reg
  *
- * MDAB Dsp Buffermanager B4 E4pctd Rptr Reg Register
+ * CBP Buffermanager B3 Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b4_e4pctd_rptr_reg
+union cavm_cbpx_buffermanager_b3_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b4_e4pctd_rptr_reg_s
+    struct cavm_cbpx_buffermanager_b3_wptr_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b3_wptr_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b3_wptr_reg cavm_cbpx_buffermanager_b3_wptr_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B3_WPTR_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822cd8ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B3_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B3_WPTR_REG(a) cavm_cbpx_buffermanager_b3_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B3_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B3_WPTR_REG(a) "CBPX_BUFFERMANAGER_B3_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B3_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B3_WPTR_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b4_e4pctd_rptr_reg
+ *
+ * CBP Buffermanager B4 E4pctd Rptr Reg Register
+ */
+union cavm_cbpx_buffermanager_b4_e4pctd_rptr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b4_e4pctd_rptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
                                                                  or expected) indicates buffer is empty.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
@@ -1283,44 +1631,44 @@ union cavm_mdab_dspx_buffermanager_b4_e4pctd_rptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b4_e4pctd_rptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b4_e4pctd_rptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b4_e4pctd_rptr_reg cavm_mdab_dspx_buffermanager_b4_e4pctd_rptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b4_e4pctd_rptr_reg cavm_cbpx_buffermanager_b4_e4pctd_rptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822d24ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(a) cavm_mdab_dspx_buffermanager_b4_e4pctd_rptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(a) cavm_cbpx_buffermanager_b4_e4pctd_rptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(a) "CBPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_RPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b4_e4pctd_wptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b4_e4pctd_wptr_reg
  *
- * MDAB Dsp Buffermanager B4 E4pctd Wptr Reg Register
+ * CBP Buffermanager B4 E4pctd Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b4_e4pctd_wptr_reg
+union cavm_cbpx_buffermanager_b4_e4pctd_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b4_e4pctd_wptr_reg_s
+    struct cavm_cbpx_buffermanager_b4_e4pctd_wptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
                                                                  expected) indicates buffer is full.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
@@ -1329,33 +1677,33 @@ union cavm_mdab_dspx_buffermanager_b4_e4pctd_wptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b4_e4pctd_wptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b4_e4pctd_wptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b4_e4pctd_wptr_reg cavm_mdab_dspx_buffermanager_b4_e4pctd_wptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b4_e4pctd_wptr_reg cavm_cbpx_buffermanager_b4_e4pctd_wptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822d20ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(a) cavm_mdab_dspx_buffermanager_b4_e4pctd_wptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(a) cavm_cbpx_buffermanager_b4_e4pctd_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(a) "CBPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B4_E4PCTD_WPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b4_e4t_inc_dir_reg
+ * Register (RSL32b) cbp#_buffermanager_b4_e4t_inc_dir_reg
  *
- * MDAB Dsp Buffermanager B4 E4t Inc Dir Reg Register
+ * CBP Buffermanager B4 E4t Inc Dir Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b4_e4t_inc_dir_reg
+union cavm_cbpx_buffermanager_b4_e4t_inc_dir_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b4_e4t_inc_dir_reg_s
+    struct cavm_cbpx_buffermanager_b4_e4t_inc_dir_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_1_31         : 31;
@@ -1385,33 +1733,105 @@ union cavm_mdab_dspx_buffermanager_b4_e4t_inc_dir_reg
         uint32_t reserved_1_31         : 31;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b4_e4t_inc_dir_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b4_e4t_inc_dir_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b4_e4t_inc_dir_reg cavm_mdab_dspx_buffermanager_b4_e4t_inc_dir_reg_t;
+typedef union cavm_cbpx_buffermanager_b4_e4t_inc_dir_reg cavm_cbpx_buffermanager_b4_e4t_inc_dir_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822d0cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(a) cavm_mdab_dspx_buffermanager_b4_e4t_inc_dir_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(a) cavm_cbpx_buffermanager_b4_e4t_inc_dir_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(a) "CBPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B4_E4T_INC_DIR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b4_start_addr_reg
+ * Register (RSL32b) cbp#_buffermanager_b4_inc_ptr_ctl_reg
  *
- * MDAB Dsp Buffermanager B4 Start Addr Reg Register
+ * CBP Buffermanager B4 Inc Ptr Ctl Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b4_start_addr_reg
+union cavm_cbpx_buffermanager_b4_inc_ptr_ctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b4_start_addr_reg_s
+    struct cavm_cbpx_buffermanager_b4_inc_ptr_ctl_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_14_31        : 18;
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_14_31        : 18;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b4_inc_ptr_ctl_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b4_inc_ptr_ctl_reg cavm_cbpx_buffermanager_b4_inc_ptr_ctl_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_INC_PTR_CTL_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_INC_PTR_CTL_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822d08ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B4_INC_PTR_CTL_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B4_INC_PTR_CTL_REG(a) cavm_cbpx_buffermanager_b4_inc_ptr_ctl_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B4_INC_PTR_CTL_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B4_INC_PTR_CTL_REG(a) "CBPX_BUFFERMANAGER_B4_INC_PTR_CTL_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B4_INC_PTR_CTL_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B4_INC_PTR_CTL_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b4_start_addr_reg
+ *
+ * CBP Buffermanager B4 Start Addr Reg Register
+ */
+union cavm_cbpx_buffermanager_b4_start_addr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b4_start_addr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t bx_start_addr         : 26; /**< [ 31:  6](R/W) Start address of buffer X
@@ -1425,44 +1845,88 @@ union cavm_mdab_dspx_buffermanager_b4_start_addr_reg
                                                                  Writing to this register is restricted when BMAN is active  (see BMAN_RST_REG ) */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b4_start_addr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b4_start_addr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b4_start_addr_reg cavm_mdab_dspx_buffermanager_b4_start_addr_reg_t;
+typedef union cavm_cbpx_buffermanager_b4_start_addr_reg cavm_cbpx_buffermanager_b4_start_addr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B4_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B4_START_ADDR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_START_ADDR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822d00ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B4_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B4_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_START_ADDR_REG(a) cavm_mdab_dspx_buffermanager_b4_start_addr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_START_ADDR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_START_ADDR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B4_START_ADDR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_START_ADDR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B4_START_ADDR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B4_START_ADDR_REG(a) cavm_cbpx_buffermanager_b4_start_addr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B4_START_ADDR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B4_START_ADDR_REG(a) "CBPX_BUFFERMANAGER_B4_START_ADDR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B4_START_ADDR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B4_START_ADDR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b5_e5pctd_rptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b4_wptr_reg
  *
- * MDAB Dsp Buffermanager B5 E5pctd Rptr Reg Register
+ * CBP Buffermanager B4 Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b5_e5pctd_rptr_reg
+union cavm_cbpx_buffermanager_b4_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b5_e5pctd_rptr_reg_s
+    struct cavm_cbpx_buffermanager_b4_wptr_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b4_wptr_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b4_wptr_reg cavm_cbpx_buffermanager_b4_wptr_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B4_WPTR_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822d18ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B4_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B4_WPTR_REG(a) cavm_cbpx_buffermanager_b4_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B4_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B4_WPTR_REG(a) "CBPX_BUFFERMANAGER_B4_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B4_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B4_WPTR_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b5_e5pctd_rptr_reg
+ *
+ * CBP Buffermanager B5 E5pctd Rptr Reg Register
+ */
+union cavm_cbpx_buffermanager_b5_e5pctd_rptr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b5_e5pctd_rptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
                                                                  or expected) indicates buffer is empty.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
@@ -1471,44 +1935,44 @@ union cavm_mdab_dspx_buffermanager_b5_e5pctd_rptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b5_e5pctd_rptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b5_e5pctd_rptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b5_e5pctd_rptr_reg cavm_mdab_dspx_buffermanager_b5_e5pctd_rptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b5_e5pctd_rptr_reg cavm_cbpx_buffermanager_b5_e5pctd_rptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822d64ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(a) cavm_mdab_dspx_buffermanager_b5_e5pctd_rptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(a) cavm_cbpx_buffermanager_b5_e5pctd_rptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(a) "CBPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_RPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b5_e5pctd_wptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b5_e5pctd_wptr_reg
  *
- * MDAB Dsp Buffermanager B5 E5pctd Wptr Reg Register
+ * CBP Buffermanager B5 E5pctd Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b5_e5pctd_wptr_reg
+union cavm_cbpx_buffermanager_b5_e5pctd_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b5_e5pctd_wptr_reg_s
+    struct cavm_cbpx_buffermanager_b5_e5pctd_wptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
                                                                  expected) indicates buffer is full.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
@@ -1517,33 +1981,33 @@ union cavm_mdab_dspx_buffermanager_b5_e5pctd_wptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b5_e5pctd_wptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b5_e5pctd_wptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b5_e5pctd_wptr_reg cavm_mdab_dspx_buffermanager_b5_e5pctd_wptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b5_e5pctd_wptr_reg cavm_cbpx_buffermanager_b5_e5pctd_wptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822d60ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(a) cavm_mdab_dspx_buffermanager_b5_e5pctd_wptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(a) cavm_cbpx_buffermanager_b5_e5pctd_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(a) "CBPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B5_E5PCTD_WPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b5_e5t_inc_dir_reg
+ * Register (RSL32b) cbp#_buffermanager_b5_e5t_inc_dir_reg
  *
- * MDAB Dsp Buffermanager B5 E5t Inc Dir Reg Register
+ * CBP Buffermanager B5 E5t Inc Dir Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b5_e5t_inc_dir_reg
+union cavm_cbpx_buffermanager_b5_e5t_inc_dir_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b5_e5t_inc_dir_reg_s
+    struct cavm_cbpx_buffermanager_b5_e5t_inc_dir_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_1_31         : 31;
@@ -1573,33 +2037,105 @@ union cavm_mdab_dspx_buffermanager_b5_e5t_inc_dir_reg
         uint32_t reserved_1_31         : 31;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b5_e5t_inc_dir_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b5_e5t_inc_dir_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b5_e5t_inc_dir_reg cavm_mdab_dspx_buffermanager_b5_e5t_inc_dir_reg_t;
+typedef union cavm_cbpx_buffermanager_b5_e5t_inc_dir_reg cavm_cbpx_buffermanager_b5_e5t_inc_dir_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822d4cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(a) cavm_mdab_dspx_buffermanager_b5_e5t_inc_dir_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(a) cavm_cbpx_buffermanager_b5_e5t_inc_dir_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(a) "CBPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B5_E5T_INC_DIR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b5_start_addr_reg
+ * Register (RSL32b) cbp#_buffermanager_b5_inc_ptr_ctl_reg
  *
- * MDAB Dsp Buffermanager B5 Start Addr Reg Register
+ * CBP Buffermanager B5 Inc Ptr Ctl Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b5_start_addr_reg
+union cavm_cbpx_buffermanager_b5_inc_ptr_ctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b5_start_addr_reg_s
+    struct cavm_cbpx_buffermanager_b5_inc_ptr_ctl_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_14_31        : 18;
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_14_31        : 18;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b5_inc_ptr_ctl_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b5_inc_ptr_ctl_reg cavm_cbpx_buffermanager_b5_inc_ptr_ctl_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_INC_PTR_CTL_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_INC_PTR_CTL_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822d48ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B5_INC_PTR_CTL_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B5_INC_PTR_CTL_REG(a) cavm_cbpx_buffermanager_b5_inc_ptr_ctl_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B5_INC_PTR_CTL_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B5_INC_PTR_CTL_REG(a) "CBPX_BUFFERMANAGER_B5_INC_PTR_CTL_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B5_INC_PTR_CTL_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B5_INC_PTR_CTL_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b5_start_addr_reg
+ *
+ * CBP Buffermanager B5 Start Addr Reg Register
+ */
+union cavm_cbpx_buffermanager_b5_start_addr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b5_start_addr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t bx_start_addr         : 26; /**< [ 31:  6](R/W) Start address of buffer X
@@ -1613,44 +2149,88 @@ union cavm_mdab_dspx_buffermanager_b5_start_addr_reg
                                                                  Writing to this register is restricted when BMAN is active  (see BMAN_RST_REG ) */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b5_start_addr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b5_start_addr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b5_start_addr_reg cavm_mdab_dspx_buffermanager_b5_start_addr_reg_t;
+typedef union cavm_cbpx_buffermanager_b5_start_addr_reg cavm_cbpx_buffermanager_b5_start_addr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B5_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B5_START_ADDR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_START_ADDR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822d40ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B5_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B5_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_START_ADDR_REG(a) cavm_mdab_dspx_buffermanager_b5_start_addr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_START_ADDR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_START_ADDR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B5_START_ADDR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_START_ADDR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B5_START_ADDR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B5_START_ADDR_REG(a) cavm_cbpx_buffermanager_b5_start_addr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B5_START_ADDR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B5_START_ADDR_REG(a) "CBPX_BUFFERMANAGER_B5_START_ADDR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B5_START_ADDR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B5_START_ADDR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b6_e6pctd_rptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b5_wptr_reg
  *
- * MDAB Dsp Buffermanager B6 E6pctd Rptr Reg Register
+ * CBP Buffermanager B5 Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b6_e6pctd_rptr_reg
+union cavm_cbpx_buffermanager_b5_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b6_e6pctd_rptr_reg_s
+    struct cavm_cbpx_buffermanager_b5_wptr_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b5_wptr_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b5_wptr_reg cavm_cbpx_buffermanager_b5_wptr_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B5_WPTR_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822d58ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B5_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B5_WPTR_REG(a) cavm_cbpx_buffermanager_b5_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B5_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B5_WPTR_REG(a) "CBPX_BUFFERMANAGER_B5_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B5_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B5_WPTR_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b6_e6pctd_rptr_reg
+ *
+ * CBP Buffermanager B6 E6pctd Rptr Reg Register
+ */
+union cavm_cbpx_buffermanager_b6_e6pctd_rptr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b6_e6pctd_rptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
                                                                  or expected) indicates buffer is empty.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
@@ -1659,44 +2239,44 @@ union cavm_mdab_dspx_buffermanager_b6_e6pctd_rptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b6_e6pctd_rptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b6_e6pctd_rptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b6_e6pctd_rptr_reg cavm_mdab_dspx_buffermanager_b6_e6pctd_rptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b6_e6pctd_rptr_reg cavm_cbpx_buffermanager_b6_e6pctd_rptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822da4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(a) cavm_mdab_dspx_buffermanager_b6_e6pctd_rptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(a) cavm_cbpx_buffermanager_b6_e6pctd_rptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(a) "CBPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_RPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b6_e6pctd_wptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b6_e6pctd_wptr_reg
  *
- * MDAB Dsp Buffermanager B6 E6pctd Wptr Reg Register
+ * CBP Buffermanager B6 E6pctd Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b6_e6pctd_wptr_reg
+union cavm_cbpx_buffermanager_b6_e6pctd_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b6_e6pctd_wptr_reg_s
+    struct cavm_cbpx_buffermanager_b6_e6pctd_wptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
                                                                  expected) indicates buffer is full.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
@@ -1705,33 +2285,33 @@ union cavm_mdab_dspx_buffermanager_b6_e6pctd_wptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b6_e6pctd_wptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b6_e6pctd_wptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b6_e6pctd_wptr_reg cavm_mdab_dspx_buffermanager_b6_e6pctd_wptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b6_e6pctd_wptr_reg cavm_cbpx_buffermanager_b6_e6pctd_wptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822da0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(a) cavm_mdab_dspx_buffermanager_b6_e6pctd_wptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(a) cavm_cbpx_buffermanager_b6_e6pctd_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(a) "CBPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B6_E6PCTD_WPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b6_e6t_inc_dir_reg
+ * Register (RSL32b) cbp#_buffermanager_b6_e6t_inc_dir_reg
  *
- * MDAB Dsp Buffermanager B6 E6t Inc Dir Reg Register
+ * CBP Buffermanager B6 E6t Inc Dir Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b6_e6t_inc_dir_reg
+union cavm_cbpx_buffermanager_b6_e6t_inc_dir_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b6_e6t_inc_dir_reg_s
+    struct cavm_cbpx_buffermanager_b6_e6t_inc_dir_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_1_31         : 31;
@@ -1761,33 +2341,105 @@ union cavm_mdab_dspx_buffermanager_b6_e6t_inc_dir_reg
         uint32_t reserved_1_31         : 31;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b6_e6t_inc_dir_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b6_e6t_inc_dir_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b6_e6t_inc_dir_reg cavm_mdab_dspx_buffermanager_b6_e6t_inc_dir_reg_t;
+typedef union cavm_cbpx_buffermanager_b6_e6t_inc_dir_reg cavm_cbpx_buffermanager_b6_e6t_inc_dir_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822d8cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(a) cavm_mdab_dspx_buffermanager_b6_e6t_inc_dir_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(a) cavm_cbpx_buffermanager_b6_e6t_inc_dir_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(a) "CBPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B6_E6T_INC_DIR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b6_start_addr_reg
+ * Register (RSL32b) cbp#_buffermanager_b6_inc_ptr_ctl_reg
  *
- * MDAB Dsp Buffermanager B6 Start Addr Reg Register
+ * CBP Buffermanager B6 Inc Ptr Ctl Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b6_start_addr_reg
+union cavm_cbpx_buffermanager_b6_inc_ptr_ctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b6_start_addr_reg_s
+    struct cavm_cbpx_buffermanager_b6_inc_ptr_ctl_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_14_31        : 18;
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_14_31        : 18;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b6_inc_ptr_ctl_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b6_inc_ptr_ctl_reg cavm_cbpx_buffermanager_b6_inc_ptr_ctl_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_INC_PTR_CTL_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_INC_PTR_CTL_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822d88ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B6_INC_PTR_CTL_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B6_INC_PTR_CTL_REG(a) cavm_cbpx_buffermanager_b6_inc_ptr_ctl_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B6_INC_PTR_CTL_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B6_INC_PTR_CTL_REG(a) "CBPX_BUFFERMANAGER_B6_INC_PTR_CTL_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B6_INC_PTR_CTL_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B6_INC_PTR_CTL_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b6_start_addr_reg
+ *
+ * CBP Buffermanager B6 Start Addr Reg Register
+ */
+union cavm_cbpx_buffermanager_b6_start_addr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b6_start_addr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t bx_start_addr         : 26; /**< [ 31:  6](R/W) Start address of buffer X
@@ -1801,44 +2453,88 @@ union cavm_mdab_dspx_buffermanager_b6_start_addr_reg
                                                                  Writing to this register is restricted when BMAN is active  (see BMAN_RST_REG ) */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b6_start_addr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b6_start_addr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b6_start_addr_reg cavm_mdab_dspx_buffermanager_b6_start_addr_reg_t;
+typedef union cavm_cbpx_buffermanager_b6_start_addr_reg cavm_cbpx_buffermanager_b6_start_addr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B6_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B6_START_ADDR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_START_ADDR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822d80ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B6_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B6_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_START_ADDR_REG(a) cavm_mdab_dspx_buffermanager_b6_start_addr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_START_ADDR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_START_ADDR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B6_START_ADDR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_START_ADDR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B6_START_ADDR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B6_START_ADDR_REG(a) cavm_cbpx_buffermanager_b6_start_addr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B6_START_ADDR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B6_START_ADDR_REG(a) "CBPX_BUFFERMANAGER_B6_START_ADDR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B6_START_ADDR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B6_START_ADDR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b7_e7pctd_rptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b6_wptr_reg
  *
- * MDAB Dsp Buffermanager B7 E7pctd Rptr Reg Register
+ * CBP Buffermanager B6 Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b7_e7pctd_rptr_reg
+union cavm_cbpx_buffermanager_b6_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b7_e7pctd_rptr_reg_s
+    struct cavm_cbpx_buffermanager_b6_wptr_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b6_wptr_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b6_wptr_reg cavm_cbpx_buffermanager_b6_wptr_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B6_WPTR_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822d98ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B6_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B6_WPTR_REG(a) cavm_cbpx_buffermanager_b6_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B6_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B6_WPTR_REG(a) "CBPX_BUFFERMANAGER_B6_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B6_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B6_WPTR_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b7_e7pctd_rptr_reg
+ *
+ * CBP Buffermanager B7 E7pctd Rptr Reg Register
+ */
+union cavm_cbpx_buffermanager_b7_e7pctd_rptr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b7_e7pctd_rptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
                                                                  or expected) indicates buffer is empty.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W) Expected read pointer for buffer X
+        uint32_t bx_expctd_rptr        : 18; /**< [ 17:  0](R/W/H) Expected read pointer for buffer X
                                                                  This register reflects the status of the BMANN_RPTR register after all DMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant write pointer (actual
@@ -1847,44 +2543,44 @@ union cavm_mdab_dspx_buffermanager_b7_e7pctd_rptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b7_e7pctd_rptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b7_e7pctd_rptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b7_e7pctd_rptr_reg cavm_mdab_dspx_buffermanager_b7_e7pctd_rptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b7_e7pctd_rptr_reg cavm_cbpx_buffermanager_b7_e7pctd_rptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822de4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(a) cavm_mdab_dspx_buffermanager_b7_e7pctd_rptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(a) cavm_cbpx_buffermanager_b7_e7pctd_rptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(a) "CBPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_RPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b7_e7pctd_wptr_reg
+ * Register (RSL32b) cbp#_buffermanager_b7_e7pctd_wptr_reg
  *
- * MDAB Dsp Buffermanager B7 E7pctd Wptr Reg Register
+ * CBP Buffermanager B7 E7pctd Wptr Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b7_e7pctd_wptr_reg
+union cavm_cbpx_buffermanager_b7_e7pctd_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b7_e7pctd_wptr_reg_s
+    struct cavm_cbpx_buffermanager_b7_e7pctd_wptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
                                                                  expected) indicates buffer is full.
                                                                  This register gets the value of 0 after BX_RST is set. */
 #else /* Word 0 - Little Endian */
-        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W) Expected write pointer for buffer X
+        uint32_t bx_expctd_wptr        : 18; /**< [ 17:  0](R/W/H) Expected write pointer for buffer X
                                                                  This register reflects the status of the BMANN_WPTR register after all DDMA
                                                                  outstanding transactions complete.
                                                                  Updating this pointer with a value equal to the relevant read pointer (actual or
@@ -1893,33 +2589,33 @@ union cavm_mdab_dspx_buffermanager_b7_e7pctd_wptr_reg
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b7_e7pctd_wptr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b7_e7pctd_wptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b7_e7pctd_wptr_reg cavm_mdab_dspx_buffermanager_b7_e7pctd_wptr_reg_t;
+typedef union cavm_cbpx_buffermanager_b7_e7pctd_wptr_reg cavm_cbpx_buffermanager_b7_e7pctd_wptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822de0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(a) cavm_mdab_dspx_buffermanager_b7_e7pctd_wptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(a) cavm_cbpx_buffermanager_b7_e7pctd_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(a) "CBPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B7_E7PCTD_WPTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b7_e7t_inc_dir_reg
+ * Register (RSL32b) cbp#_buffermanager_b7_e7t_inc_dir_reg
  *
- * MDAB Dsp Buffermanager B7 E7t Inc Dir Reg Register
+ * CBP Buffermanager B7 E7t Inc Dir Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b7_e7t_inc_dir_reg
+union cavm_cbpx_buffermanager_b7_e7t_inc_dir_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b7_e7t_inc_dir_reg_s
+    struct cavm_cbpx_buffermanager_b7_e7t_inc_dir_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_1_31         : 31;
@@ -1949,33 +2645,105 @@ union cavm_mdab_dspx_buffermanager_b7_e7t_inc_dir_reg
         uint32_t reserved_1_31         : 31;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b7_e7t_inc_dir_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b7_e7t_inc_dir_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b7_e7t_inc_dir_reg cavm_mdab_dspx_buffermanager_b7_e7t_inc_dir_reg_t;
+typedef union cavm_cbpx_buffermanager_b7_e7t_inc_dir_reg cavm_cbpx_buffermanager_b7_e7t_inc_dir_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822dccll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(a) cavm_mdab_dspx_buffermanager_b7_e7t_inc_dir_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(a) cavm_cbpx_buffermanager_b7_e7t_inc_dir_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(a) "CBPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B7_E7T_INC_DIR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_buffermanager_b7_start_addr_reg
+ * Register (RSL32b) cbp#_buffermanager_b7_inc_ptr_ctl_reg
  *
- * MDAB Dsp Buffermanager B7 Start Addr Reg Register
+ * CBP Buffermanager B7 Inc Ptr Ctl Reg Register
  */
-union cavm_mdab_dspx_buffermanager_b7_start_addr_reg
+union cavm_cbpx_buffermanager_b7_inc_ptr_ctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_buffermanager_b7_start_addr_reg_s
+    struct cavm_cbpx_buffermanager_b7_inc_ptr_ctl_reg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_14_31        : 18;
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_ptr_inc_val        : 10; /**< [  9:  0](R/W) Increment value of the read/write pointer when external increment signal is set
+                                                                 or when BX_PTR_INC is written with 1
+                                                                 This register is also user for setting the number of bytes read/write from/to
+                                                                 the buffer before setting the bmanX_sniffer_ext_inc output signal
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_10_11        : 2;
+        uint32_t bx_ptr_inc            : 1;  /**< [ 12: 12](WO) Increment request to read/write expected pointer of buffer X
+                                                                 The functionality of this bit is defined by the BX_PTR_INC_DIR configuration register.
+                                                                 Writing the value of 1 to this field is restricted when bmanX_sniffer_ext_inc is
+                                                                 used by external device or when bmanX_ext_ptr_inc is connected to a sniffer at
+                                                                 external memory */
+        uint32_t bx_ptr_inc_dir        : 1;  /**< [ 13: 13](R/W) Select functionality of BX_PTR_INC
+                                                                 0  BX_PTR_INC is used for incrementing expected write pointer
+                                                                 1  BX_PTR_INC is used for incrementing expected read pointer
+                                                                 Changing the value of this field is restricted when BMAN is active and
+                                                                 bmanX_sniffer_ext_inc is used by external device or bmanX_ext_ptr_inc is
+                                                                 connected to a sniffer at external memory */
+        uint32_t reserved_14_31        : 18;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b7_inc_ptr_ctl_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b7_inc_ptr_ctl_reg cavm_cbpx_buffermanager_b7_inc_ptr_ctl_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_INC_PTR_CTL_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_INC_PTR_CTL_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822dc8ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B7_INC_PTR_CTL_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B7_INC_PTR_CTL_REG(a) cavm_cbpx_buffermanager_b7_inc_ptr_ctl_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B7_INC_PTR_CTL_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B7_INC_PTR_CTL_REG(a) "CBPX_BUFFERMANAGER_B7_INC_PTR_CTL_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B7_INC_PTR_CTL_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B7_INC_PTR_CTL_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_buffermanager_b7_start_addr_reg
+ *
+ * CBP Buffermanager B7 Start Addr Reg Register
+ */
+union cavm_cbpx_buffermanager_b7_start_addr_reg
+{
+    uint32_t u;
+    struct cavm_cbpx_buffermanager_b7_start_addr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t bx_start_addr         : 26; /**< [ 31:  6](R/W) Start address of buffer X
@@ -1989,71 +2757,115 @@ union cavm_mdab_dspx_buffermanager_b7_start_addr_reg
                                                                  Writing to this register is restricted when BMAN is active  (see BMAN_RST_REG ) */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_buffermanager_b7_start_addr_reg_s cn; */
+    /* struct cavm_cbpx_buffermanager_b7_start_addr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_buffermanager_b7_start_addr_reg cavm_mdab_dspx_buffermanager_b7_start_addr_reg_t;
+typedef union cavm_cbpx_buffermanager_b7_start_addr_reg cavm_cbpx_buffermanager_b7_start_addr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B7_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_BUFFERMANAGER_B7_START_ADDR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_START_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_START_ADDR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822dc0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_BUFFERMANAGER_B7_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B7_START_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_START_ADDR_REG(a) cavm_mdab_dspx_buffermanager_b7_start_addr_reg_t
-#define bustype_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_START_ADDR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_START_ADDR_REG(a) "MDAB_DSPX_BUFFERMANAGER_B7_START_ADDR_REG"
-#define busnum_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_START_ADDR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_BUFFERMANAGER_B7_START_ADDR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B7_START_ADDR_REG(a) cavm_cbpx_buffermanager_b7_start_addr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B7_START_ADDR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B7_START_ADDR_REG(a) "CBPX_BUFFERMANAGER_B7_START_ADDR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B7_START_ADDR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B7_START_ADDR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_coreextid_core_id
+ * Register (RSL32b) cbp#_buffermanager_b7_wptr_reg
  *
- * MDAB Dsp Coreextid Core Id Register
+ * CBP Buffermanager B7 Wptr Reg Register
  */
-union cavm_mdab_dspx_coreextid_core_id
+union cavm_cbpx_buffermanager_b7_wptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_coreextid_core_id_s
+    struct cavm_cbpx_buffermanager_b7_wptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t core_id               : 32; /**< [ 31:  0](RO) The value of this register is sampled at reset from the core_id input bus.
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+#else /* Word 0 - Little Endian */
+        uint32_t bx_wptr               : 18; /**< [ 17:  0](R/W) Write pointer for buffer X
+                                                                 This register gets the value of 0 after BX_RST is set
+                                                                 Writing to this register is prohibited and is reserved for future use. */
+        uint32_t reserved_18_30        : 13;
+        uint32_t bx_aempty             : 1;  /**< [ 31: 31](RO/H) Buffer almost empty.
+                                                                 Reflects the status of the bX_aempty output signal. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cbpx_buffermanager_b7_wptr_reg_s cn; */
+};
+typedef union cavm_cbpx_buffermanager_b7_wptr_reg cavm_cbpx_buffermanager_b7_wptr_reg_t;
+
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_WPTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_BUFFERMANAGER_B7_WPTR_REG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044822dd8ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("CBPX_BUFFERMANAGER_B7_WPTR_REG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CBPX_BUFFERMANAGER_B7_WPTR_REG(a) cavm_cbpx_buffermanager_b7_wptr_reg_t
+#define bustype_CAVM_CBPX_BUFFERMANAGER_B7_WPTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_BUFFERMANAGER_B7_WPTR_REG(a) "CBPX_BUFFERMANAGER_B7_WPTR_REG"
+#define busnum_CAVM_CBPX_BUFFERMANAGER_B7_WPTR_REG(a) (a)
+#define arguments_CAVM_CBPX_BUFFERMANAGER_B7_WPTR_REG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) cbp#_coreextid_core_id
+ *
+ * CBP Coreextid Core Id Register
+ */
+union cavm_cbpx_coreextid_core_id
+{
+    uint32_t u;
+    struct cavm_cbpx_coreextid_core_id_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t core_id               : 32; /**< [ 31:  0](RO/H) The value of this register is sampled at reset from the core_id input bus.
                                                                  This register is read only.
                                                                  For EDAP or FICSR ports the CORE_ID register can be  accessed using address 0x40_1004 . */
 #else /* Word 0 - Little Endian */
-        uint32_t core_id               : 32; /**< [ 31:  0](RO) The value of this register is sampled at reset from the core_id input bus.
+        uint32_t core_id               : 32; /**< [ 31:  0](RO/H) The value of this register is sampled at reset from the core_id input bus.
                                                                  This register is read only.
                                                                  For EDAP or FICSR ports the CORE_ID register can be  accessed using address 0x40_1004 . */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_coreextid_core_id_s cn; */
+    /* struct cavm_cbpx_coreextid_core_id_s cn; */
 };
-typedef union cavm_mdab_dspx_coreextid_core_id cavm_mdab_dspx_coreextid_core_id_t;
+typedef union cavm_cbpx_coreextid_core_id cavm_cbpx_coreextid_core_id_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_COREEXTID_CORE_ID(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_COREEXTID_CORE_ID(unsigned long a)
+static inline uint64_t CAVM_CBPX_COREEXTID_CORE_ID(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_COREEXTID_CORE_ID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044821004ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_COREEXTID_CORE_ID", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_COREEXTID_CORE_ID", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_COREEXTID_CORE_ID(a) cavm_mdab_dspx_coreextid_core_id_t
-#define bustype_CAVM_MDAB_DSPX_COREEXTID_CORE_ID(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_COREEXTID_CORE_ID(a) "MDAB_DSPX_COREEXTID_CORE_ID"
-#define busnum_CAVM_MDAB_DSPX_COREEXTID_CORE_ID(a) (a)
-#define arguments_CAVM_MDAB_DSPX_COREEXTID_CORE_ID(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_COREEXTID_CORE_ID(a) cavm_cbpx_coreextid_core_id_t
+#define bustype_CAVM_CBPX_COREEXTID_CORE_ID(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_COREEXTID_CORE_ID(a) "CBPX_COREEXTID_CORE_ID"
+#define busnum_CAVM_CBPX_COREEXTID_CORE_ID(a) (a)
+#define arguments_CAVM_CBPX_COREEXTID_CORE_ID(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_coreextid_core_version
+ * Register (RSL32b) cbp#_coreextid_core_version
  *
- * MDAB Dsp Coreextid Core Version Register
+ * CBP Coreextid Core Version Register
  */
-union cavm_mdab_dspx_coreextid_core_version
+union cavm_cbpx_coreextid_core_version
 {
     uint32_t u;
-    struct cavm_mdab_dspx_coreextid_core_version_s
+    struct cavm_cbpx_coreextid_core_version_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t core_version          : 32; /**< [ 31:  0](RO) Bits [31:16]: DSP core type
@@ -2063,34 +2875,34 @@ union cavm_mdab_dspx_coreextid_core_version
                                                                  Reset value: Core Version. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_coreextid_core_version_s cn; */
+    /* struct cavm_cbpx_coreextid_core_version_s cn; */
 };
-typedef union cavm_mdab_dspx_coreextid_core_version cavm_mdab_dspx_coreextid_core_version_t;
+typedef union cavm_cbpx_coreextid_core_version cavm_cbpx_coreextid_core_version_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_COREEXTID_CORE_VERSION(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_COREEXTID_CORE_VERSION(unsigned long a)
+static inline uint64_t CAVM_CBPX_COREEXTID_CORE_VERSION(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_COREEXTID_CORE_VERSION(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044821000ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_COREEXTID_CORE_VERSION", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_COREEXTID_CORE_VERSION", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_COREEXTID_CORE_VERSION(a) cavm_mdab_dspx_coreextid_core_version_t
-#define bustype_CAVM_MDAB_DSPX_COREEXTID_CORE_VERSION(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_COREEXTID_CORE_VERSION(a) "MDAB_DSPX_COREEXTID_CORE_VERSION"
-#define busnum_CAVM_MDAB_DSPX_COREEXTID_CORE_VERSION(a) (a)
-#define arguments_CAVM_MDAB_DSPX_COREEXTID_CORE_VERSION(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_COREEXTID_CORE_VERSION(a) cavm_cbpx_coreextid_core_version_t
+#define bustype_CAVM_CBPX_COREEXTID_CORE_VERSION(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_COREEXTID_CORE_VERSION(a) "CBPX_COREEXTID_CORE_VERSION"
+#define busnum_CAVM_CBPX_COREEXTID_CORE_VERSION(a) (a)
+#define arguments_CAVM_CBPX_COREEXTID_CORE_VERSION(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_ddam
+ * Register (RSL32b) cbp#_dma_dbg_ddam
  *
- * MDAB Dsp Dma Dbg Ddam Register
+ * CBP Dma Dbg Ddam Register
  * * If the DDMA is configured to use bursts for the external AXI, only the start address of the burst is matched.
  */
-union cavm_mdab_dspx_dma_dbg_ddam
+union cavm_cbpx_dma_dbg_ddam
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_ddam_s
+    struct cavm_cbpx_dma_dbg_ddam_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t dmadam                : 32; /**< [ 31:  0](R/W) DMA data address match.*
@@ -2104,36 +2916,36 @@ union cavm_mdab_dspx_dma_dbg_ddam
                                                                  with the DMADAM value. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_ddam_s cn; */
+    /* struct cavm_cbpx_dma_dbg_ddam_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_ddam cavm_mdab_dspx_dma_dbg_ddam_t;
+typedef union cavm_cbpx_dma_dbg_ddam cavm_cbpx_dma_dbg_ddam_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DDAM(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DDAM(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_DDAM(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_DDAM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822204ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_DDAM", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_DDAM", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_DDAM(a) cavm_mdab_dspx_dma_dbg_ddam_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_DDAM(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_DDAM(a) "MDAB_DSPX_DMA_DBG_DDAM"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_DDAM(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_DDAM(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_DDAM(a) cavm_cbpx_dma_dbg_ddam_t
+#define bustype_CAVM_CBPX_DMA_DBG_DDAM(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_DDAM(a) "CBPX_DMA_DBG_DDAM"
+#define busnum_CAVM_CBPX_DMA_DBG_DDAM(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_DDAM(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_ddc
+ * Register (RSL32b) cbp#_dma_dbg_ddc
  *
- * MDAB Dsp Dma Dbg Ddc Register
+ * CBP Dma Dbg Ddc Register
  * Notes:
  * 1.	If both the DMADAMDE and DMADAMUE bits are set to 0, the DMA address match is disabled.
  * 2.	It is restricted to write 2b11 to the DAS field.
  */
-union cavm_mdab_dspx_dma_dbg_ddc
+union cavm_cbpx_dma_dbg_ddc
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_ddc_s
+    struct cavm_cbpx_dma_dbg_ddc_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -2173,59 +2985,59 @@ union cavm_mdab_dspx_dma_dbg_ddc
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_ddc_s cn; */
+    /* struct cavm_cbpx_dma_dbg_ddc_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_ddc cavm_mdab_dspx_dma_dbg_ddc_t;
+typedef union cavm_cbpx_dma_dbg_ddc cavm_cbpx_dma_dbg_ddc_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DDC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DDC(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_DDC(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_DDC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482220cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_DDC", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_DDC", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_DDC(a) cavm_mdab_dspx_dma_dbg_ddc_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_DDC(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_DDC(a) "MDAB_DSPX_DMA_DBG_DDC"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_DDC(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_DDC(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_DDC(a) cavm_cbpx_dma_dbg_ddc_t
+#define bustype_CAVM_CBPX_DMA_DBG_DDC(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_DDC(a) "CBPX_DMA_DBG_DDC"
+#define busnum_CAVM_CBPX_DMA_DBG_DDC(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_DDC(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_dds
+ * Register (RSL32b) cbp#_dma_dbg_dds
  *
- * MDAB Dsp Dma Dbg Dds Register
+ * CBP Dma Dbg Dds Register
  * Notes:
  * 1.      A dedicated indication is issued to the OCEM indicating the occurrence of a
  * data address match (upload or download). This indication is also observed off-core
  * via a dedicated port.
  */
-union cavm_mdab_dspx_dma_dbg_dds
+union cavm_cbpx_dma_dbg_dds
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_dds_s
+    struct cavm_cbpx_dma_dbg_dds_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_6_31         : 26;
-        uint32_t dam                   : 2;  /**< [  5:  4](R/W) DMA internal/external address match.
+        uint32_t dam                   : 2;  /**< [  5:  4](R/W/H) DMA internal/external address match.
                                                                  Indicates whether a data address match occurred on an internal memory address,
                                                                  external memory address or none. Writing 00 to these bits clears them:
                                                                  00: No address match occurred
                                                                  01: Internal address
                                                                  10: External address
                                                                  11: Reserved */
-        uint32_t dmaddam               : 1;  /**< [  3:  3](R/W) DMA data upload address match.
+        uint32_t dmaddam               : 1;  /**< [  3:  3](R/W/H) DMA data upload address match.
                                                                  When set, indicates a DMA data upload address match occurrence. Writing 0 to this bit clears it. */
-        uint32_t dmaduam               : 1;  /**< [  2:  2](R/W) DMA data upload address match.
+        uint32_t dmaduam               : 1;  /**< [  2:  2](R/W/H) DMA data upload address match.
                                                                  When set, indicates a DMA data upload address match occurrence. Writing 0 to this bit clears it. */
         uint32_t reserved_0_1          : 2;
 #else /* Word 0 - Little Endian */
         uint32_t reserved_0_1          : 2;
-        uint32_t dmaduam               : 1;  /**< [  2:  2](R/W) DMA data upload address match.
+        uint32_t dmaduam               : 1;  /**< [  2:  2](R/W/H) DMA data upload address match.
                                                                  When set, indicates a DMA data upload address match occurrence. Writing 0 to this bit clears it. */
-        uint32_t dmaddam               : 1;  /**< [  3:  3](R/W) DMA data upload address match.
+        uint32_t dmaddam               : 1;  /**< [  3:  3](R/W/H) DMA data upload address match.
                                                                  When set, indicates a DMA data upload address match occurrence. Writing 0 to this bit clears it. */
-        uint32_t dam                   : 2;  /**< [  5:  4](R/W) DMA internal/external address match.
+        uint32_t dam                   : 2;  /**< [  5:  4](R/W/H) DMA internal/external address match.
                                                                  Indicates whether a data address match occurred on an internal memory address,
                                                                  external memory address or none. Writing 00 to these bits clears them:
                                                                  00: No address match occurred
@@ -2235,33 +3047,33 @@ union cavm_mdab_dspx_dma_dbg_dds
         uint32_t reserved_6_31         : 26;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_dds_s cn; */
+    /* struct cavm_cbpx_dma_dbg_dds_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_dds cavm_mdab_dspx_dma_dbg_dds_t;
+typedef union cavm_cbpx_dma_dbg_dds cavm_cbpx_dma_dbg_dds_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DDS(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DDS(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_DDS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_DDS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822210ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_DDS", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_DDS", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_DDS(a) cavm_mdab_dspx_dma_dbg_dds_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_DDS(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_DDS(a) "MDAB_DSPX_DMA_DBG_DDS"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_DDS(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_DDS(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_DDS(a) cavm_cbpx_dma_dbg_dds_t
+#define bustype_CAVM_CBPX_DMA_DBG_DDS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_DDS(a) "CBPX_DMA_DBG_DDS"
+#define busnum_CAVM_CBPX_DMA_DBG_DDS(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_DDS(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_dunmpd0
+ * Register (RSL32b) cbp#_dma_dbg_dunmpd0
  *
- * MDAB Dsp Dma Dbg Dunmpd0 Register
+ * CBP Dma Dbg Dunmpd0 Register
  */
-union cavm_mdab_dspx_dma_dbg_dunmpd0
+union cavm_cbpx_dma_dbg_dunmpd0
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_dunmpd0_s
+    struct cavm_cbpx_dma_dbg_dunmpd0_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t dexcptn_unmapd        : 32; /**< [ 31:  0](RO) Set of each bit indicates that the corresponding region in data address space is
@@ -2273,33 +3085,33 @@ union cavm_mdab_dspx_dma_dbg_dunmpd0
                                                                  Regions 1-32 */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_dunmpd0_s cn; */
+    /* struct cavm_cbpx_dma_dbg_dunmpd0_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_dunmpd0 cavm_mdab_dspx_dma_dbg_dunmpd0_t;
+typedef union cavm_cbpx_dma_dbg_dunmpd0 cavm_cbpx_dma_dbg_dunmpd0_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DUNMPD0(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DUNMPD0(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_DUNMPD0(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_DUNMPD0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482222cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_DUNMPD0", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_DUNMPD0", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD0(a) cavm_mdab_dspx_dma_dbg_dunmpd0_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD0(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD0(a) "MDAB_DSPX_DMA_DBG_DUNMPD0"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD0(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD0(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_DUNMPD0(a) cavm_cbpx_dma_dbg_dunmpd0_t
+#define bustype_CAVM_CBPX_DMA_DBG_DUNMPD0(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_DUNMPD0(a) "CBPX_DMA_DBG_DUNMPD0"
+#define busnum_CAVM_CBPX_DMA_DBG_DUNMPD0(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_DUNMPD0(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_dunmpd1
+ * Register (RSL32b) cbp#_dma_dbg_dunmpd1
  *
- * MDAB Dsp Dma Dbg Dunmpd1 Register
+ * CBP Dma Dbg Dunmpd1 Register
  */
-union cavm_mdab_dspx_dma_dbg_dunmpd1
+union cavm_cbpx_dma_dbg_dunmpd1
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_dunmpd1_s
+    struct cavm_cbpx_dma_dbg_dunmpd1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t dexcptn_unmapd        : 32; /**< [ 31:  0](RO) Set of each bit indicates that the corresponding region in data address space is
@@ -2313,33 +3125,33 @@ union cavm_mdab_dspx_dma_dbg_dunmpd1
                                                                  at hardware installation this register is not implemented. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_dunmpd1_s cn; */
+    /* struct cavm_cbpx_dma_dbg_dunmpd1_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_dunmpd1 cavm_mdab_dspx_dma_dbg_dunmpd1_t;
+typedef union cavm_cbpx_dma_dbg_dunmpd1 cavm_cbpx_dma_dbg_dunmpd1_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DUNMPD1(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DUNMPD1(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_DUNMPD1(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_DUNMPD1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822230ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_DUNMPD1", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_DUNMPD1", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD1(a) cavm_mdab_dspx_dma_dbg_dunmpd1_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD1(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD1(a) "MDAB_DSPX_DMA_DBG_DUNMPD1"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD1(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD1(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_DUNMPD1(a) cavm_cbpx_dma_dbg_dunmpd1_t
+#define bustype_CAVM_CBPX_DMA_DBG_DUNMPD1(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_DUNMPD1(a) "CBPX_DMA_DBG_DUNMPD1"
+#define busnum_CAVM_CBPX_DMA_DBG_DUNMPD1(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_DUNMPD1(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_dunmpd_msk0
+ * Register (RSL32b) cbp#_dma_dbg_dunmpd_msk0
  *
- * MDAB Dsp Dma Dbg Dunmpd Msk0 Register
+ * CBP Dma Dbg Dunmpd Msk0 Register
  */
-union cavm_mdab_dspx_dma_dbg_dunmpd_msk0
+union cavm_cbpx_dma_dbg_dunmpd_msk0
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_dunmpd_msk0_s
+    struct cavm_cbpx_dma_dbg_dunmpd_msk0_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t dexcptn_unmapd_mask   : 32; /**< [ 31:  0](R/W) Set of each bit indicates that the corresponding region un-mapped indication is
@@ -2351,33 +3163,33 @@ union cavm_mdab_dspx_dma_dbg_dunmpd_msk0
                                                                  Regions 1-32 */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_dunmpd_msk0_s cn; */
+    /* struct cavm_cbpx_dma_dbg_dunmpd_msk0_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_dunmpd_msk0 cavm_mdab_dspx_dma_dbg_dunmpd_msk0_t;
+typedef union cavm_cbpx_dma_dbg_dunmpd_msk0 cavm_cbpx_dma_dbg_dunmpd_msk0_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK0(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK0(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_DUNMPD_MSK0(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_DUNMPD_MSK0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822234ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_DUNMPD_MSK0", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_DUNMPD_MSK0", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK0(a) cavm_mdab_dspx_dma_dbg_dunmpd_msk0_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK0(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK0(a) "MDAB_DSPX_DMA_DBG_DUNMPD_MSK0"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK0(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK0(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_DUNMPD_MSK0(a) cavm_cbpx_dma_dbg_dunmpd_msk0_t
+#define bustype_CAVM_CBPX_DMA_DBG_DUNMPD_MSK0(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_DUNMPD_MSK0(a) "CBPX_DMA_DBG_DUNMPD_MSK0"
+#define busnum_CAVM_CBPX_DMA_DBG_DUNMPD_MSK0(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_DUNMPD_MSK0(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_dunmpd_msk1
+ * Register (RSL32b) cbp#_dma_dbg_dunmpd_msk1
  *
- * MDAB Dsp Dma Dbg Dunmpd Msk1 Register
+ * CBP Dma Dbg Dunmpd Msk1 Register
  */
-union cavm_mdab_dspx_dma_dbg_dunmpd_msk1
+union cavm_cbpx_dma_dbg_dunmpd_msk1
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_dunmpd_msk1_s
+    struct cavm_cbpx_dma_dbg_dunmpd_msk1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t dexcptn_unmapd_mask   : 32; /**< [ 31:  0](R/W) Set of each bit indicates that the corresponding region un-mapped indication is
@@ -2391,211 +3203,211 @@ union cavm_mdab_dspx_dma_dbg_dunmpd_msk1
                                                                  at hardware installation this register is not implemented. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_dunmpd_msk1_s cn; */
+    /* struct cavm_cbpx_dma_dbg_dunmpd_msk1_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_dunmpd_msk1 cavm_mdab_dspx_dma_dbg_dunmpd_msk1_t;
+typedef union cavm_cbpx_dma_dbg_dunmpd_msk1 cavm_cbpx_dma_dbg_dunmpd_msk1_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK1(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK1(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_DUNMPD_MSK1(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_DUNMPD_MSK1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822238ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_DUNMPD_MSK1", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_DUNMPD_MSK1", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK1(a) cavm_mdab_dspx_dma_dbg_dunmpd_msk1_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK1(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK1(a) "MDAB_DSPX_DMA_DBG_DUNMPD_MSK1"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK1(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_DUNMPD_MSK1(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_DUNMPD_MSK1(a) cavm_cbpx_dma_dbg_dunmpd_msk1_t
+#define bustype_CAVM_CBPX_DMA_DBG_DUNMPD_MSK1(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_DUNMPD_MSK1(a) "CBPX_DMA_DBG_DUNMPD_MSK1"
+#define busnum_CAVM_CBPX_DMA_DBG_DUNMPD_MSK1(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_DUNMPD_MSK1(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_gen
+ * Register (RSL32b) cbp#_dma_dbg_gen
  *
- * MDAB Dsp Dma Dbg Gen Register
+ * CBP Dma Dbg Gen Register
  * Note: when the user clear a bit in the GVI register and a new one is set in the same
  * cycle this bit will remain set
  */
-union cavm_mdab_dspx_dma_dbg_gen
+union cavm_cbpx_dma_dbg_gen
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_gen_s
+    struct cavm_cbpx_dma_dbg_gen_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t vcu_c                 : 1;  /**< [ 31: 31](R/W) This bit is set when the VCU attempt to access cacheable region.
+        uint32_t vcu_c                 : 1;  /**< [ 31: 31](R/W/H) This bit is set when the VCU attempt to access cacheable region.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
         uint32_t reserved_30           : 1;
-        uint32_t bkrep_excptn          : 1;  /**< [ 29: 29](R/W) This bit is set when there is use of more than four nesting levels in BKREP.
+        uint32_t bkrep_excptn          : 1;  /**< [ 29: 29](R/W/H) This bit is set when there is use of more than four nesting levels in BKREP.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t ovrflw_excptn         : 1;  /**< [ 28: 28](R/W) This bit is set when there is calculation overflow in one of the MACs.
+        uint32_t ovrflw_excptn         : 1;  /**< [ 28: 28](R/W/H) This bit is set when there is calculation overflow in one of the MACs.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t stack_viol_excptn     : 1;  /**< [ 27: 27](R/W) This bit is set when there is stack violation detection when the stack address
+        uint32_t stack_viol_excptn     : 1;  /**< [ 27: 27](R/W/H) This bit is set when there is stack violation detection when the stack address
                                                                  fall outside the pre-configured start and end addresses.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t unmapped_excptn       : 1;  /**< [ 26: 26](R/W) This bit is set when one of the DBG_xUNMPD0/1 registers is asserted and its
+        uint32_t unmapped_excptn       : 1;  /**< [ 26: 26](R/W/H) This bit is set when one of the DBG_xUNMPD0/1 registers is asserted and its
                                                                  corresponding mask bit is cleared in DBG_UNMPD_MASK0/1; this indicates that an
                                                                  un-mapped violation occurred in one of the configured regions in IACU or DACU.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_bman_pktsize       : 1;  /**< [ 25: 25](R/W) Error indication BMAN packet size is zero while access to the buffer in use continues.
+        uint32_t er_bman_pktsize       : 1;  /**< [ 25: 25](R/W/H) Error indication BMAN packet size is zero while access to the buffer in use continues.
                                                                  This bit is set when the BMAN_IRQ_SEL field is configured to interrupt when DSP
                                                                  reads from an almost empty buffer and the number of bytes being read from the
                                                                  buffer exceeds the configured packet size ().
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t qman_idm_cros         : 1;  /**< [ 24: 24](R/W) Error indication QMAN internal access crossed IDM last address.
+        uint32_t qman_idm_cros         : 1;  /**< [ 24: 24](R/W/H) Error indication QMAN internal access crossed IDM last address.
                                                                  This bit is set when one of the bits at the QMAN_IDM_CROS register is set.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
         uint32_t wb_align_err          : 1;  /**< [ 23: 23](R/W) Error indication Write Buffer access with full bandwidth and address not aligned to DW.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t wb_idm_cros           : 1;  /**< [ 22: 22](R/W) Error indication Write Buffer internal access crossed IDM last address.
+        uint32_t wb_idm_cros           : 1;  /**< [ 22: 22](R/W/H) Error indication Write Buffer internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t lsu_idm_cros          : 1;  /**< [ 21: 21](R/W) Error indication LSU internal access crossed IDM last address.
+        uint32_t lsu_idm_cros          : 1;  /**< [ 21: 21](R/W/H) Error indication LSU internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t ddma_idm_cros         : 1;  /**< [ 20: 20](R/W) Error indication DDMA internal access crossed IDM last address.
+        uint32_t ddma_idm_cros         : 1;  /**< [ 20: 20](R/W/H) Error indication DDMA internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t wb_rg_cros            : 1;  /**< [ 19: 19](R/W) Error indication Write Buffer external access crossed external data access port
+        uint32_t wb_rg_cros            : 1;  /**< [ 19: 19](R/W/H) Error indication Write Buffer external access crossed external data access port
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t lsu_rg_cros           : 1;  /**< [ 18: 18](R/W) Error indication LSU external access crossed external data access port.
+        uint32_t lsu_rg_cros           : 1;  /**< [ 18: 18](R/W/H) Error indication LSU external access crossed external data access port.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t ddma_rg_cros          : 1;  /**< [ 17: 17](R/W) Error indication DDMA external access crossed external data access port.
+        uint32_t ddma_rg_cros          : 1;  /**< [ 17: 17](R/W/H) Error indication DDMA external access crossed external data access port.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_rows_oor           : 1;  /**< [ 16: 16](R/W) Error indication access to external port using row stride.
+        uint32_t er_rows_oor           : 1;  /**< [ 16: 16](R/W/H) Error indication access to external port using row stride.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics7_oor             : 1;  /**< [ 15: 15](R/W) Error indication FICS7 read/write from/to an address out of range.
+        uint32_t fics7_oor             : 1;  /**< [ 15: 15](R/W/H) Error indication FICS7 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics6_oor             : 1;  /**< [ 14: 14](R/W) Error indication FICS6 read/write from/to an address out of range.
+        uint32_t fics6_oor             : 1;  /**< [ 14: 14](R/W/H) Error indication FICS6 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics5_oor             : 1;  /**< [ 13: 13](R/W) Error indication FICS5 read/ write from/to an address out of range.
+        uint32_t fics5_oor             : 1;  /**< [ 13: 13](R/W/H) Error indication FICS5 read/ write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics4_oor             : 1;  /**< [ 12: 12](R/W) Error indication FICS4 read/write from/to an address out of range.
+        uint32_t fics4_oor             : 1;  /**< [ 12: 12](R/W/H) Error indication FICS4 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics3_oor             : 1;  /**< [ 11: 11](R/W) Error indication FICS3 read/write from/to an address out of range.
+        uint32_t fics3_oor             : 1;  /**< [ 11: 11](R/W/H) Error indication FICS3 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics2_oor             : 1;  /**< [ 10: 10](R/W) Error indication FICS2 read/write from/to an address out of range.
+        uint32_t fics2_oor             : 1;  /**< [ 10: 10](R/W/H) Error indication FICS2 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics1_oor             : 1;  /**< [  9:  9](R/W) Error indication FICS1read/ write from/to an address out of range.
+        uint32_t fics1_oor             : 1;  /**< [  9:  9](R/W/H) Error indication FICS1read/ write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics0_oor             : 1;  /**< [  8:  8](R/W) Error indication FICS0 read/write from/to an address out of range.
+        uint32_t fics0_oor             : 1;  /**< [  8:  8](R/W/H) Error indication FICS0 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t edap_w_oor            : 1;  /**< [  7:  7](R/W) Error indication EDAP write to an address out of range.
+        uint32_t edap_w_oor            : 1;  /**< [  7:  7](R/W/H) Error indication EDAP write to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t edap_r_oor            : 1;  /**< [  6:  6](R/W) Error indication EDAP read from an address out of range.
+        uint32_t edap_r_oor            : 1;  /**< [  6:  6](R/W/H) Error indication EDAP read from an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_exok               : 1;  /**< [  5:  5](R/W) Error indication slave not support exclusive accesses.
+        uint32_t er_exok               : 1;  /**< [  5:  5](R/W/H) Error indication slave not support exclusive accesses.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_wrc                : 1;  /**< [  4:  4](R/W) Error indication is received when WRC reaches 0x3FF.
+        uint32_t er_wrc                : 1;  /**< [  4:  4](R/W/H) Error indication is received when WRC reaches 0x3FF.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_edp                : 1;  /**< [  3:  3](R/W) Error indication is received from EDP access.
+        uint32_t er_edp                : 1;  /**< [  3:  3](R/W/H) Error indication is received from EDP access.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_epp                : 1;  /**< [  2:  2](R/W) Error indication is received from EPP access.
+        uint32_t er_epp                : 1;  /**< [  2:  2](R/W/H) Error indication is received from EPP access.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_iop                : 1;  /**< [  1:  1](R/W) Error indication is received from I/O APB access.
+        uint32_t er_iop                : 1;  /**< [  1:  1](R/W/H) Error indication is received from I/O APB access.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t gvi                   : 1;  /**< [  0:  0](R/W) General violation.
+        uint32_t gvi                   : 1;  /**< [  0:  0](R/W/H) General violation.
                                                                  This bit is set whenever one of the bits in the general DBG_GEN register or
                                                                  DBG_GEN_2 register is set.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
 #else /* Word 0 - Little Endian */
-        uint32_t gvi                   : 1;  /**< [  0:  0](R/W) General violation.
+        uint32_t gvi                   : 1;  /**< [  0:  0](R/W/H) General violation.
                                                                  This bit is set whenever one of the bits in the general DBG_GEN register or
                                                                  DBG_GEN_2 register is set.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_iop                : 1;  /**< [  1:  1](R/W) Error indication is received from I/O APB access.
+        uint32_t er_iop                : 1;  /**< [  1:  1](R/W/H) Error indication is received from I/O APB access.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_epp                : 1;  /**< [  2:  2](R/W) Error indication is received from EPP access.
+        uint32_t er_epp                : 1;  /**< [  2:  2](R/W/H) Error indication is received from EPP access.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_edp                : 1;  /**< [  3:  3](R/W) Error indication is received from EDP access.
+        uint32_t er_edp                : 1;  /**< [  3:  3](R/W/H) Error indication is received from EDP access.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_wrc                : 1;  /**< [  4:  4](R/W) Error indication is received when WRC reaches 0x3FF.
+        uint32_t er_wrc                : 1;  /**< [  4:  4](R/W/H) Error indication is received when WRC reaches 0x3FF.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_exok               : 1;  /**< [  5:  5](R/W) Error indication slave not support exclusive accesses.
+        uint32_t er_exok               : 1;  /**< [  5:  5](R/W/H) Error indication slave not support exclusive accesses.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t edap_r_oor            : 1;  /**< [  6:  6](R/W) Error indication EDAP read from an address out of range.
+        uint32_t edap_r_oor            : 1;  /**< [  6:  6](R/W/H) Error indication EDAP read from an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t edap_w_oor            : 1;  /**< [  7:  7](R/W) Error indication EDAP write to an address out of range.
+        uint32_t edap_w_oor            : 1;  /**< [  7:  7](R/W/H) Error indication EDAP write to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics0_oor             : 1;  /**< [  8:  8](R/W) Error indication FICS0 read/write from/to an address out of range.
+        uint32_t fics0_oor             : 1;  /**< [  8:  8](R/W/H) Error indication FICS0 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics1_oor             : 1;  /**< [  9:  9](R/W) Error indication FICS1read/ write from/to an address out of range.
+        uint32_t fics1_oor             : 1;  /**< [  9:  9](R/W/H) Error indication FICS1read/ write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics2_oor             : 1;  /**< [ 10: 10](R/W) Error indication FICS2 read/write from/to an address out of range.
+        uint32_t fics2_oor             : 1;  /**< [ 10: 10](R/W/H) Error indication FICS2 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics3_oor             : 1;  /**< [ 11: 11](R/W) Error indication FICS3 read/write from/to an address out of range.
+        uint32_t fics3_oor             : 1;  /**< [ 11: 11](R/W/H) Error indication FICS3 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics4_oor             : 1;  /**< [ 12: 12](R/W) Error indication FICS4 read/write from/to an address out of range.
+        uint32_t fics4_oor             : 1;  /**< [ 12: 12](R/W/H) Error indication FICS4 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics5_oor             : 1;  /**< [ 13: 13](R/W) Error indication FICS5 read/ write from/to an address out of range.
+        uint32_t fics5_oor             : 1;  /**< [ 13: 13](R/W/H) Error indication FICS5 read/ write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics6_oor             : 1;  /**< [ 14: 14](R/W) Error indication FICS6 read/write from/to an address out of range.
+        uint32_t fics6_oor             : 1;  /**< [ 14: 14](R/W/H) Error indication FICS6 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t fics7_oor             : 1;  /**< [ 15: 15](R/W) Error indication FICS7 read/write from/to an address out of range.
+        uint32_t fics7_oor             : 1;  /**< [ 15: 15](R/W/H) Error indication FICS7 read/write from/to an address out of range.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_rows_oor           : 1;  /**< [ 16: 16](R/W) Error indication access to external port using row stride.
+        uint32_t er_rows_oor           : 1;  /**< [ 16: 16](R/W/H) Error indication access to external port using row stride.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t ddma_rg_cros          : 1;  /**< [ 17: 17](R/W) Error indication DDMA external access crossed external data access port.
+        uint32_t ddma_rg_cros          : 1;  /**< [ 17: 17](R/W/H) Error indication DDMA external access crossed external data access port.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t lsu_rg_cros           : 1;  /**< [ 18: 18](R/W) Error indication LSU external access crossed external data access port.
+        uint32_t lsu_rg_cros           : 1;  /**< [ 18: 18](R/W/H) Error indication LSU external access crossed external data access port.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t wb_rg_cros            : 1;  /**< [ 19: 19](R/W) Error indication Write Buffer external access crossed external data access port
+        uint32_t wb_rg_cros            : 1;  /**< [ 19: 19](R/W/H) Error indication Write Buffer external access crossed external data access port
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t ddma_idm_cros         : 1;  /**< [ 20: 20](R/W) Error indication DDMA internal access crossed IDM last address.
+        uint32_t ddma_idm_cros         : 1;  /**< [ 20: 20](R/W/H) Error indication DDMA internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t lsu_idm_cros          : 1;  /**< [ 21: 21](R/W) Error indication LSU internal access crossed IDM last address.
+        uint32_t lsu_idm_cros          : 1;  /**< [ 21: 21](R/W/H) Error indication LSU internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t wb_idm_cros           : 1;  /**< [ 22: 22](R/W) Error indication Write Buffer internal access crossed IDM last address.
+        uint32_t wb_idm_cros           : 1;  /**< [ 22: 22](R/W/H) Error indication Write Buffer internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
         uint32_t wb_align_err          : 1;  /**< [ 23: 23](R/W) Error indication Write Buffer access with full bandwidth and address not aligned to DW.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t qman_idm_cros         : 1;  /**< [ 24: 24](R/W) Error indication QMAN internal access crossed IDM last address.
+        uint32_t qman_idm_cros         : 1;  /**< [ 24: 24](R/W/H) Error indication QMAN internal access crossed IDM last address.
                                                                  This bit is set when one of the bits at the QMAN_IDM_CROS register is set.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_bman_pktsize       : 1;  /**< [ 25: 25](R/W) Error indication BMAN packet size is zero while access to the buffer in use continues.
+        uint32_t er_bman_pktsize       : 1;  /**< [ 25: 25](R/W/H) Error indication BMAN packet size is zero while access to the buffer in use continues.
                                                                  This bit is set when the BMAN_IRQ_SEL field is configured to interrupt when DSP
                                                                  reads from an almost empty buffer and the number of bytes being read from the
                                                                  buffer exceeds the configured packet size ().
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t unmapped_excptn       : 1;  /**< [ 26: 26](R/W) This bit is set when one of the DBG_xUNMPD0/1 registers is asserted and its
+        uint32_t unmapped_excptn       : 1;  /**< [ 26: 26](R/W/H) This bit is set when one of the DBG_xUNMPD0/1 registers is asserted and its
                                                                  corresponding mask bit is cleared in DBG_UNMPD_MASK0/1; this indicates that an
                                                                  un-mapped violation occurred in one of the configured regions in IACU or DACU.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t stack_viol_excptn     : 1;  /**< [ 27: 27](R/W) This bit is set when there is stack violation detection when the stack address
+        uint32_t stack_viol_excptn     : 1;  /**< [ 27: 27](R/W/H) This bit is set when there is stack violation detection when the stack address
                                                                  fall outside the pre-configured start and end addresses.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t ovrflw_excptn         : 1;  /**< [ 28: 28](R/W) This bit is set when there is calculation overflow in one of the MACs.
+        uint32_t ovrflw_excptn         : 1;  /**< [ 28: 28](R/W/H) This bit is set when there is calculation overflow in one of the MACs.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t bkrep_excptn          : 1;  /**< [ 29: 29](R/W) This bit is set when there is use of more than four nesting levels in BKREP.
+        uint32_t bkrep_excptn          : 1;  /**< [ 29: 29](R/W/H) This bit is set when there is use of more than four nesting levels in BKREP.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
         uint32_t reserved_30           : 1;
-        uint32_t vcu_c                 : 1;  /**< [ 31: 31](R/W) This bit is set when the VCU attempt to access cacheable region.
+        uint32_t vcu_c                 : 1;  /**< [ 31: 31](R/W/H) This bit is set when the VCU attempt to access cacheable region.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_gen_s cn; */
+    /* struct cavm_cbpx_dma_dbg_gen_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_gen cavm_mdab_dspx_dma_dbg_gen_t;
+typedef union cavm_cbpx_dma_dbg_gen cavm_cbpx_dma_dbg_gen_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_GEN(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_GEN(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_GEN(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_GEN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822214ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_GEN", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_GEN", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_GEN(a) cavm_mdab_dspx_dma_dbg_gen_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_GEN(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_GEN(a) "MDAB_DSPX_DMA_DBG_GEN"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_GEN(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_GEN(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_GEN(a) cavm_cbpx_dma_dbg_gen_t
+#define bustype_CAVM_CBPX_DMA_DBG_GEN(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_GEN(a) "CBPX_DMA_DBG_GEN"
+#define busnum_CAVM_CBPX_DMA_DBG_GEN(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_GEN(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_gen2_mask
+ * Register (RSL32b) cbp#_dma_dbg_gen2_mask
  *
- * MDAB Dsp Dma Dbg Gen2 Mask Register
+ * CBP Dma Dbg Gen2 Mask Register
  */
-union cavm_mdab_dspx_dma_dbg_gen2_mask
+union cavm_cbpx_dma_dbg_gen2_mask
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_gen2_mask_s
+    struct cavm_cbpx_dma_dbg_gen2_mask_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_9_31         : 23;
@@ -2649,67 +3461,67 @@ union cavm_mdab_dspx_dma_dbg_gen2_mask
         uint32_t reserved_9_31         : 23;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_gen2_mask_s cn; */
+    /* struct cavm_cbpx_dma_dbg_gen2_mask_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_gen2_mask cavm_mdab_dspx_dma_dbg_gen2_mask_t;
+typedef union cavm_cbpx_dma_dbg_gen2_mask cavm_cbpx_dma_dbg_gen2_mask_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_GEN2_MASK(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_GEN2_MASK(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_GEN2_MASK(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_GEN2_MASK(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822224ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_GEN2_MASK", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_GEN2_MASK", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_GEN2_MASK(a) cavm_mdab_dspx_dma_dbg_gen2_mask_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_GEN2_MASK(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_GEN2_MASK(a) "MDAB_DSPX_DMA_DBG_GEN2_MASK"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_GEN2_MASK(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_GEN2_MASK(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_GEN2_MASK(a) cavm_cbpx_dma_dbg_gen2_mask_t
+#define bustype_CAVM_CBPX_DMA_DBG_GEN2_MASK(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_GEN2_MASK(a) "CBPX_DMA_DBG_GEN2_MASK"
+#define busnum_CAVM_CBPX_DMA_DBG_GEN2_MASK(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_GEN2_MASK(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_gen_2
+ * Register (RSL32b) cbp#_dma_dbg_gen_2
  *
- * MDAB Dsp Dma Dbg Gen 2 Register
+ * CBP Dma Dbg Gen 2 Register
  * Note: when the user clear a bit in the GVI register and a new one is set in the same
  * cycle this bit will remain set
  */
-union cavm_mdab_dspx_dma_dbg_gen_2
+union cavm_cbpx_dma_dbg_gen_2
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_gen_2_s
+    struct cavm_cbpx_dma_dbg_gen_2_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_9_31         : 23;
-        uint32_t er_fic1_outs          : 1;  /**< [  8:  8](R/W) Error indication is received when FIC1 outstanding counter reaches 0x1FF.
+        uint32_t er_fic1_outs          : 1;  /**< [  8:  8](R/W/H) Error indication is received when FIC1 outstanding counter reaches 0x1FF.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_fic0_outs          : 1;  /**< [  7:  7](R/W) Error indication is received when FIC0 outstanding counter reaches 0x1FF.
+        uint32_t er_fic0_outs          : 1;  /**< [  7:  7](R/W/H) Error indication is received when FIC0 outstanding counter reaches 0x1FF.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
         uint32_t reserved_6            : 1;
         uint32_t exc_e                 : 1;  /**< [  5:  5](R/W) Error indication when Exclusive transaction accesses a restricted region. */
         uint32_t qman_blank_acc        : 1;  /**< [  4:  4](R/W) Error indication QMAN access a blank region.
                                                                  This bit is set when an access to a blank region is executed by the QMAN.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit */
-        uint32_t ddma_blank_acc        : 1;  /**< [  3:  3](R/W) Error indication DDMA access a blank region.
+        uint32_t ddma_blank_acc        : 1;  /**< [  3:  3](R/W/H) Error indication DDMA access a blank region.
                                                                  This bit is set when the DDMA detects a task with external address (DDEA) that
                                                                  resides at a blank region.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit */
         uint32_t reserved_2            : 1;
-        uint32_t st_blank_acc          : 1;  /**< [  1:  1](R/W) Error indication core store access to a blank region.
+        uint32_t st_blank_acc          : 1;  /**< [  1:  1](R/W/H) Error indication core store access to a blank region.
                                                                  This bit is set when a store access to a blank region is executed.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit */
-        uint32_t ld_blank_acc          : 1;  /**< [  0:  0](R/W) Error indication core load access to a blank region.
+        uint32_t ld_blank_acc          : 1;  /**< [  0:  0](R/W/H) Error indication core load access to a blank region.
                                                                  This bit is set when a load access to a blank region is executed by the core.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit */
 #else /* Word 0 - Little Endian */
-        uint32_t ld_blank_acc          : 1;  /**< [  0:  0](R/W) Error indication core load access to a blank region.
+        uint32_t ld_blank_acc          : 1;  /**< [  0:  0](R/W/H) Error indication core load access to a blank region.
                                                                  This bit is set when a load access to a blank region is executed by the core.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit */
-        uint32_t st_blank_acc          : 1;  /**< [  1:  1](R/W) Error indication core store access to a blank region.
+        uint32_t st_blank_acc          : 1;  /**< [  1:  1](R/W/H) Error indication core store access to a blank region.
                                                                  This bit is set when a store access to a blank region is executed.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit */
         uint32_t reserved_2            : 1;
-        uint32_t ddma_blank_acc        : 1;  /**< [  3:  3](R/W) Error indication DDMA access a blank region.
+        uint32_t ddma_blank_acc        : 1;  /**< [  3:  3](R/W/H) Error indication DDMA access a blank region.
                                                                  This bit is set when the DDMA detects a task with external address (DDEA) that
                                                                  resides at a blank region.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit */
@@ -2718,40 +3530,40 @@ union cavm_mdab_dspx_dma_dbg_gen_2
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit */
         uint32_t exc_e                 : 1;  /**< [  5:  5](R/W) Error indication when Exclusive transaction accesses a restricted region. */
         uint32_t reserved_6            : 1;
-        uint32_t er_fic0_outs          : 1;  /**< [  7:  7](R/W) Error indication is received when FIC0 outstanding counter reaches 0x1FF.
+        uint32_t er_fic0_outs          : 1;  /**< [  7:  7](R/W/H) Error indication is received when FIC0 outstanding counter reaches 0x1FF.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
-        uint32_t er_fic1_outs          : 1;  /**< [  8:  8](R/W) Error indication is received when FIC1 outstanding counter reaches 0x1FF.
+        uint32_t er_fic1_outs          : 1;  /**< [  8:  8](R/W/H) Error indication is received when FIC1 outstanding counter reaches 0x1FF.
                                                                  This bit is a sticky bit and is cleared by writing 0 to this register bit. */
         uint32_t reserved_9_31         : 23;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_gen_2_s cn; */
+    /* struct cavm_cbpx_dma_dbg_gen_2_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_gen_2 cavm_mdab_dspx_dma_dbg_gen_2_t;
+typedef union cavm_cbpx_dma_dbg_gen_2 cavm_cbpx_dma_dbg_gen_2_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_GEN_2(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_GEN_2(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_GEN_2(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_GEN_2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482221cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_GEN_2", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_GEN_2", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_GEN_2(a) cavm_mdab_dspx_dma_dbg_gen_2_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_GEN_2(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_GEN_2(a) "MDAB_DSPX_DMA_DBG_GEN_2"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_GEN_2(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_GEN_2(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_GEN_2(a) cavm_cbpx_dma_dbg_gen_2_t
+#define bustype_CAVM_CBPX_DMA_DBG_GEN_2(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_GEN_2(a) "CBPX_DMA_DBG_GEN_2"
+#define busnum_CAVM_CBPX_DMA_DBG_GEN_2(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_GEN_2(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_gen_mask
+ * Register (RSL32b) cbp#_dma_dbg_gen_mask
  *
- * MDAB Dsp Dma Dbg Gen Mask Register
+ * CBP Dma Dbg Gen Mask Register
  */
-union cavm_mdab_dspx_dma_dbg_gen_mask
+union cavm_cbpx_dma_dbg_gen_mask
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_gen_mask_s
+    struct cavm_cbpx_dma_dbg_gen_mask_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t m_vcu_c               : 1;  /**< [ 31: 31](R/W) This bit is a mask for the corresponding GVI DBG_GEN register bit..
@@ -2945,33 +3757,33 @@ union cavm_mdab_dspx_dma_dbg_gen_mask
                                                                  1: this bit is masked in the DBG_GEN register */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_gen_mask_s cn; */
+    /* struct cavm_cbpx_dma_dbg_gen_mask_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_gen_mask cavm_mdab_dspx_dma_dbg_gen_mask_t;
+typedef union cavm_cbpx_dma_dbg_gen_mask cavm_cbpx_dma_dbg_gen_mask_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_GEN_MASK(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_GEN_MASK(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_GEN_MASK(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_GEN_MASK(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822220ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_GEN_MASK", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_GEN_MASK", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_GEN_MASK(a) cavm_mdab_dspx_dma_dbg_gen_mask_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_GEN_MASK(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_GEN_MASK(a) "MDAB_DSPX_DMA_DBG_GEN_MASK"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_GEN_MASK(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_GEN_MASK(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_GEN_MASK(a) cavm_cbpx_dma_dbg_gen_mask_t
+#define bustype_CAVM_CBPX_DMA_DBG_GEN_MASK(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_GEN_MASK(a) "CBPX_DMA_DBG_GEN_MASK"
+#define busnum_CAVM_CBPX_DMA_DBG_GEN_MASK(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_GEN_MASK(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_stack_end
+ * Register (RSL32b) cbp#_dma_dbg_stack_end
  *
- * MDAB Dsp Dma Dbg Stack End Register
+ * CBP Dma Dbg Stack End Register
  */
-union cavm_mdab_dspx_dma_dbg_stack_end
+union cavm_cbpx_dma_dbg_stack_end
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_stack_end_s
+    struct cavm_cbpx_dma_dbg_stack_end_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t stack_violtn_end_add  : 32; /**< [ 31:  0](R/W) Defines the stack violation END address, any access outside region defined by
@@ -2981,33 +3793,33 @@ union cavm_mdab_dspx_dma_dbg_stack_end
                                                                  stack start and end addresses issues stack violation exception */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_stack_end_s cn; */
+    /* struct cavm_cbpx_dma_dbg_stack_end_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_stack_end cavm_mdab_dspx_dma_dbg_stack_end_t;
+typedef union cavm_cbpx_dma_dbg_stack_end cavm_cbpx_dma_dbg_stack_end_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_STACK_END(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_STACK_END(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_STACK_END(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_STACK_END(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822248ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_STACK_END", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_STACK_END", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_STACK_END(a) cavm_mdab_dspx_dma_dbg_stack_end_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_STACK_END(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_STACK_END(a) "MDAB_DSPX_DMA_DBG_STACK_END"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_STACK_END(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_STACK_END(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_STACK_END(a) cavm_cbpx_dma_dbg_stack_end_t
+#define bustype_CAVM_CBPX_DMA_DBG_STACK_END(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_STACK_END(a) "CBPX_DMA_DBG_STACK_END"
+#define busnum_CAVM_CBPX_DMA_DBG_STACK_END(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_STACK_END(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_stack_start
+ * Register (RSL32b) cbp#_dma_dbg_stack_start
  *
- * MDAB Dsp Dma Dbg Stack Start Register
+ * CBP Dma Dbg Stack Start Register
  */
-union cavm_mdab_dspx_dma_dbg_stack_start
+union cavm_cbpx_dma_dbg_stack_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_stack_start_s
+    struct cavm_cbpx_dma_dbg_stack_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t stk_violtn_start_add  : 32; /**< [ 31:  0](R/W) Defines the outside region defined by stack start and end addresses issues stack
@@ -3017,73 +3829,73 @@ union cavm_mdab_dspx_dma_dbg_stack_start
                                                                  violation exception */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_stack_start_s cn; */
+    /* struct cavm_cbpx_dma_dbg_stack_start_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_stack_start cavm_mdab_dspx_dma_dbg_stack_start_t;
+typedef union cavm_cbpx_dma_dbg_stack_start cavm_cbpx_dma_dbg_stack_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_STACK_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_STACK_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_STACK_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_STACK_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822244ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_STACK_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_STACK_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_STACK_START(a) cavm_mdab_dspx_dma_dbg_stack_start_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_STACK_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_STACK_START(a) "MDAB_DSPX_DMA_DBG_STACK_START"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_STACK_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_STACK_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_STACK_START(a) cavm_cbpx_dma_dbg_stack_start_t
+#define bustype_CAVM_CBPX_DMA_DBG_STACK_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_STACK_START(a) "CBPX_DMA_DBG_STACK_START"
+#define busnum_CAVM_CBPX_DMA_DBG_STACK_START(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_STACK_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dma_dbg_wrc
+ * Register (RSL32b) cbp#_dma_dbg_wrc
  *
- * MDAB Dsp Dma Dbg Wrc Register
+ * CBP Dma Dbg Wrc Register
  */
-union cavm_mdab_dspx_dma_dbg_wrc
+union cavm_cbpx_dma_dbg_wrc
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dma_dbg_wrc_s
+    struct cavm_cbpx_dma_dbg_wrc_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_10_31        : 22;
-        uint32_t wrc                   : 10; /**< [  9:  0](R/W) Write response counter.
+        uint32_t wrc                   : 10; /**< [  9:  0](R/W/H) Write response counter.
                                                                  Status indication for the write response.
                                                                  Any write to this register clears its value. */
 #else /* Word 0 - Little Endian */
-        uint32_t wrc                   : 10; /**< [  9:  0](R/W) Write response counter.
+        uint32_t wrc                   : 10; /**< [  9:  0](R/W/H) Write response counter.
                                                                  Status indication for the write response.
                                                                  Any write to this register clears its value. */
         uint32_t reserved_10_31        : 22;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dma_dbg_wrc_s cn; */
+    /* struct cavm_cbpx_dma_dbg_wrc_s cn; */
 };
-typedef union cavm_mdab_dspx_dma_dbg_wrc cavm_mdab_dspx_dma_dbg_wrc_t;
+typedef union cavm_cbpx_dma_dbg_wrc cavm_cbpx_dma_dbg_wrc_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_WRC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMA_DBG_WRC(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMA_DBG_WRC(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMA_DBG_WRC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822218ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMA_DBG_WRC", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMA_DBG_WRC", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMA_DBG_WRC(a) cavm_mdab_dspx_dma_dbg_wrc_t
-#define bustype_CAVM_MDAB_DSPX_DMA_DBG_WRC(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMA_DBG_WRC(a) "MDAB_DSPX_DMA_DBG_WRC"
-#define busnum_CAVM_MDAB_DSPX_DMA_DBG_WRC(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMA_DBG_WRC(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMA_DBG_WRC(a) cavm_cbpx_dma_dbg_wrc_t
+#define bustype_CAVM_CBPX_DMA_DBG_WRC(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMA_DBG_WRC(a) "CBPX_DMA_DBG_WRC"
+#define busnum_CAVM_CBPX_DMA_DBG_WRC(a) (a)
+#define arguments_CAVM_CBPX_DMA_DBG_WRC(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_dacc
+ * Register (RSL32b) cbp#_dmss_mss_dacc
  *
- * MDAB Dsp Dmss Mss Dacc Register
+ * CBP Dmss Mss Dacc Register
  */
-union cavm_mdab_dspx_dmss_mss_dacc
+union cavm_cbpx_dmss_mss_dacc
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_dacc_s
+    struct cavm_cbpx_dmss_mss_dacc_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_11_31        : 21;
@@ -3151,119 +3963,119 @@ union cavm_mdab_dspx_dmss_mss_dacc
         uint32_t reserved_11_31        : 21;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_dacc_s cn; */
+    /* struct cavm_cbpx_dmss_mss_dacc_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_dacc cavm_mdab_dspx_dmss_mss_dacc_t;
+typedef union cavm_cbpx_dmss_mss_dacc cavm_cbpx_dmss_mss_dacc_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DACC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DACC(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DACC(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DACC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482203cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_DACC", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_DACC", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_DACC(a) cavm_mdab_dspx_dmss_mss_dacc_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_DACC(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_DACC(a) "MDAB_DSPX_DMSS_MSS_DACC"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_DACC(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_DACC(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_DACC(a) cavm_cbpx_dmss_mss_dacc_t
+#define bustype_CAVM_CBPX_DMSS_MSS_DACC(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_DACC(a) "CBPX_DMSS_MSS_DACC"
+#define busnum_CAVM_CBPX_DMSS_MSS_DACC(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_DACC(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_ddea
+ * Register (RSL32b) cbp#_dmss_mss_ddea
  *
- * MDAB Dsp Dmss Mss Ddea Register
+ * CBP Dmss Mss Ddea Register
  * When WBE, EWBE and EDPE are set, all write transactions have been issued to the
  * external bus, and are not delayed anywhere in the MSS/port/bridge.
  * Bits [31:18] are ignored if IDM is configured to 256KB.
  * Bits [31:19] are ignored if IDM is configured to 512KB.
  */
-union cavm_mdab_dspx_dmss_mss_ddea
+union cavm_cbpx_dmss_mss_ddea
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_ddea_s
+    struct cavm_cbpx_dmss_mss_ddea_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t ddea                  : 32; /**< [ 31:  0](R/W) Data DMA external address used as source/destination address for DMA download/upload.
+        uint32_t ddea                  : 32; /**< [ 31:  0](R/W/H) Data DMA external address used as source/destination address for DMA download/upload.
                                                                  The DDEA register is also used for holding a 32-bit message when BSZ==41111 and DDIR==0 (download).
                                                                  Reading from this register will return the current external address used by the DDMA. */
 #else /* Word 0 - Little Endian */
-        uint32_t ddea                  : 32; /**< [ 31:  0](R/W) Data DMA external address used as source/destination address for DMA download/upload.
+        uint32_t ddea                  : 32; /**< [ 31:  0](R/W/H) Data DMA external address used as source/destination address for DMA download/upload.
                                                                  The DDEA register is also used for holding a 32-bit message when BSZ==41111 and DDIR==0 (download).
                                                                  Reading from this register will return the current external address used by the DDMA. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_ddea_s cn; */
+    /* struct cavm_cbpx_dmss_mss_ddea_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_ddea cavm_mdab_dspx_dmss_mss_ddea_t;
+typedef union cavm_cbpx_dmss_mss_ddea cavm_cbpx_dmss_mss_ddea_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DDEA(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DDEA(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DDEA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DDEA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482201cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_DDEA", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_DDEA", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_DDEA(a) cavm_mdab_dspx_dmss_mss_ddea_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_DDEA(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_DDEA(a) "MDAB_DSPX_DMSS_MSS_DDEA"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_DDEA(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_DDEA(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_DDEA(a) cavm_cbpx_dmss_mss_ddea_t
+#define bustype_CAVM_CBPX_DMSS_MSS_DDEA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_DDEA(a) "CBPX_DMSS_MSS_DDEA"
+#define busnum_CAVM_CBPX_DMSS_MSS_DDEA(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_DDEA(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_ddia
+ * Register (RSL32b) cbp#_dmss_mss_ddia
  *
- * MDAB Dsp Dmss Mss Ddia Register
+ * CBP Dmss Mss Ddia Register
  * Note: 	When used as IDM address:
  */
-union cavm_mdab_dspx_dmss_mss_ddia
+union cavm_cbpx_dmss_mss_ddia
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_ddia_s
+    struct cavm_cbpx_dmss_mss_ddia_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t ddia                  : 32; /**< [ 31:  0](R/W) IDM address used by the DMA as source/destination address for DMA upload/download.
+        uint32_t ddia                  : 32; /**< [ 31:  0](R/W/H) IDM address used by the DMA as source/destination address for DMA upload/download.
                                                                  The DDIA register is also used for holding a 32 bit message when BSZ==41111 and DDIR==1 (upload)
                                                                  Reading from this register will return the current internal address used by the DDMA. */
 #else /* Word 0 - Little Endian */
-        uint32_t ddia                  : 32; /**< [ 31:  0](R/W) IDM address used by the DMA as source/destination address for DMA upload/download.
+        uint32_t ddia                  : 32; /**< [ 31:  0](R/W/H) IDM address used by the DMA as source/destination address for DMA upload/download.
                                                                  The DDIA register is also used for holding a 32 bit message when BSZ==41111 and DDIR==1 (upload)
                                                                  Reading from this register will return the current internal address used by the DDMA. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_ddia_s cn; */
+    /* struct cavm_cbpx_dmss_mss_ddia_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_ddia cavm_mdab_dspx_dmss_mss_ddia_t;
+typedef union cavm_cbpx_dmss_mss_ddia cavm_cbpx_dmss_mss_ddia_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DDIA(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DDIA(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DDIA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DDIA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822020ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_DDIA", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_DDIA", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_DDIA(a) cavm_mdab_dspx_dmss_mss_ddia_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_DDIA(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_DDIA(a) "MDAB_DSPX_DMSS_MSS_DDIA"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_DDIA(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_DDIA(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_DDIA(a) cavm_cbpx_dmss_mss_ddia_t
+#define bustype_CAVM_CBPX_DMSS_MSS_DDIA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_DDIA(a) "CBPX_DMSS_MSS_DDIA"
+#define busnum_CAVM_CBPX_DMSS_MSS_DDIA(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_DDIA(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_ddqs
+ * Register (RSL32b) cbp#_dmss_mss_ddqs
  *
- * MDAB Dsp Dmss Mss Ddqs Register
+ * CBP Dmss Mss Ddqs Register
  * * The QEMPTY, QFULL, QCOUNT and QOVFL are updated two cycles after DDTC is written with a value other than zero. Any In command reading from these fields must be placed at least two cycles from the Out command that is writing to the DDTC.
  */
-union cavm_mdab_dspx_dmss_mss_ddqs
+union cavm_cbpx_dmss_mss_ddqs
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_ddqs_s
+    struct cavm_cbpx_dmss_mss_ddqs_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
-        uint32_t qovfl                 : 1;  /**< [  7:  7](R/W) A new request cannot be added to the queue (queue over flow)
+        uint32_t qovfl                 : 1;  /**< [  7:  7](R/W/H) A new request cannot be added to the queue (queue over flow)
                                                                  1: queue overflow
                                                                  0: queue not in overflow
                                                                  This bit is clear by written 0 */
@@ -3271,16 +4083,16 @@ union cavm_mdab_dspx_dmss_mss_ddqs
                                                                  1: according to the NEXT_DDMA
                                                                  0: automatically
                                                                  (read/write) */
-        uint32_t qcount                : 4;  /**< [  5:  2](RO) Data DMA request count: indicates the number of DMA requests pending and ongoing in the Q.
+        uint32_t qcount                : 4;  /**< [  5:  2](RO/H) Data DMA request count: indicates the number of DMA requests pending and ongoing in the Q.
                                                                  Note: The ongoing transaction is included
                                                                  0000: no requests on the Queue
                                                                  0001-1000: number of requests on the Queue */
-        uint32_t qfull                 : 1;  /**< [  1:  1](RO) Data DMA request queue is full */
+        uint32_t qfull                 : 1;  /**< [  1:  1](RO/H) Data DMA request queue is full */
         uint32_t qempty                : 1;  /**< [  0:  0](RO) Data DMA request queue is empty */
 #else /* Word 0 - Little Endian */
         uint32_t qempty                : 1;  /**< [  0:  0](RO) Data DMA request queue is empty */
-        uint32_t qfull                 : 1;  /**< [  1:  1](RO) Data DMA request queue is full */
-        uint32_t qcount                : 4;  /**< [  5:  2](RO) Data DMA request count: indicates the number of DMA requests pending and ongoing in the Q.
+        uint32_t qfull                 : 1;  /**< [  1:  1](RO/H) Data DMA request queue is full */
+        uint32_t qcount                : 4;  /**< [  5:  2](RO/H) Data DMA request count: indicates the number of DMA requests pending and ongoing in the Q.
                                                                  Note: The ongoing transaction is included
                                                                  0000: no requests on the Queue
                                                                  0001-1000: number of requests on the Queue */
@@ -3288,158 +4100,158 @@ union cavm_mdab_dspx_dmss_mss_ddqs
                                                                  1: according to the NEXT_DDMA
                                                                  0: automatically
                                                                  (read/write) */
-        uint32_t qovfl                 : 1;  /**< [  7:  7](R/W) A new request cannot be added to the queue (queue over flow)
+        uint32_t qovfl                 : 1;  /**< [  7:  7](R/W/H) A new request cannot be added to the queue (queue over flow)
                                                                  1: queue overflow
                                                                  0: queue not in overflow
                                                                  This bit is clear by written 0 */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_ddqs_s cn; */
+    /* struct cavm_cbpx_dmss_mss_ddqs_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_ddqs cavm_mdab_dspx_dmss_mss_ddqs_t;
+typedef union cavm_cbpx_dmss_mss_ddqs cavm_cbpx_dmss_mss_ddqs_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DDQS(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DDQS(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DDQS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DDQS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822028ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_DDQS", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_DDQS", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_DDQS(a) cavm_mdab_dspx_dmss_mss_ddqs_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_DDQS(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_DDQS(a) "MDAB_DSPX_DMSS_MSS_DDQS"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_DDQS(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_DDQS(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_DDQS(a) cavm_cbpx_dmss_mss_ddqs_t
+#define bustype_CAVM_CBPX_DMSS_MSS_DDQS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_DDQS(a) "CBPX_DMSS_MSS_DDQS"
+#define busnum_CAVM_CBPX_DMSS_MSS_DDQS(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_DDQS(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_ddrs
+ * Register (RSL32b) cbp#_dmss_mss_ddrs
  *
- * MDAB Dsp Dmss Mss Ddrs Register
+ * CBP Dmss Mss Ddrs Register
  * * The STSX and LSID fields are updated two cycles after DDTC is written with a value other than zero. Any in command reading from these fields must be placed at least two cycles from the Out command writing to the DDTC.
  */
-union cavm_mdab_dspx_dmss_mss_ddrs
+union cavm_cbpx_dmss_mss_ddrs
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_ddrs_s
+    struct cavm_cbpx_dmss_mss_ddrs_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_19_31        : 13;
-        uint32_t lsid                  : 3;  /**< [ 18: 16](RO) The last DMA configuration entered into the queue ID number */
-        uint32_t sts7                  : 2;  /**< [ 15: 14](RO) ID7 statuses:
+        uint32_t lsid                  : 3;  /**< [ 18: 16](RO/H) The last DMA configuration entered into the queue ID number */
+        uint32_t sts7                  : 2;  /**< [ 15: 14](RO/H) ID7 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts6                  : 2;  /**< [ 13: 12](RO) ID6 statuses:
+        uint32_t sts6                  : 2;  /**< [ 13: 12](RO/H) ID6 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts5                  : 2;  /**< [ 11: 10](RO) ID5 statuses:
+        uint32_t sts5                  : 2;  /**< [ 11: 10](RO/H) ID5 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts4                  : 2;  /**< [  9:  8](RO) ID4 statuses:
+        uint32_t sts4                  : 2;  /**< [  9:  8](RO/H) ID4 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts3                  : 2;  /**< [  7:  6](RO) ID3 statuses:
+        uint32_t sts3                  : 2;  /**< [  7:  6](RO/H) ID3 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts2                  : 2;  /**< [  5:  4](RO) ID2 statuses:
+        uint32_t sts2                  : 2;  /**< [  5:  4](RO/H) ID2 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts1                  : 2;  /**< [  3:  2](RO) ID1 statuses:
+        uint32_t sts1                  : 2;  /**< [  3:  2](RO/H) ID1 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts0                  : 2;  /**< [  1:  0](RO) ID0 statuses:
+        uint32_t sts0                  : 2;  /**< [  1:  0](RO/H) ID0 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
 #else /* Word 0 - Little Endian */
-        uint32_t sts0                  : 2;  /**< [  1:  0](RO) ID0 statuses:
+        uint32_t sts0                  : 2;  /**< [  1:  0](RO/H) ID0 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts1                  : 2;  /**< [  3:  2](RO) ID1 statuses:
+        uint32_t sts1                  : 2;  /**< [  3:  2](RO/H) ID1 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts2                  : 2;  /**< [  5:  4](RO) ID2 statuses:
+        uint32_t sts2                  : 2;  /**< [  5:  4](RO/H) ID2 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts3                  : 2;  /**< [  7:  6](RO) ID3 statuses:
+        uint32_t sts3                  : 2;  /**< [  7:  6](RO/H) ID3 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts4                  : 2;  /**< [  9:  8](RO) ID4 statuses:
+        uint32_t sts4                  : 2;  /**< [  9:  8](RO/H) ID4 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts5                  : 2;  /**< [ 11: 10](RO) ID5 statuses:
+        uint32_t sts5                  : 2;  /**< [ 11: 10](RO/H) ID5 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts6                  : 2;  /**< [ 13: 12](RO) ID6 statuses:
+        uint32_t sts6                  : 2;  /**< [ 13: 12](RO/H) ID6 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t sts7                  : 2;  /**< [ 15: 14](RO) ID7 statuses:
+        uint32_t sts7                  : 2;  /**< [ 15: 14](RO/H) ID7 statuses:
                                                                  00: never used
                                                                  01: pending
                                                                  10: ongoing (used by the DMA)
                                                                  11: done */
-        uint32_t lsid                  : 3;  /**< [ 18: 16](RO) The last DMA configuration entered into the queue ID number */
+        uint32_t lsid                  : 3;  /**< [ 18: 16](RO/H) The last DMA configuration entered into the queue ID number */
         uint32_t reserved_19_31        : 13;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_ddrs_s cn; */
+    /* struct cavm_cbpx_dmss_mss_ddrs_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_ddrs cavm_mdab_dspx_dmss_mss_ddrs_t;
+typedef union cavm_cbpx_dmss_mss_ddrs cavm_cbpx_dmss_mss_ddrs_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DDRS(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DDRS(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DDRS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DDRS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482202cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_DDRS", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_DDRS", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_DDRS(a) cavm_mdab_dspx_dmss_mss_ddrs_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_DDRS(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_DDRS(a) "MDAB_DSPX_DMSS_MSS_DDRS"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_DDRS(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_DDRS(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_DDRS(a) cavm_cbpx_dmss_mss_ddrs_t
+#define bustype_CAVM_CBPX_DMSS_MSS_DDRS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_DDRS(a) "CBPX_DMSS_MSS_DDRS"
+#define busnum_CAVM_CBPX_DMSS_MSS_DDRS(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_DDRS(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_ddtc
+ * Register (RSL32b) cbp#_dmss_mss_ddtc
  *
- * MDAB Dsp Dmss Mss Ddtc Register
+ * CBP Dmss Mss Ddtc Register
  * Note: It is illegal for (DDTC + MSS_DDIA) to exceed the internal memory boundary.
  */
-union cavm_mdab_dspx_dmss_mss_ddtc
+union cavm_cbpx_dmss_mss_ddtc
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_ddtc_s
+    struct cavm_cbpx_dmss_mss_ddtc_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ddie                  : 1;  /**< [ 31: 31](R/W) Data DMA interrupt enable:
@@ -3448,7 +4260,7 @@ union cavm_mdab_dspx_dmss_mss_ddtc
         uint32_t ddir                  : 1;  /**< [ 30: 30](R/W) DMA direction:
                                                                  0: The DMA downloads from the external memory to the IDM.
                                                                  1: The DMA uploads from the IDM to the external memory. */
-        uint32_t ddst                  : 1;  /**< [ 29: 29](RO) Data DMA status:
+        uint32_t ddst                  : 1;  /**< [ 29: 29](RO/H) Data DMA status:
                                                                  This read-only bit indicates the data DMA status. When set, the data DMA is busy
                                                                  meaning, a frame is currently being transferred. When cleared, the DMA is not
                                                                  busy. This bit is automatically set by hardware when a frame transfer starts,
@@ -3469,19 +4281,19 @@ union cavm_mdab_dspx_dmss_mss_ddtc
                                                                  1111: Message
                                                                  Other values are reserved.
                                                                  Only Single transfer sizes are allowed when using a FICM port. */
-        uint32_t trid                  : 3;  /**< [ 24: 22](RO) Transaction queue ID (read only) */
+        uint32_t trid                  : 3;  /**< [ 24: 22](RO/H) Transaction queue ID (read only) */
         uint32_t reserved_21           : 1;
-        uint32_t ddtc                  : 21; /**< [ 20:  0](R/W) Data DMA transfer counts indicates the number of data bytes to transfer.
+        uint32_t ddtc                  : 21; /**< [ 20:  0](R/W/H) Data DMA transfer counts indicates the number of data bytes to transfer.
                                                                  Reading from this field will return the current transfer count used by the DDMA.
                                                                  When using BSZ==4b1111 (message transfer) the DDTC must be set to 0.
                                                                  Note: when using 64 Byte boundary configuration the bursts length cannot exceed four */
 #else /* Word 0 - Little Endian */
-        uint32_t ddtc                  : 21; /**< [ 20:  0](R/W) Data DMA transfer counts indicates the number of data bytes to transfer.
+        uint32_t ddtc                  : 21; /**< [ 20:  0](R/W/H) Data DMA transfer counts indicates the number of data bytes to transfer.
                                                                  Reading from this field will return the current transfer count used by the DDMA.
                                                                  When using BSZ==4b1111 (message transfer) the DDTC must be set to 0.
                                                                  Note: when using 64 Byte boundary configuration the bursts length cannot exceed four */
         uint32_t reserved_21           : 1;
-        uint32_t trid                  : 3;  /**< [ 24: 22](RO) Transaction queue ID (read only) */
+        uint32_t trid                  : 3;  /**< [ 24: 22](RO/H) Transaction queue ID (read only) */
         uint32_t bsz                   : 4;  /**< [ 28: 25](R/W) Data DMA maximum burst length:
                                                                  0000: Single (1) transfers with incrementing addresses (INCR)
                                                                  0001: Single transfers with fixed address (FIXED)
@@ -3498,7 +4310,7 @@ union cavm_mdab_dspx_dmss_mss_ddtc
                                                                  1111: Message
                                                                  Other values are reserved.
                                                                  Only Single transfer sizes are allowed when using a FICM port. */
-        uint32_t ddst                  : 1;  /**< [ 29: 29](RO) Data DMA status:
+        uint32_t ddst                  : 1;  /**< [ 29: 29](RO/H) Data DMA status:
                                                                  This read-only bit indicates the data DMA status. When set, the data DMA is busy
                                                                  meaning, a frame is currently being transferred. When cleared, the DMA is not
                                                                  busy. This bit is automatically set by hardware when a frame transfer starts,
@@ -3511,34 +4323,34 @@ union cavm_mdab_dspx_dmss_mss_ddtc
                                                                  1: The data DMA interrupt at the end of the transfer is enabled. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_ddtc_s cn; */
+    /* struct cavm_cbpx_dmss_mss_ddtc_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_ddtc cavm_mdab_dspx_dmss_mss_ddtc_t;
+typedef union cavm_cbpx_dmss_mss_ddtc cavm_cbpx_dmss_mss_ddtc_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DDTC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DDTC(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DDTC(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DDTC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822024ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_DDTC", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_DDTC", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_DDTC(a) cavm_mdab_dspx_dmss_mss_ddtc_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_DDTC(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_DDTC(a) "MDAB_DSPX_DMSS_MSS_DDTC"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_DDTC(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_DDTC(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_DDTC(a) cavm_cbpx_dmss_mss_ddtc_t
+#define bustype_CAVM_CBPX_DMSS_MSS_DDTC(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_DDTC(a) "CBPX_DMSS_MSS_DDTC"
+#define busnum_CAVM_CBPX_DMSS_MSS_DDTC(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_DDTC(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_dmba
+ * Register (RSL32b) cbp#_dmss_mss_dmba
  *
- * MDAB Dsp Dmss Mss Dmba Register
+ * CBP Dmss Mss Dmba Register
  * Note: The number of bits used for DMBA depends on the IDM size.
  */
-union cavm_mdab_dspx_dmss_mss_dmba
+union cavm_cbpx_dmss_mss_dmba
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_dmba_s
+    struct cavm_cbpx_dmss_mss_dmba_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t dmba                  : 32; /**< [ 31:  0](R/W) Data memory base address of the IDM.
@@ -3556,35 +4368,35 @@ union cavm_mdab_dspx_dmss_mss_dmba
                                                                  LSBs are written as 0. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_dmba_s cn; */
+    /* struct cavm_cbpx_dmss_mss_dmba_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_dmba cavm_mdab_dspx_dmss_mss_dmba_t;
+typedef union cavm_cbpx_dmss_mss_dmba cavm_cbpx_dmss_mss_dmba_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DMBA(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DMBA(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DMBA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DMBA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822014ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_DMBA", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_DMBA", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_DMBA(a) cavm_mdab_dspx_dmss_mss_dmba_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_DMBA(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_DMBA(a) "MDAB_DSPX_DMSS_MSS_DMBA"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_DMBA(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_DMBA(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_DMBA(a) cavm_cbpx_dmss_mss_dmba_t
+#define bustype_CAVM_CBPX_DMSS_MSS_DMBA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_DMBA(a) "CBPX_DMSS_MSS_DMBA"
+#define busnum_CAVM_CBPX_DMSS_MSS_DMBA(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_DMBA(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_dmbe
+ * Register (RSL32b) cbp#_dmss_mss_dmbe
  *
- * MDAB Dsp Dmss Mss Dmbe Register
+ * CBP Dmss Mss Dmbe Register
  * When WBE, EWBE and EDPE are set, all write transactions have been issued to the
  * external bus, and are not delayed anywhere in the MSS/port/bridge.
  */
-union cavm_mdab_dspx_dmss_mss_dmbe
+union cavm_cbpx_dmss_mss_dmbe
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_dmbe_s
+    struct cavm_cbpx_dmss_mss_dmbe_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_19_31        : 13;
@@ -3633,27 +4445,27 @@ union cavm_mdab_dspx_dmss_mss_dmbe
                                                                  1: Not busy (empty)
                                                                  0: Busy (not empty)
                                                                  Written to by hardware. */
-        uint32_t dmss_idle             : 1;  /**< [  3:  3](RO) This read-only bit indicates DMSS is in idle state. This means the following status:
+        uint32_t dmss_idle             : 1;  /**< [  3:  3](RO/H) This read-only bit indicates DMSS is in idle state. This means the following status:
                                                                  ADLB is set
                                                                  WBE is set
                                                                  EWBE  is set
                                                                  EDPE is set */
         uint32_t edpe                  : 1;  /**< [  2:  2](RO) This read-only indicates that there are no pending transactions (from any
                                                                  source) inside the External data port. */
-        uint32_t ewbe                  : 1;  /**< [  1:  1](RO) This read-only bit indicates the External Data Port core write transaction
+        uint32_t ewbe                  : 1;  /**< [  1:  1](RO/H) This read-only bit indicates the External Data Port core write transaction
                                                                  status. When set, the External Data Port has no pending write originated by the
                                                                  write buffer transactions. */
-        uint32_t wbe                   : 1;  /**< [  0:  0](RO) This read-only bit indicates the write buffer status. When set, the write buffer
+        uint32_t wbe                   : 1;  /**< [  0:  0](RO/H) This read-only bit indicates the write buffer status. When set, the write buffer
                                                                  is empty (address delay lines and queue are all empty). */
 #else /* Word 0 - Little Endian */
-        uint32_t wbe                   : 1;  /**< [  0:  0](RO) This read-only bit indicates the write buffer status. When set, the write buffer
+        uint32_t wbe                   : 1;  /**< [  0:  0](RO/H) This read-only bit indicates the write buffer status. When set, the write buffer
                                                                  is empty (address delay lines and queue are all empty). */
-        uint32_t ewbe                  : 1;  /**< [  1:  1](RO) This read-only bit indicates the External Data Port core write transaction
+        uint32_t ewbe                  : 1;  /**< [  1:  1](RO/H) This read-only bit indicates the External Data Port core write transaction
                                                                  status. When set, the External Data Port has no pending write originated by the
                                                                  write buffer transactions. */
         uint32_t edpe                  : 1;  /**< [  2:  2](RO) This read-only indicates that there are no pending transactions (from any
                                                                  source) inside the External data port. */
-        uint32_t dmss_idle             : 1;  /**< [  3:  3](RO) This read-only bit indicates DMSS is in idle state. This means the following status:
+        uint32_t dmss_idle             : 1;  /**< [  3:  3](RO/H) This read-only bit indicates DMSS is in idle state. This means the following status:
                                                                  ADLB is set
                                                                  WBE is set
                                                                  EWBE  is set
@@ -3706,34 +4518,34 @@ union cavm_mdab_dspx_dmss_mss_dmbe
         uint32_t reserved_19_31        : 13;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_dmbe_s cn; */
+    /* struct cavm_cbpx_dmss_mss_dmbe_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_dmbe cavm_mdab_dspx_dmss_mss_dmbe_t;
+typedef union cavm_cbpx_dmss_mss_dmbe cavm_cbpx_dmss_mss_dmbe_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DMBE(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_DMBE(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DMBE(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_DMBE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822018ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_DMBE", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_DMBE", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_DMBE(a) cavm_mdab_dspx_dmss_mss_dmbe_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_DMBE(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_DMBE(a) "MDAB_DSPX_DMSS_MSS_DMBE"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_DMBE(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_DMBE(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_DMBE(a) cavm_cbpx_dmss_mss_dmbe_t
+#define bustype_CAVM_CBPX_DMSS_MSS_DMBE(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_DMBE(a) "CBPX_DMSS_MSS_DMBE"
+#define busnum_CAVM_CBPX_DMSS_MSS_DMBE(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_DMBE(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_gpin
+ * Register (RSL32b) cbp#_dmss_mss_gpin
  *
- * MDAB Dsp Dmss Mss Gpin Register
+ * CBP Dmss Mss Gpin Register
  * Note: This register is read-only.
  */
-union cavm_mdab_dspx_dmss_mss_gpin
+union cavm_cbpx_dmss_mss_gpin
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_gpin_s
+    struct cavm_cbpx_dmss_mss_gpin_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t gpin                  : 32; /**< [ 31:  0](RO) General-purpose inputs.
@@ -3743,33 +4555,33 @@ union cavm_mdab_dspx_dmss_mss_gpin
                                                                  The 32-bit general-purpose input bus is captured in this register. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_gpin_s cn; */
+    /* struct cavm_cbpx_dmss_mss_gpin_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_gpin cavm_mdab_dspx_dmss_mss_gpin_t;
+typedef union cavm_cbpx_dmss_mss_gpin cavm_cbpx_dmss_mss_gpin_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_GPIN(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_GPIN(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_GPIN(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_GPIN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822034ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_GPIN", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_GPIN", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_GPIN(a) cavm_mdab_dspx_dmss_mss_gpin_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_GPIN(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_GPIN(a) "MDAB_DSPX_DMSS_MSS_GPIN"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_GPIN(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_GPIN(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_GPIN(a) cavm_cbpx_dmss_mss_gpin_t
+#define bustype_CAVM_CBPX_DMSS_MSS_GPIN(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_GPIN(a) "CBPX_DMSS_MSS_GPIN"
+#define busnum_CAVM_CBPX_DMSS_MSS_GPIN(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_GPIN(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_gpout
+ * Register (RSL32b) cbp#_dmss_mss_gpout
  *
- * MDAB Dsp Dmss Mss Gpout Register
+ * CBP Dmss Mss Gpout Register
  */
-union cavm_mdab_dspx_dmss_mss_gpout
+union cavm_cbpx_dmss_mss_gpout
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_gpout_s
+    struct cavm_cbpx_dmss_mss_gpout_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t gpout                 : 32; /**< [ 31:  0](R/W) General-purpose outputs.
@@ -3779,33 +4591,33 @@ union cavm_mdab_dspx_dmss_mss_gpout
                                                                  The 32-bit general-purpose output bus is connected to this register. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_gpout_s cn; */
+    /* struct cavm_cbpx_dmss_mss_gpout_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_gpout cavm_mdab_dspx_dmss_mss_gpout_t;
+typedef union cavm_cbpx_dmss_mss_gpout cavm_cbpx_dmss_mss_gpout_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_GPOUT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_GPOUT(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_GPOUT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_GPOUT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822038ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_GPOUT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_GPOUT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_GPOUT(a) cavm_mdab_dspx_dmss_mss_gpout_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_GPOUT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_GPOUT(a) "MDAB_DSPX_DMSS_MSS_GPOUT"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_GPOUT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_GPOUT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_GPOUT(a) cavm_cbpx_dmss_mss_gpout_t
+#define bustype_CAVM_CBPX_DMSS_MSS_GPOUT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_GPOUT(a) "CBPX_DMSS_MSS_GPOUT"
+#define busnum_CAVM_CBPX_DMSS_MSS_GPOUT(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_GPOUT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_hdcfg
+ * Register (RSL32b) cbp#_dmss_mss_hdcfg
  *
- * MDAB Dsp Dmss Mss Hdcfg Register
+ * CBP Dmss Mss Hdcfg Register
  */
-union cavm_mdab_dspx_dmss_mss_hdcfg
+union cavm_cbpx_dmss_mss_hdcfg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_hdcfg_s
+    struct cavm_cbpx_dmss_mss_hdcfg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_25_31        : 7;
@@ -3925,33 +4737,33 @@ union cavm_mdab_dspx_dmss_mss_hdcfg
         uint32_t reserved_25_31        : 7;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_hdcfg_s cn; */
+    /* struct cavm_cbpx_dmss_mss_hdcfg_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_hdcfg cavm_mdab_dspx_dmss_mss_hdcfg_t;
+typedef union cavm_cbpx_dmss_mss_hdcfg cavm_cbpx_dmss_mss_hdcfg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_HDCFG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_HDCFG(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_HDCFG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_HDCFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822030ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_HDCFG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_HDCFG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_HDCFG(a) cavm_mdab_dspx_dmss_mss_hdcfg_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_HDCFG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_HDCFG(a) "MDAB_DSPX_DMSS_MSS_HDCFG"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_HDCFG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_HDCFG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_HDCFG(a) cavm_cbpx_dmss_mss_hdcfg_t
+#define bustype_CAVM_CBPX_DMSS_MSS_HDCFG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_HDCFG(a) "CBPX_DMSS_MSS_HDCFG"
+#define busnum_CAVM_CBPX_DMSS_MSS_HDCFG(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_HDCFG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_dmss_mss_sdcfg
+ * Register (RSL32b) cbp#_dmss_mss_sdcfg
  *
- * MDAB Dsp Dmss Mss Sdcfg Register
+ * CBP Dmss Mss Sdcfg Register
  */
-union cavm_mdab_dspx_dmss_mss_sdcfg
+union cavm_cbpx_dmss_mss_sdcfg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_dmss_mss_sdcfg_s
+    struct cavm_cbpx_dmss_mss_sdcfg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_27_31        : 5;
@@ -3989,33 +4801,33 @@ union cavm_mdab_dspx_dmss_mss_sdcfg
         uint32_t reserved_27_31        : 5;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_dmss_mss_sdcfg_s cn; */
+    /* struct cavm_cbpx_dmss_mss_sdcfg_s cn; */
 };
-typedef union cavm_mdab_dspx_dmss_mss_sdcfg cavm_mdab_dspx_dmss_mss_sdcfg_t;
+typedef union cavm_cbpx_dmss_mss_sdcfg cavm_cbpx_dmss_mss_sdcfg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_SDCFG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_DMSS_MSS_SDCFG(unsigned long a)
+static inline uint64_t CAVM_CBPX_DMSS_MSS_SDCFG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_DMSS_MSS_SDCFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822040ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_DMSS_MSS_SDCFG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_DMSS_MSS_SDCFG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_DMSS_MSS_SDCFG(a) cavm_mdab_dspx_dmss_mss_sdcfg_t
-#define bustype_CAVM_MDAB_DSPX_DMSS_MSS_SDCFG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_DMSS_MSS_SDCFG(a) "MDAB_DSPX_DMSS_MSS_SDCFG"
-#define busnum_CAVM_MDAB_DSPX_DMSS_MSS_SDCFG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_DMSS_MSS_SDCFG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_DMSS_MSS_SDCFG(a) cavm_cbpx_dmss_mss_sdcfg_t
+#define bustype_CAVM_CBPX_DMSS_MSS_SDCFG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_DMSS_MSS_SDCFG(a) "CBPX_DMSS_MSS_SDCFG"
+#define busnum_CAVM_CBPX_DMSS_MSS_SDCFG(a) (a)
+#define arguments_CAVM_CBPX_DMSS_MSS_SDCFG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ecc_ecadd
+ * Register (RSL32b) cbp#_ecc_ecadd
  *
- * MDAB Dsp Ecc Ecadd Register
+ * CBP Ecc Ecadd Register
  */
-union cavm_mdab_dspx_ecc_ecadd
+union cavm_cbpx_ecc_ecadd
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ecc_ecadd_s
+    struct cavm_cbpx_ecc_ecadd_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ecadd                 : 27; /**< [ 31:  5](RO) Address of last 512 bits (two code fetch line) containing an ECC error */
@@ -4025,33 +4837,33 @@ union cavm_mdab_dspx_ecc_ecadd
         uint32_t ecadd                 : 27; /**< [ 31:  5](RO) Address of last 512 bits (two code fetch line) containing an ECC error */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ecc_ecadd_s cn; */
+    /* struct cavm_cbpx_ecc_ecadd_s cn; */
 };
-typedef union cavm_mdab_dspx_ecc_ecadd cavm_mdab_dspx_ecc_ecadd_t;
+typedef union cavm_cbpx_ecc_ecadd cavm_cbpx_ecc_ecadd_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_ECC_ECADD(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_ECC_ECADD(unsigned long a)
+static inline uint64_t CAVM_CBPX_ECC_ECADD(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_ECC_ECADD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822050ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_ECC_ECADD", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_ECC_ECADD", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_ECC_ECADD(a) cavm_mdab_dspx_ecc_ecadd_t
-#define bustype_CAVM_MDAB_DSPX_ECC_ECADD(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_ECC_ECADD(a) "MDAB_DSPX_ECC_ECADD"
-#define busnum_CAVM_MDAB_DSPX_ECC_ECADD(a) (a)
-#define arguments_CAVM_MDAB_DSPX_ECC_ECADD(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_ECC_ECADD(a) cavm_cbpx_ecc_ecadd_t
+#define bustype_CAVM_CBPX_ECC_ECADD(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_ECC_ECADD(a) "CBPX_ECC_ECADD"
+#define busnum_CAVM_CBPX_ECC_ECADD(a) (a)
+#define arguments_CAVM_CBPX_ECC_ECADD(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ecc_ectadd
+ * Register (RSL32b) cbp#_ecc_ectadd
  *
- * MDAB Dsp Ecc Ectadd Register
+ * CBP Ecc Ectadd Register
  */
-union cavm_mdab_dspx_ecc_ectadd
+union cavm_cbpx_ecc_ectadd
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ecc_ectadd_s
+    struct cavm_cbpx_ecc_ectadd_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ectadd                : 27; /**< [ 31:  5](RO) Latest TAG ECC error address; this includes the
@@ -4065,33 +4877,33 @@ union cavm_mdab_dspx_ecc_ectadd
                                                                  [31:15]  17 bit tag */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ecc_ectadd_s cn; */
+    /* struct cavm_cbpx_ecc_ectadd_s cn; */
 };
-typedef union cavm_mdab_dspx_ecc_ectadd cavm_mdab_dspx_ecc_ectadd_t;
+typedef union cavm_cbpx_ecc_ectadd cavm_cbpx_ecc_ectadd_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_ECC_ECTADD(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_ECC_ECTADD(unsigned long a)
+static inline uint64_t CAVM_CBPX_ECC_ECTADD(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_ECC_ECTADD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822054ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_ECC_ECTADD", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_ECC_ECTADD", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_ECC_ECTADD(a) cavm_mdab_dspx_ecc_ectadd_t
-#define bustype_CAVM_MDAB_DSPX_ECC_ECTADD(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_ECC_ECTADD(a) "MDAB_DSPX_ECC_ECTADD"
-#define busnum_CAVM_MDAB_DSPX_ECC_ECTADD(a) (a)
-#define arguments_CAVM_MDAB_DSPX_ECC_ECTADD(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_ECC_ECTADD(a) cavm_cbpx_ecc_ectadd_t
+#define bustype_CAVM_CBPX_ECC_ECTADD(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_ECC_ECTADD(a) "CBPX_ECC_ECTADD"
+#define busnum_CAVM_CBPX_ECC_ECTADD(a) (a)
+#define arguments_CAVM_CBPX_ECC_ECTADD(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add0_att
+ * Register (RSL32b) cbp#_iacu_p_add0_att
  *
- * MDAB Dsp Iacu P Add0 Att Register
+ * CBP Iacu P Add0 Att Register
  */
-union cavm_mdab_dspx_iacu_p_add0_att
+union cavm_cbpx_iacu_p_add0_att
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add0_att_s
+    struct cavm_cbpx_iacu_p_add0_att_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
@@ -4133,33 +4945,33 @@ union cavm_mdab_dspx_iacu_p_add0_att
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add0_att_s cn; */
+    /* struct cavm_cbpx_iacu_p_add0_att_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add0_att cavm_mdab_dspx_iacu_p_add0_att_t;
+typedef union cavm_cbpx_iacu_p_add0_att cavm_cbpx_iacu_p_add0_att_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD0_ATT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD0_ATT(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD0_ATT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD0_ATT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823474ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD0_ATT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD0_ATT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD0_ATT(a) cavm_mdab_dspx_iacu_p_add0_att_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD0_ATT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD0_ATT(a) "MDAB_DSPX_IACU_P_ADD0_ATT"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD0_ATT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD0_ATT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD0_ATT(a) cavm_cbpx_iacu_p_add0_att_t
+#define bustype_CAVM_CBPX_IACU_P_ADD0_ATT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD0_ATT(a) "CBPX_IACU_P_ADD0_ATT"
+#define busnum_CAVM_CBPX_IACU_P_ADD0_ATT(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD0_ATT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add0_start
+ * Register (RSL32b) cbp#_iacu_p_add0_start
  *
- * MDAB Dsp Iacu P Add0 Start Register
+ * CBP Iacu P Add0 Start Register
  */
-union cavm_mdab_dspx_iacu_p_add0_start
+union cavm_cbpx_iacu_p_add0_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add0_start_s
+    struct cavm_cbpx_iacu_p_add0_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
@@ -4171,33 +4983,33 @@ union cavm_mdab_dspx_iacu_p_add0_start
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add0_start_s cn; */
+    /* struct cavm_cbpx_iacu_p_add0_start_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add0_start cavm_mdab_dspx_iacu_p_add0_start_t;
+typedef union cavm_cbpx_iacu_p_add0_start cavm_cbpx_iacu_p_add0_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD0_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD0_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD0_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD0_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823470ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD0_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD0_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD0_START(a) cavm_mdab_dspx_iacu_p_add0_start_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD0_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD0_START(a) "MDAB_DSPX_IACU_P_ADD0_START"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD0_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD0_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD0_START(a) cavm_cbpx_iacu_p_add0_start_t
+#define bustype_CAVM_CBPX_IACU_P_ADD0_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD0_START(a) "CBPX_IACU_P_ADD0_START"
+#define busnum_CAVM_CBPX_IACU_P_ADD0_START(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD0_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add1_att
+ * Register (RSL32b) cbp#_iacu_p_add1_att
  *
- * MDAB Dsp Iacu P Add1 Att Register
+ * CBP Iacu P Add1 Att Register
  */
-union cavm_mdab_dspx_iacu_p_add1_att
+union cavm_cbpx_iacu_p_add1_att
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add1_att_s
+    struct cavm_cbpx_iacu_p_add1_att_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
@@ -4239,33 +5051,33 @@ union cavm_mdab_dspx_iacu_p_add1_att
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add1_att_s cn; */
+    /* struct cavm_cbpx_iacu_p_add1_att_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add1_att cavm_mdab_dspx_iacu_p_add1_att_t;
+typedef union cavm_cbpx_iacu_p_add1_att cavm_cbpx_iacu_p_add1_att_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD1_ATT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD1_ATT(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD1_ATT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD1_ATT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823484ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD1_ATT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD1_ATT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD1_ATT(a) cavm_mdab_dspx_iacu_p_add1_att_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD1_ATT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD1_ATT(a) "MDAB_DSPX_IACU_P_ADD1_ATT"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD1_ATT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD1_ATT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD1_ATT(a) cavm_cbpx_iacu_p_add1_att_t
+#define bustype_CAVM_CBPX_IACU_P_ADD1_ATT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD1_ATT(a) "CBPX_IACU_P_ADD1_ATT"
+#define busnum_CAVM_CBPX_IACU_P_ADD1_ATT(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD1_ATT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add1_start
+ * Register (RSL32b) cbp#_iacu_p_add1_start
  *
- * MDAB Dsp Iacu P Add1 Start Register
+ * CBP Iacu P Add1 Start Register
  */
-union cavm_mdab_dspx_iacu_p_add1_start
+union cavm_cbpx_iacu_p_add1_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add1_start_s
+    struct cavm_cbpx_iacu_p_add1_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
@@ -4277,33 +5089,33 @@ union cavm_mdab_dspx_iacu_p_add1_start
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add1_start_s cn; */
+    /* struct cavm_cbpx_iacu_p_add1_start_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add1_start cavm_mdab_dspx_iacu_p_add1_start_t;
+typedef union cavm_cbpx_iacu_p_add1_start cavm_cbpx_iacu_p_add1_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD1_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD1_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD1_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD1_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823480ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD1_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD1_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD1_START(a) cavm_mdab_dspx_iacu_p_add1_start_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD1_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD1_START(a) "MDAB_DSPX_IACU_P_ADD1_START"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD1_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD1_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD1_START(a) cavm_cbpx_iacu_p_add1_start_t
+#define bustype_CAVM_CBPX_IACU_P_ADD1_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD1_START(a) "CBPX_IACU_P_ADD1_START"
+#define busnum_CAVM_CBPX_IACU_P_ADD1_START(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD1_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add2_att
+ * Register (RSL32b) cbp#_iacu_p_add2_att
  *
- * MDAB Dsp Iacu P Add2 Att Register
+ * CBP Iacu P Add2 Att Register
  */
-union cavm_mdab_dspx_iacu_p_add2_att
+union cavm_cbpx_iacu_p_add2_att
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add2_att_s
+    struct cavm_cbpx_iacu_p_add2_att_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
@@ -4345,33 +5157,33 @@ union cavm_mdab_dspx_iacu_p_add2_att
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add2_att_s cn; */
+    /* struct cavm_cbpx_iacu_p_add2_att_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add2_att cavm_mdab_dspx_iacu_p_add2_att_t;
+typedef union cavm_cbpx_iacu_p_add2_att cavm_cbpx_iacu_p_add2_att_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD2_ATT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD2_ATT(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD2_ATT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD2_ATT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823494ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD2_ATT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD2_ATT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD2_ATT(a) cavm_mdab_dspx_iacu_p_add2_att_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD2_ATT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD2_ATT(a) "MDAB_DSPX_IACU_P_ADD2_ATT"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD2_ATT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD2_ATT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD2_ATT(a) cavm_cbpx_iacu_p_add2_att_t
+#define bustype_CAVM_CBPX_IACU_P_ADD2_ATT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD2_ATT(a) "CBPX_IACU_P_ADD2_ATT"
+#define busnum_CAVM_CBPX_IACU_P_ADD2_ATT(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD2_ATT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add2_start
+ * Register (RSL32b) cbp#_iacu_p_add2_start
  *
- * MDAB Dsp Iacu P Add2 Start Register
+ * CBP Iacu P Add2 Start Register
  */
-union cavm_mdab_dspx_iacu_p_add2_start
+union cavm_cbpx_iacu_p_add2_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add2_start_s
+    struct cavm_cbpx_iacu_p_add2_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
@@ -4383,33 +5195,33 @@ union cavm_mdab_dspx_iacu_p_add2_start
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add2_start_s cn; */
+    /* struct cavm_cbpx_iacu_p_add2_start_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add2_start cavm_mdab_dspx_iacu_p_add2_start_t;
+typedef union cavm_cbpx_iacu_p_add2_start cavm_cbpx_iacu_p_add2_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD2_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD2_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD2_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD2_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823490ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD2_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD2_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD2_START(a) cavm_mdab_dspx_iacu_p_add2_start_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD2_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD2_START(a) "MDAB_DSPX_IACU_P_ADD2_START"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD2_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD2_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD2_START(a) cavm_cbpx_iacu_p_add2_start_t
+#define bustype_CAVM_CBPX_IACU_P_ADD2_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD2_START(a) "CBPX_IACU_P_ADD2_START"
+#define busnum_CAVM_CBPX_IACU_P_ADD2_START(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD2_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add3_att
+ * Register (RSL32b) cbp#_iacu_p_add3_att
  *
- * MDAB Dsp Iacu P Add3 Att Register
+ * CBP Iacu P Add3 Att Register
  */
-union cavm_mdab_dspx_iacu_p_add3_att
+union cavm_cbpx_iacu_p_add3_att
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add3_att_s
+    struct cavm_cbpx_iacu_p_add3_att_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
@@ -4451,33 +5263,33 @@ union cavm_mdab_dspx_iacu_p_add3_att
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add3_att_s cn; */
+    /* struct cavm_cbpx_iacu_p_add3_att_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add3_att cavm_mdab_dspx_iacu_p_add3_att_t;
+typedef union cavm_cbpx_iacu_p_add3_att cavm_cbpx_iacu_p_add3_att_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD3_ATT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD3_ATT(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD3_ATT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD3_ATT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448234a4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD3_ATT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD3_ATT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD3_ATT(a) cavm_mdab_dspx_iacu_p_add3_att_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD3_ATT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD3_ATT(a) "MDAB_DSPX_IACU_P_ADD3_ATT"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD3_ATT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD3_ATT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD3_ATT(a) cavm_cbpx_iacu_p_add3_att_t
+#define bustype_CAVM_CBPX_IACU_P_ADD3_ATT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD3_ATT(a) "CBPX_IACU_P_ADD3_ATT"
+#define busnum_CAVM_CBPX_IACU_P_ADD3_ATT(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD3_ATT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add3_start
+ * Register (RSL32b) cbp#_iacu_p_add3_start
  *
- * MDAB Dsp Iacu P Add3 Start Register
+ * CBP Iacu P Add3 Start Register
  */
-union cavm_mdab_dspx_iacu_p_add3_start
+union cavm_cbpx_iacu_p_add3_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add3_start_s
+    struct cavm_cbpx_iacu_p_add3_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
@@ -4489,33 +5301,33 @@ union cavm_mdab_dspx_iacu_p_add3_start
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add3_start_s cn; */
+    /* struct cavm_cbpx_iacu_p_add3_start_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add3_start cavm_mdab_dspx_iacu_p_add3_start_t;
+typedef union cavm_cbpx_iacu_p_add3_start cavm_cbpx_iacu_p_add3_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD3_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD3_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD3_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD3_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448234a0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD3_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD3_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD3_START(a) cavm_mdab_dspx_iacu_p_add3_start_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD3_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD3_START(a) "MDAB_DSPX_IACU_P_ADD3_START"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD3_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD3_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD3_START(a) cavm_cbpx_iacu_p_add3_start_t
+#define bustype_CAVM_CBPX_IACU_P_ADD3_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD3_START(a) "CBPX_IACU_P_ADD3_START"
+#define busnum_CAVM_CBPX_IACU_P_ADD3_START(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD3_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add4_att
+ * Register (RSL32b) cbp#_iacu_p_add4_att
  *
- * MDAB Dsp Iacu P Add4 Att Register
+ * CBP Iacu P Add4 Att Register
  */
-union cavm_mdab_dspx_iacu_p_add4_att
+union cavm_cbpx_iacu_p_add4_att
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add4_att_s
+    struct cavm_cbpx_iacu_p_add4_att_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
@@ -4557,33 +5369,33 @@ union cavm_mdab_dspx_iacu_p_add4_att
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add4_att_s cn; */
+    /* struct cavm_cbpx_iacu_p_add4_att_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add4_att cavm_mdab_dspx_iacu_p_add4_att_t;
+typedef union cavm_cbpx_iacu_p_add4_att cavm_cbpx_iacu_p_add4_att_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD4_ATT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD4_ATT(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD4_ATT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD4_ATT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448234b4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD4_ATT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD4_ATT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD4_ATT(a) cavm_mdab_dspx_iacu_p_add4_att_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD4_ATT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD4_ATT(a) "MDAB_DSPX_IACU_P_ADD4_ATT"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD4_ATT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD4_ATT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD4_ATT(a) cavm_cbpx_iacu_p_add4_att_t
+#define bustype_CAVM_CBPX_IACU_P_ADD4_ATT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD4_ATT(a) "CBPX_IACU_P_ADD4_ATT"
+#define busnum_CAVM_CBPX_IACU_P_ADD4_ATT(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD4_ATT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add4_start
+ * Register (RSL32b) cbp#_iacu_p_add4_start
  *
- * MDAB Dsp Iacu P Add4 Start Register
+ * CBP Iacu P Add4 Start Register
  */
-union cavm_mdab_dspx_iacu_p_add4_start
+union cavm_cbpx_iacu_p_add4_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add4_start_s
+    struct cavm_cbpx_iacu_p_add4_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
@@ -4595,33 +5407,33 @@ union cavm_mdab_dspx_iacu_p_add4_start
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add4_start_s cn; */
+    /* struct cavm_cbpx_iacu_p_add4_start_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add4_start cavm_mdab_dspx_iacu_p_add4_start_t;
+typedef union cavm_cbpx_iacu_p_add4_start cavm_cbpx_iacu_p_add4_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD4_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD4_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD4_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD4_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448234b0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD4_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD4_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD4_START(a) cavm_mdab_dspx_iacu_p_add4_start_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD4_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD4_START(a) "MDAB_DSPX_IACU_P_ADD4_START"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD4_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD4_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD4_START(a) cavm_cbpx_iacu_p_add4_start_t
+#define bustype_CAVM_CBPX_IACU_P_ADD4_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD4_START(a) "CBPX_IACU_P_ADD4_START"
+#define busnum_CAVM_CBPX_IACU_P_ADD4_START(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD4_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add5_att
+ * Register (RSL32b) cbp#_iacu_p_add5_att
  *
- * MDAB Dsp Iacu P Add5 Att Register
+ * CBP Iacu P Add5 Att Register
  */
-union cavm_mdab_dspx_iacu_p_add5_att
+union cavm_cbpx_iacu_p_add5_att
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add5_att_s
+    struct cavm_cbpx_iacu_p_add5_att_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
@@ -4663,33 +5475,33 @@ union cavm_mdab_dspx_iacu_p_add5_att
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add5_att_s cn; */
+    /* struct cavm_cbpx_iacu_p_add5_att_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add5_att cavm_mdab_dspx_iacu_p_add5_att_t;
+typedef union cavm_cbpx_iacu_p_add5_att cavm_cbpx_iacu_p_add5_att_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD5_ATT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD5_ATT(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD5_ATT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD5_ATT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448234c4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD5_ATT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD5_ATT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD5_ATT(a) cavm_mdab_dspx_iacu_p_add5_att_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD5_ATT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD5_ATT(a) "MDAB_DSPX_IACU_P_ADD5_ATT"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD5_ATT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD5_ATT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD5_ATT(a) cavm_cbpx_iacu_p_add5_att_t
+#define bustype_CAVM_CBPX_IACU_P_ADD5_ATT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD5_ATT(a) "CBPX_IACU_P_ADD5_ATT"
+#define busnum_CAVM_CBPX_IACU_P_ADD5_ATT(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD5_ATT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add5_start
+ * Register (RSL32b) cbp#_iacu_p_add5_start
  *
- * MDAB Dsp Iacu P Add5 Start Register
+ * CBP Iacu P Add5 Start Register
  */
-union cavm_mdab_dspx_iacu_p_add5_start
+union cavm_cbpx_iacu_p_add5_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add5_start_s
+    struct cavm_cbpx_iacu_p_add5_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
@@ -4701,33 +5513,33 @@ union cavm_mdab_dspx_iacu_p_add5_start
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add5_start_s cn; */
+    /* struct cavm_cbpx_iacu_p_add5_start_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add5_start cavm_mdab_dspx_iacu_p_add5_start_t;
+typedef union cavm_cbpx_iacu_p_add5_start cavm_cbpx_iacu_p_add5_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD5_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD5_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD5_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD5_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448234c0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD5_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD5_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD5_START(a) cavm_mdab_dspx_iacu_p_add5_start_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD5_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD5_START(a) "MDAB_DSPX_IACU_P_ADD5_START"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD5_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD5_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD5_START(a) cavm_cbpx_iacu_p_add5_start_t
+#define bustype_CAVM_CBPX_IACU_P_ADD5_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD5_START(a) "CBPX_IACU_P_ADD5_START"
+#define busnum_CAVM_CBPX_IACU_P_ADD5_START(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD5_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add6_att
+ * Register (RSL32b) cbp#_iacu_p_add6_att
  *
- * MDAB Dsp Iacu P Add6 Att Register
+ * CBP Iacu P Add6 Att Register
  */
-union cavm_mdab_dspx_iacu_p_add6_att
+union cavm_cbpx_iacu_p_add6_att
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add6_att_s
+    struct cavm_cbpx_iacu_p_add6_att_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
@@ -4769,33 +5581,33 @@ union cavm_mdab_dspx_iacu_p_add6_att
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add6_att_s cn; */
+    /* struct cavm_cbpx_iacu_p_add6_att_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add6_att cavm_mdab_dspx_iacu_p_add6_att_t;
+typedef union cavm_cbpx_iacu_p_add6_att cavm_cbpx_iacu_p_add6_att_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD6_ATT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD6_ATT(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD6_ATT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD6_ATT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448234d4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD6_ATT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD6_ATT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD6_ATT(a) cavm_mdab_dspx_iacu_p_add6_att_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD6_ATT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD6_ATT(a) "MDAB_DSPX_IACU_P_ADD6_ATT"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD6_ATT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD6_ATT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD6_ATT(a) cavm_cbpx_iacu_p_add6_att_t
+#define bustype_CAVM_CBPX_IACU_P_ADD6_ATT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD6_ATT(a) "CBPX_IACU_P_ADD6_ATT"
+#define busnum_CAVM_CBPX_IACU_P_ADD6_ATT(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD6_ATT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add6_start
+ * Register (RSL32b) cbp#_iacu_p_add6_start
  *
- * MDAB Dsp Iacu P Add6 Start Register
+ * CBP Iacu P Add6 Start Register
  */
-union cavm_mdab_dspx_iacu_p_add6_start
+union cavm_cbpx_iacu_p_add6_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add6_start_s
+    struct cavm_cbpx_iacu_p_add6_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
@@ -4807,33 +5619,33 @@ union cavm_mdab_dspx_iacu_p_add6_start
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add6_start_s cn; */
+    /* struct cavm_cbpx_iacu_p_add6_start_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add6_start cavm_mdab_dspx_iacu_p_add6_start_t;
+typedef union cavm_cbpx_iacu_p_add6_start cavm_cbpx_iacu_p_add6_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD6_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD6_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD6_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD6_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448234d0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD6_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD6_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD6_START(a) cavm_mdab_dspx_iacu_p_add6_start_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD6_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD6_START(a) "MDAB_DSPX_IACU_P_ADD6_START"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD6_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD6_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD6_START(a) cavm_cbpx_iacu_p_add6_start_t
+#define bustype_CAVM_CBPX_IACU_P_ADD6_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD6_START(a) "CBPX_IACU_P_ADD6_START"
+#define busnum_CAVM_CBPX_IACU_P_ADD6_START(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD6_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add7_att
+ * Register (RSL32b) cbp#_iacu_p_add7_att
  *
- * MDAB Dsp Iacu P Add7 Att Register
+ * CBP Iacu P Add7 Att Register
  */
-union cavm_mdab_dspx_iacu_p_add7_att
+union cavm_cbpx_iacu_p_add7_att
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add7_att_s
+    struct cavm_cbpx_iacu_p_add7_att_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
@@ -4875,33 +5687,33 @@ union cavm_mdab_dspx_iacu_p_add7_att
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add7_att_s cn; */
+    /* struct cavm_cbpx_iacu_p_add7_att_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add7_att cavm_mdab_dspx_iacu_p_add7_att_t;
+typedef union cavm_cbpx_iacu_p_add7_att cavm_cbpx_iacu_p_add7_att_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD7_ATT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD7_ATT(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD7_ATT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD7_ATT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448234e4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD7_ATT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD7_ATT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD7_ATT(a) cavm_mdab_dspx_iacu_p_add7_att_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD7_ATT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD7_ATT(a) "MDAB_DSPX_IACU_P_ADD7_ATT"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD7_ATT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD7_ATT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD7_ATT(a) cavm_cbpx_iacu_p_add7_att_t
+#define bustype_CAVM_CBPX_IACU_P_ADD7_ATT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD7_ATT(a) "CBPX_IACU_P_ADD7_ATT"
+#define busnum_CAVM_CBPX_IACU_P_ADD7_ATT(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD7_ATT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_iacu_p_add7_start
+ * Register (RSL32b) cbp#_iacu_p_add7_start
  *
- * MDAB Dsp Iacu P Add7 Start Register
+ * CBP Iacu P Add7 Start Register
  */
-union cavm_mdab_dspx_iacu_p_add7_start
+union cavm_cbpx_iacu_p_add7_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_iacu_p_add7_start_s
+    struct cavm_cbpx_iacu_p_add7_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
@@ -4913,33 +5725,33 @@ union cavm_mdab_dspx_iacu_p_add7_start
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_iacu_p_add7_start_s cn; */
+    /* struct cavm_cbpx_iacu_p_add7_start_s cn; */
 };
-typedef union cavm_mdab_dspx_iacu_p_add7_start cavm_mdab_dspx_iacu_p_add7_start_t;
+typedef union cavm_cbpx_iacu_p_add7_start cavm_cbpx_iacu_p_add7_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD7_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_IACU_P_ADD7_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_IACU_P_ADD7_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_IACU_P_ADD7_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448234e0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_IACU_P_ADD7_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_IACU_P_ADD7_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_IACU_P_ADD7_START(a) cavm_mdab_dspx_iacu_p_add7_start_t
-#define bustype_CAVM_MDAB_DSPX_IACU_P_ADD7_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_IACU_P_ADD7_START(a) "MDAB_DSPX_IACU_P_ADD7_START"
-#define busnum_CAVM_MDAB_DSPX_IACU_P_ADD7_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_IACU_P_ADD7_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_IACU_P_ADD7_START(a) cavm_cbpx_iacu_p_add7_start_t
+#define bustype_CAVM_CBPX_IACU_P_ADD7_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_IACU_P_ADD7_START(a) "CBPX_IACU_P_ADD7_START"
+#define busnum_CAVM_CBPX_IACU_P_ADD7_START(a) (a)
+#define arguments_CAVM_CBPX_IACU_P_ADD7_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add#_att0
+ * Register (RSL32b) cbp#_interfaceconfiguration_add#_att0
  *
- * MDAB Dsp Interfaceconfiguration Add Att0 Register
+ * CBP Interfaceconfiguration Add Att0 Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_addx_att0
+union cavm_cbpx_interfaceconfiguration_addx_att0
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_addx_att0_s
+    struct cavm_cbpx_interfaceconfiguration_addx_att0_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t wqos                  : 4;  /**< [ 31: 28](R/W) Write transaction Quality of Service, QoS.
@@ -5075,33 +5887,33 @@ union cavm_mdab_dspx_interfaceconfiguration_addx_att0
                                                                  Used only if AXI4 is supported */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_addx_att0_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_addx_att0_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_addx_att0 cavm_mdab_dspx_interfaceconfiguration_addx_att0_t;
+typedef union cavm_cbpx_interfaceconfiguration_addx_att0 cavm_cbpx_interfaceconfiguration_addx_att0_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT0(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT0(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT0(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT0(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=31)))
         return 0x87e044823524ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1f);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT0", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADDX_ATT0", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT0(a,b) cavm_mdab_dspx_interfaceconfiguration_addx_att0_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT0(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT0(a,b) "MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT0"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT0(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT0(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT0(a,b) cavm_cbpx_interfaceconfiguration_addx_att0_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT0(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT0(a,b) "CBPX_INTERFACECONFIGURATION_ADDX_ATT0"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT0(a,b) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT0(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add#_att1
+ * Register (RSL32b) cbp#_interfaceconfiguration_add#_att1
  *
- * MDAB Dsp Interfaceconfiguration Add Att1 Register
+ * CBP Interfaceconfiguration Add Att1 Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_addx_att1
+union cavm_cbpx_interfaceconfiguration_addx_att1
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_addx_att1_s
+    struct cavm_cbpx_interfaceconfiguration_addx_att1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_9_31         : 23;
@@ -5169,33 +5981,33 @@ union cavm_mdab_dspx_interfaceconfiguration_addx_att1
         uint32_t reserved_9_31         : 23;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_addx_att1_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_addx_att1_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_addx_att1 cavm_mdab_dspx_interfaceconfiguration_addx_att1_t;
+typedef union cavm_cbpx_interfaceconfiguration_addx_att1 cavm_cbpx_interfaceconfiguration_addx_att1_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT1(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT1(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT1(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=31)))
         return 0x87e044823528ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1f);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT1", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADDX_ATT1", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT1(a,b) cavm_mdab_dspx_interfaceconfiguration_addx_att1_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT1(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT1(a,b) "MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT1"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT1(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADDX_ATT1(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT1(a,b) cavm_cbpx_interfaceconfiguration_addx_att1_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT1(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT1(a,b) "CBPX_INTERFACECONFIGURATION_ADDX_ATT1"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT1(a,b) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADDX_ATT1(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add0_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add0_start
  *
- * MDAB Dsp Interfaceconfiguration Add0 Start Register
+ * CBP Interfaceconfiguration Add0 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add0_start
+union cavm_cbpx_interfaceconfiguration_add0_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add0_start_s
+    struct cavm_cbpx_interfaceconfiguration_add0_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5225,33 +6037,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add0_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add0_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add0_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add0_start cavm_mdab_dspx_interfaceconfiguration_add0_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add0_start cavm_cbpx_interfaceconfiguration_add0_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD0_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD0_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD0_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD0_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823520ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD0_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD0_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD0_START(a) cavm_mdab_dspx_interfaceconfiguration_add0_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD0_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD0_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD0_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD0_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD0_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD0_START(a) cavm_cbpx_interfaceconfiguration_add0_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD0_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD0_START(a) "CBPX_INTERFACECONFIGURATION_ADD0_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD0_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD0_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add10_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add10_start
  *
- * MDAB Dsp Interfaceconfiguration Add10 Start Register
+ * CBP Interfaceconfiguration Add10 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add10_start
+union cavm_cbpx_interfaceconfiguration_add10_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add10_start_s
+    struct cavm_cbpx_interfaceconfiguration_add10_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5281,33 +6093,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add10_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add10_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add10_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add10_start cavm_mdab_dspx_interfaceconfiguration_add10_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add10_start cavm_cbpx_interfaceconfiguration_add10_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD10_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD10_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD10_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD10_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448235c0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD10_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD10_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD10_START(a) cavm_mdab_dspx_interfaceconfiguration_add10_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD10_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD10_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD10_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD10_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD10_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD10_START(a) cavm_cbpx_interfaceconfiguration_add10_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD10_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD10_START(a) "CBPX_INTERFACECONFIGURATION_ADD10_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD10_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD10_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add11_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add11_start
  *
- * MDAB Dsp Interfaceconfiguration Add11 Start Register
+ * CBP Interfaceconfiguration Add11 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add11_start
+union cavm_cbpx_interfaceconfiguration_add11_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add11_start_s
+    struct cavm_cbpx_interfaceconfiguration_add11_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5337,33 +6149,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add11_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add11_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add11_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add11_start cavm_mdab_dspx_interfaceconfiguration_add11_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add11_start cavm_cbpx_interfaceconfiguration_add11_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD11_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD11_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD11_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD11_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448235d0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD11_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD11_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD11_START(a) cavm_mdab_dspx_interfaceconfiguration_add11_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD11_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD11_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD11_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD11_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD11_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD11_START(a) cavm_cbpx_interfaceconfiguration_add11_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD11_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD11_START(a) "CBPX_INTERFACECONFIGURATION_ADD11_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD11_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD11_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add12_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add12_start
  *
- * MDAB Dsp Interfaceconfiguration Add12 Start Register
+ * CBP Interfaceconfiguration Add12 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add12_start
+union cavm_cbpx_interfaceconfiguration_add12_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add12_start_s
+    struct cavm_cbpx_interfaceconfiguration_add12_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5393,33 +6205,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add12_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add12_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add12_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add12_start cavm_mdab_dspx_interfaceconfiguration_add12_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add12_start cavm_cbpx_interfaceconfiguration_add12_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD12_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD12_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD12_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD12_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448235e0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD12_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD12_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD12_START(a) cavm_mdab_dspx_interfaceconfiguration_add12_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD12_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD12_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD12_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD12_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD12_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD12_START(a) cavm_cbpx_interfaceconfiguration_add12_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD12_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD12_START(a) "CBPX_INTERFACECONFIGURATION_ADD12_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD12_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD12_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add13_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add13_start
  *
- * MDAB Dsp Interfaceconfiguration Add13 Start Register
+ * CBP Interfaceconfiguration Add13 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add13_start
+union cavm_cbpx_interfaceconfiguration_add13_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add13_start_s
+    struct cavm_cbpx_interfaceconfiguration_add13_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5449,33 +6261,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add13_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add13_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add13_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add13_start cavm_mdab_dspx_interfaceconfiguration_add13_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add13_start cavm_cbpx_interfaceconfiguration_add13_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD13_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD13_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD13_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD13_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448235f0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD13_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD13_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD13_START(a) cavm_mdab_dspx_interfaceconfiguration_add13_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD13_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD13_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD13_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD13_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD13_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD13_START(a) cavm_cbpx_interfaceconfiguration_add13_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD13_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD13_START(a) "CBPX_INTERFACECONFIGURATION_ADD13_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD13_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD13_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add14_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add14_start
  *
- * MDAB Dsp Interfaceconfiguration Add14 Start Register
+ * CBP Interfaceconfiguration Add14 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add14_start
+union cavm_cbpx_interfaceconfiguration_add14_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add14_start_s
+    struct cavm_cbpx_interfaceconfiguration_add14_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5505,33 +6317,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add14_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add14_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add14_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add14_start cavm_mdab_dspx_interfaceconfiguration_add14_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add14_start cavm_cbpx_interfaceconfiguration_add14_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD14_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD14_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD14_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD14_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823600ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD14_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD14_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD14_START(a) cavm_mdab_dspx_interfaceconfiguration_add14_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD14_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD14_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD14_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD14_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD14_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD14_START(a) cavm_cbpx_interfaceconfiguration_add14_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD14_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD14_START(a) "CBPX_INTERFACECONFIGURATION_ADD14_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD14_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD14_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add15_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add15_start
  *
- * MDAB Dsp Interfaceconfiguration Add15 Start Register
+ * CBP Interfaceconfiguration Add15 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add15_start
+union cavm_cbpx_interfaceconfiguration_add15_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add15_start_s
+    struct cavm_cbpx_interfaceconfiguration_add15_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5561,33 +6373,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add15_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add15_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add15_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add15_start cavm_mdab_dspx_interfaceconfiguration_add15_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add15_start cavm_cbpx_interfaceconfiguration_add15_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD15_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD15_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD15_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD15_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823610ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD15_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD15_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD15_START(a) cavm_mdab_dspx_interfaceconfiguration_add15_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD15_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD15_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD15_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD15_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD15_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD15_START(a) cavm_cbpx_interfaceconfiguration_add15_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD15_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD15_START(a) "CBPX_INTERFACECONFIGURATION_ADD15_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD15_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD15_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add16_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add16_start
  *
- * MDAB Dsp Interfaceconfiguration Add16 Start Register
+ * CBP Interfaceconfiguration Add16 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add16_start
+union cavm_cbpx_interfaceconfiguration_add16_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add16_start_s
+    struct cavm_cbpx_interfaceconfiguration_add16_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5617,33 +6429,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add16_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add16_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add16_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add16_start cavm_mdab_dspx_interfaceconfiguration_add16_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add16_start cavm_cbpx_interfaceconfiguration_add16_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD16_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD16_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD16_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD16_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823620ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD16_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD16_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD16_START(a) cavm_mdab_dspx_interfaceconfiguration_add16_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD16_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD16_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD16_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD16_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD16_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD16_START(a) cavm_cbpx_interfaceconfiguration_add16_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD16_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD16_START(a) "CBPX_INTERFACECONFIGURATION_ADD16_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD16_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD16_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add17_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add17_start
  *
- * MDAB Dsp Interfaceconfiguration Add17 Start Register
+ * CBP Interfaceconfiguration Add17 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add17_start
+union cavm_cbpx_interfaceconfiguration_add17_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add17_start_s
+    struct cavm_cbpx_interfaceconfiguration_add17_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5673,33 +6485,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add17_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add17_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add17_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add17_start cavm_mdab_dspx_interfaceconfiguration_add17_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add17_start cavm_cbpx_interfaceconfiguration_add17_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD17_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD17_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD17_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD17_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823630ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD17_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD17_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD17_START(a) cavm_mdab_dspx_interfaceconfiguration_add17_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD17_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD17_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD17_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD17_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD17_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD17_START(a) cavm_cbpx_interfaceconfiguration_add17_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD17_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD17_START(a) "CBPX_INTERFACECONFIGURATION_ADD17_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD17_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD17_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add18_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add18_start
  *
- * MDAB Dsp Interfaceconfiguration Add18 Start Register
+ * CBP Interfaceconfiguration Add18 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add18_start
+union cavm_cbpx_interfaceconfiguration_add18_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add18_start_s
+    struct cavm_cbpx_interfaceconfiguration_add18_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5729,33 +6541,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add18_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add18_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add18_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add18_start cavm_mdab_dspx_interfaceconfiguration_add18_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add18_start cavm_cbpx_interfaceconfiguration_add18_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD18_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD18_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD18_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD18_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823640ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD18_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD18_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD18_START(a) cavm_mdab_dspx_interfaceconfiguration_add18_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD18_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD18_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD18_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD18_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD18_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD18_START(a) cavm_cbpx_interfaceconfiguration_add18_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD18_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD18_START(a) "CBPX_INTERFACECONFIGURATION_ADD18_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD18_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD18_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add19_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add19_start
  *
- * MDAB Dsp Interfaceconfiguration Add19 Start Register
+ * CBP Interfaceconfiguration Add19 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add19_start
+union cavm_cbpx_interfaceconfiguration_add19_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add19_start_s
+    struct cavm_cbpx_interfaceconfiguration_add19_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5785,33 +6597,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add19_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add19_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add19_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add19_start cavm_mdab_dspx_interfaceconfiguration_add19_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add19_start cavm_cbpx_interfaceconfiguration_add19_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD19_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD19_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD19_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD19_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823650ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD19_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD19_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD19_START(a) cavm_mdab_dspx_interfaceconfiguration_add19_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD19_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD19_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD19_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD19_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD19_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD19_START(a) cavm_cbpx_interfaceconfiguration_add19_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD19_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD19_START(a) "CBPX_INTERFACECONFIGURATION_ADD19_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD19_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD19_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add1_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add1_start
  *
- * MDAB Dsp Interfaceconfiguration Add1 Start Register
+ * CBP Interfaceconfiguration Add1 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add1_start
+union cavm_cbpx_interfaceconfiguration_add1_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add1_start_s
+    struct cavm_cbpx_interfaceconfiguration_add1_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5841,33 +6653,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add1_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add1_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add1_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add1_start cavm_mdab_dspx_interfaceconfiguration_add1_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add1_start cavm_cbpx_interfaceconfiguration_add1_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD1_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD1_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD1_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD1_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823530ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD1_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD1_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD1_START(a) cavm_mdab_dspx_interfaceconfiguration_add1_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD1_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD1_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD1_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD1_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD1_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD1_START(a) cavm_cbpx_interfaceconfiguration_add1_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD1_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD1_START(a) "CBPX_INTERFACECONFIGURATION_ADD1_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD1_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD1_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add20_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add20_start
  *
- * MDAB Dsp Interfaceconfiguration Add20 Start Register
+ * CBP Interfaceconfiguration Add20 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add20_start
+union cavm_cbpx_interfaceconfiguration_add20_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add20_start_s
+    struct cavm_cbpx_interfaceconfiguration_add20_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5897,33 +6709,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add20_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add20_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add20_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add20_start cavm_mdab_dspx_interfaceconfiguration_add20_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add20_start cavm_cbpx_interfaceconfiguration_add20_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD20_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD20_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD20_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD20_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823660ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD20_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD20_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD20_START(a) cavm_mdab_dspx_interfaceconfiguration_add20_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD20_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD20_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD20_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD20_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD20_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD20_START(a) cavm_cbpx_interfaceconfiguration_add20_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD20_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD20_START(a) "CBPX_INTERFACECONFIGURATION_ADD20_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD20_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD20_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add21_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add21_start
  *
- * MDAB Dsp Interfaceconfiguration Add21 Start Register
+ * CBP Interfaceconfiguration Add21 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add21_start
+union cavm_cbpx_interfaceconfiguration_add21_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add21_start_s
+    struct cavm_cbpx_interfaceconfiguration_add21_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -5953,33 +6765,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add21_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add21_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add21_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add21_start cavm_mdab_dspx_interfaceconfiguration_add21_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add21_start cavm_cbpx_interfaceconfiguration_add21_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD21_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD21_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD21_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD21_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823670ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD21_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD21_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD21_START(a) cavm_mdab_dspx_interfaceconfiguration_add21_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD21_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD21_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD21_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD21_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD21_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD21_START(a) cavm_cbpx_interfaceconfiguration_add21_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD21_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD21_START(a) "CBPX_INTERFACECONFIGURATION_ADD21_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD21_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD21_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add22_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add22_start
  *
- * MDAB Dsp Interfaceconfiguration Add22 Start Register
+ * CBP Interfaceconfiguration Add22 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add22_start
+union cavm_cbpx_interfaceconfiguration_add22_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add22_start_s
+    struct cavm_cbpx_interfaceconfiguration_add22_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6009,33 +6821,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add22_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add22_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add22_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add22_start cavm_mdab_dspx_interfaceconfiguration_add22_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add22_start cavm_cbpx_interfaceconfiguration_add22_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD22_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD22_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD22_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD22_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823680ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD22_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD22_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD22_START(a) cavm_mdab_dspx_interfaceconfiguration_add22_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD22_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD22_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD22_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD22_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD22_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD22_START(a) cavm_cbpx_interfaceconfiguration_add22_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD22_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD22_START(a) "CBPX_INTERFACECONFIGURATION_ADD22_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD22_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD22_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add23_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add23_start
  *
- * MDAB Dsp Interfaceconfiguration Add23 Start Register
+ * CBP Interfaceconfiguration Add23 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add23_start
+union cavm_cbpx_interfaceconfiguration_add23_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add23_start_s
+    struct cavm_cbpx_interfaceconfiguration_add23_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6065,33 +6877,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add23_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add23_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add23_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add23_start cavm_mdab_dspx_interfaceconfiguration_add23_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add23_start cavm_cbpx_interfaceconfiguration_add23_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD23_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD23_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD23_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD23_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823690ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD23_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD23_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD23_START(a) cavm_mdab_dspx_interfaceconfiguration_add23_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD23_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD23_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD23_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD23_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD23_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD23_START(a) cavm_cbpx_interfaceconfiguration_add23_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD23_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD23_START(a) "CBPX_INTERFACECONFIGURATION_ADD23_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD23_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD23_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add24_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add24_start
  *
- * MDAB Dsp Interfaceconfiguration Add24 Start Register
+ * CBP Interfaceconfiguration Add24 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add24_start
+union cavm_cbpx_interfaceconfiguration_add24_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add24_start_s
+    struct cavm_cbpx_interfaceconfiguration_add24_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6121,33 +6933,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add24_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add24_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add24_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add24_start cavm_mdab_dspx_interfaceconfiguration_add24_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add24_start cavm_cbpx_interfaceconfiguration_add24_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD24_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD24_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD24_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD24_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448236a0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD24_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD24_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD24_START(a) cavm_mdab_dspx_interfaceconfiguration_add24_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD24_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD24_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD24_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD24_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD24_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD24_START(a) cavm_cbpx_interfaceconfiguration_add24_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD24_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD24_START(a) "CBPX_INTERFACECONFIGURATION_ADD24_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD24_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD24_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add25_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add25_start
  *
- * MDAB Dsp Interfaceconfiguration Add25 Start Register
+ * CBP Interfaceconfiguration Add25 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add25_start
+union cavm_cbpx_interfaceconfiguration_add25_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add25_start_s
+    struct cavm_cbpx_interfaceconfiguration_add25_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6177,33 +6989,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add25_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add25_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add25_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add25_start cavm_mdab_dspx_interfaceconfiguration_add25_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add25_start cavm_cbpx_interfaceconfiguration_add25_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD25_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD25_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD25_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD25_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448236b0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD25_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD25_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD25_START(a) cavm_mdab_dspx_interfaceconfiguration_add25_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD25_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD25_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD25_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD25_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD25_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD25_START(a) cavm_cbpx_interfaceconfiguration_add25_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD25_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD25_START(a) "CBPX_INTERFACECONFIGURATION_ADD25_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD25_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD25_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add26_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add26_start
  *
- * MDAB Dsp Interfaceconfiguration Add26 Start Register
+ * CBP Interfaceconfiguration Add26 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add26_start
+union cavm_cbpx_interfaceconfiguration_add26_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add26_start_s
+    struct cavm_cbpx_interfaceconfiguration_add26_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6233,33 +7045,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add26_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add26_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add26_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add26_start cavm_mdab_dspx_interfaceconfiguration_add26_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add26_start cavm_cbpx_interfaceconfiguration_add26_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD26_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD26_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD26_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD26_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448236c0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD26_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD26_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD26_START(a) cavm_mdab_dspx_interfaceconfiguration_add26_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD26_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD26_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD26_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD26_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD26_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD26_START(a) cavm_cbpx_interfaceconfiguration_add26_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD26_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD26_START(a) "CBPX_INTERFACECONFIGURATION_ADD26_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD26_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD26_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add27_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add27_start
  *
- * MDAB Dsp Interfaceconfiguration Add27 Start Register
+ * CBP Interfaceconfiguration Add27 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add27_start
+union cavm_cbpx_interfaceconfiguration_add27_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add27_start_s
+    struct cavm_cbpx_interfaceconfiguration_add27_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6289,33 +7101,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add27_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add27_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add27_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add27_start cavm_mdab_dspx_interfaceconfiguration_add27_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add27_start cavm_cbpx_interfaceconfiguration_add27_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD27_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD27_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD27_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD27_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448236d0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD27_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD27_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD27_START(a) cavm_mdab_dspx_interfaceconfiguration_add27_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD27_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD27_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD27_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD27_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD27_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD27_START(a) cavm_cbpx_interfaceconfiguration_add27_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD27_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD27_START(a) "CBPX_INTERFACECONFIGURATION_ADD27_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD27_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD27_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add28_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add28_start
  *
- * MDAB Dsp Interfaceconfiguration Add28 Start Register
+ * CBP Interfaceconfiguration Add28 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add28_start
+union cavm_cbpx_interfaceconfiguration_add28_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add28_start_s
+    struct cavm_cbpx_interfaceconfiguration_add28_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6345,33 +7157,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add28_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add28_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add28_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add28_start cavm_mdab_dspx_interfaceconfiguration_add28_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add28_start cavm_cbpx_interfaceconfiguration_add28_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD28_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD28_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD28_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD28_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448236e0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD28_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD28_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD28_START(a) cavm_mdab_dspx_interfaceconfiguration_add28_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD28_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD28_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD28_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD28_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD28_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD28_START(a) cavm_cbpx_interfaceconfiguration_add28_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD28_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD28_START(a) "CBPX_INTERFACECONFIGURATION_ADD28_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD28_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD28_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add29_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add29_start
  *
- * MDAB Dsp Interfaceconfiguration Add29 Start Register
+ * CBP Interfaceconfiguration Add29 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add29_start
+union cavm_cbpx_interfaceconfiguration_add29_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add29_start_s
+    struct cavm_cbpx_interfaceconfiguration_add29_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6401,33 +7213,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add29_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add29_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add29_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add29_start cavm_mdab_dspx_interfaceconfiguration_add29_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add29_start cavm_cbpx_interfaceconfiguration_add29_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD29_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD29_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD29_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD29_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448236f0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD29_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD29_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD29_START(a) cavm_mdab_dspx_interfaceconfiguration_add29_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD29_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD29_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD29_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD29_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD29_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD29_START(a) cavm_cbpx_interfaceconfiguration_add29_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD29_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD29_START(a) "CBPX_INTERFACECONFIGURATION_ADD29_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD29_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD29_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add2_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add2_start
  *
- * MDAB Dsp Interfaceconfiguration Add2 Start Register
+ * CBP Interfaceconfiguration Add2 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add2_start
+union cavm_cbpx_interfaceconfiguration_add2_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add2_start_s
+    struct cavm_cbpx_interfaceconfiguration_add2_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6457,33 +7269,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add2_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add2_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add2_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add2_start cavm_mdab_dspx_interfaceconfiguration_add2_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add2_start cavm_cbpx_interfaceconfiguration_add2_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD2_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD2_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD2_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD2_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823540ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD2_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD2_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD2_START(a) cavm_mdab_dspx_interfaceconfiguration_add2_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD2_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD2_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD2_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD2_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD2_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD2_START(a) cavm_cbpx_interfaceconfiguration_add2_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD2_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD2_START(a) "CBPX_INTERFACECONFIGURATION_ADD2_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD2_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD2_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add30_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add30_start
  *
- * MDAB Dsp Interfaceconfiguration Add30 Start Register
+ * CBP Interfaceconfiguration Add30 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add30_start
+union cavm_cbpx_interfaceconfiguration_add30_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add30_start_s
+    struct cavm_cbpx_interfaceconfiguration_add30_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6513,33 +7325,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add30_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add30_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add30_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add30_start cavm_mdab_dspx_interfaceconfiguration_add30_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add30_start cavm_cbpx_interfaceconfiguration_add30_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD30_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD30_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD30_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD30_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823700ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD30_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD30_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD30_START(a) cavm_mdab_dspx_interfaceconfiguration_add30_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD30_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD30_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD30_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD30_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD30_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD30_START(a) cavm_cbpx_interfaceconfiguration_add30_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD30_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD30_START(a) "CBPX_INTERFACECONFIGURATION_ADD30_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD30_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD30_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add31_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add31_start
  *
- * MDAB Dsp Interfaceconfiguration Add31 Start Register
+ * CBP Interfaceconfiguration Add31 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add31_start
+union cavm_cbpx_interfaceconfiguration_add31_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add31_start_s
+    struct cavm_cbpx_interfaceconfiguration_add31_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6569,33 +7381,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add31_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add31_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add31_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add31_start cavm_mdab_dspx_interfaceconfiguration_add31_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add31_start cavm_cbpx_interfaceconfiguration_add31_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD31_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD31_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD31_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD31_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823710ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD31_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD31_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD31_START(a) cavm_mdab_dspx_interfaceconfiguration_add31_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD31_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD31_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD31_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD31_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD31_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD31_START(a) cavm_cbpx_interfaceconfiguration_add31_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD31_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD31_START(a) "CBPX_INTERFACECONFIGURATION_ADD31_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD31_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD31_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add3_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add3_start
  *
- * MDAB Dsp Interfaceconfiguration Add3 Start Register
+ * CBP Interfaceconfiguration Add3 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add3_start
+union cavm_cbpx_interfaceconfiguration_add3_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add3_start_s
+    struct cavm_cbpx_interfaceconfiguration_add3_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6625,33 +7437,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add3_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add3_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add3_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add3_start cavm_mdab_dspx_interfaceconfiguration_add3_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add3_start cavm_cbpx_interfaceconfiguration_add3_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD3_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD3_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD3_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD3_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823550ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD3_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD3_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD3_START(a) cavm_mdab_dspx_interfaceconfiguration_add3_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD3_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD3_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD3_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD3_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD3_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD3_START(a) cavm_cbpx_interfaceconfiguration_add3_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD3_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD3_START(a) "CBPX_INTERFACECONFIGURATION_ADD3_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD3_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD3_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add4_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add4_start
  *
- * MDAB Dsp Interfaceconfiguration Add4 Start Register
+ * CBP Interfaceconfiguration Add4 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add4_start
+union cavm_cbpx_interfaceconfiguration_add4_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add4_start_s
+    struct cavm_cbpx_interfaceconfiguration_add4_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6681,33 +7493,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add4_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add4_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add4_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add4_start cavm_mdab_dspx_interfaceconfiguration_add4_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add4_start cavm_cbpx_interfaceconfiguration_add4_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD4_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD4_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD4_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD4_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823560ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD4_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD4_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD4_START(a) cavm_mdab_dspx_interfaceconfiguration_add4_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD4_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD4_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD4_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD4_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD4_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD4_START(a) cavm_cbpx_interfaceconfiguration_add4_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD4_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD4_START(a) "CBPX_INTERFACECONFIGURATION_ADD4_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD4_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD4_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add5_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add5_start
  *
- * MDAB Dsp Interfaceconfiguration Add5 Start Register
+ * CBP Interfaceconfiguration Add5 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add5_start
+union cavm_cbpx_interfaceconfiguration_add5_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add5_start_s
+    struct cavm_cbpx_interfaceconfiguration_add5_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6737,33 +7549,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add5_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add5_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add5_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add5_start cavm_mdab_dspx_interfaceconfiguration_add5_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add5_start cavm_cbpx_interfaceconfiguration_add5_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD5_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD5_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD5_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD5_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823570ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD5_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD5_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD5_START(a) cavm_mdab_dspx_interfaceconfiguration_add5_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD5_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD5_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD5_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD5_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD5_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD5_START(a) cavm_cbpx_interfaceconfiguration_add5_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD5_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD5_START(a) "CBPX_INTERFACECONFIGURATION_ADD5_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD5_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD5_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add6_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add6_start
  *
- * MDAB Dsp Interfaceconfiguration Add6 Start Register
+ * CBP Interfaceconfiguration Add6 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add6_start
+union cavm_cbpx_interfaceconfiguration_add6_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add6_start_s
+    struct cavm_cbpx_interfaceconfiguration_add6_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6793,33 +7605,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add6_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add6_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add6_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add6_start cavm_mdab_dspx_interfaceconfiguration_add6_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add6_start cavm_cbpx_interfaceconfiguration_add6_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD6_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD6_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD6_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD6_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823580ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD6_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD6_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD6_START(a) cavm_mdab_dspx_interfaceconfiguration_add6_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD6_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD6_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD6_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD6_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD6_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD6_START(a) cavm_cbpx_interfaceconfiguration_add6_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD6_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD6_START(a) "CBPX_INTERFACECONFIGURATION_ADD6_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD6_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD6_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add7_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add7_start
  *
- * MDAB Dsp Interfaceconfiguration Add7 Start Register
+ * CBP Interfaceconfiguration Add7 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add7_start
+union cavm_cbpx_interfaceconfiguration_add7_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add7_start_s
+    struct cavm_cbpx_interfaceconfiguration_add7_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6849,33 +7661,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add7_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add7_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add7_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add7_start cavm_mdab_dspx_interfaceconfiguration_add7_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add7_start cavm_cbpx_interfaceconfiguration_add7_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD7_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD7_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD7_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD7_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823590ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD7_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD7_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD7_START(a) cavm_mdab_dspx_interfaceconfiguration_add7_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD7_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD7_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD7_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD7_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD7_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD7_START(a) cavm_cbpx_interfaceconfiguration_add7_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD7_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD7_START(a) "CBPX_INTERFACECONFIGURATION_ADD7_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD7_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD7_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add8_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add8_start
  *
- * MDAB Dsp Interfaceconfiguration Add8 Start Register
+ * CBP Interfaceconfiguration Add8 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add8_start
+union cavm_cbpx_interfaceconfiguration_add8_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add8_start_s
+    struct cavm_cbpx_interfaceconfiguration_add8_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6905,33 +7717,33 @@ union cavm_mdab_dspx_interfaceconfiguration_add8_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add8_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add8_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add8_start cavm_mdab_dspx_interfaceconfiguration_add8_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add8_start cavm_cbpx_interfaceconfiguration_add8_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD8_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD8_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD8_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD8_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448235a0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD8_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD8_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD8_START(a) cavm_mdab_dspx_interfaceconfiguration_add8_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD8_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD8_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD8_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD8_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD8_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD8_START(a) cavm_cbpx_interfaceconfiguration_add8_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD8_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD8_START(a) "CBPX_INTERFACECONFIGURATION_ADD8_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD8_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD8_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_add9_start
+ * Register (RSL32b) cbp#_interfaceconfiguration_add9_start
  *
- * MDAB Dsp Interfaceconfiguration Add9 Start Register
+ * CBP Interfaceconfiguration Add9 Start Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_add9_start
+union cavm_cbpx_interfaceconfiguration_add9_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_add9_start_s
+    struct cavm_cbpx_interfaceconfiguration_add9_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
@@ -6961,38 +7773,38 @@ union cavm_mdab_dspx_interfaceconfiguration_add9_start
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_add9_start_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_add9_start_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_add9_start cavm_mdab_dspx_interfaceconfiguration_add9_start_t;
+typedef union cavm_cbpx_interfaceconfiguration_add9_start cavm_cbpx_interfaceconfiguration_add9_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD9_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD9_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD9_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_ADD9_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448235b0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_ADD9_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_ADD9_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD9_START(a) cavm_mdab_dspx_interfaceconfiguration_add9_start_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD9_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD9_START(a) "MDAB_DSPX_INTERFACECONFIGURATION_ADD9_START"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD9_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_ADD9_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_ADD9_START(a) cavm_cbpx_interfaceconfiguration_add9_start_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_ADD9_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_ADD9_START(a) "CBPX_INTERFACECONFIGURATION_ADD9_START"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_ADD9_START(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_ADD9_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_ficmr_cor
+ * Register (RSL32b) cbp#_interfaceconfiguration_ficmr_cor
  *
- * MDAB Dsp Interfaceconfiguration Ficmr Cor Register
+ * CBP Interfaceconfiguration Ficmr Cor Register
  * Note:
  *         The user must ensure that STL_CNT0 and STL_CNT1 are properly configured
  * before FICM0 or FICM1 are used for performing read transactions.
  *         After initial configuration of the STL_CNT0 and STL_CNT1 the FIC buses do
  * not change structure and the user must not change the STL_CNT0 and STL_CNT1.
  */
-union cavm_mdab_dspx_interfaceconfiguration_ficmr_cor
+union cavm_cbpx_interfaceconfiguration_ficmr_cor
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_ficmr_cor_s
+    struct cavm_cbpx_interfaceconfiguration_ficmr_cor_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_10_31        : 22;
@@ -7020,28 +7832,28 @@ union cavm_mdab_dspx_interfaceconfiguration_ficmr_cor
         uint32_t reserved_10_31        : 22;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_ficmr_cor_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_ficmr_cor_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_ficmr_cor cavm_mdab_dspx_interfaceconfiguration_ficmr_cor_t;
+typedef union cavm_cbpx_interfaceconfiguration_ficmr_cor cavm_cbpx_interfaceconfiguration_ficmr_cor_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICMR_COR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICMR_COR(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_FICMR_COR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_FICMR_COR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823508ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_FICMR_COR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_FICMR_COR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICMR_COR(a) cavm_mdab_dspx_interfaceconfiguration_ficmr_cor_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICMR_COR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICMR_COR(a) "MDAB_DSPX_INTERFACECONFIGURATION_FICMR_COR"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICMR_COR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICMR_COR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_FICMR_COR(a) cavm_cbpx_interfaceconfiguration_ficmr_cor_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_FICMR_COR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_FICMR_COR(a) "CBPX_INTERFACECONFIGURATION_FICMR_COR"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_FICMR_COR(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_FICMR_COR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_fics_cor
+ * Register (RSL32b) cbp#_interfaceconfiguration_fics_cor
  *
- * MDAB Dsp Interfaceconfiguration Fics Cor Register
+ * CBP Interfaceconfiguration Fics Cor Register
  * Note:
  *         The DLY_PRMX (X denotes the number of slave port) field must be properly
  * configured to reflect the core to FIC bus clock ratio, before issuing read or write
@@ -7050,10 +7862,10 @@ static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICMR_COR(unsigned 
  * fixed and the value of DLY_PRMX must not change.
  * 	FIC slave port X must not be used for changing the value of DLY_PRMX.
  */
-union cavm_mdab_dspx_interfaceconfiguration_fics_cor
+union cavm_cbpx_interfaceconfiguration_fics_cor
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_fics_cor_s
+    struct cavm_cbpx_interfaceconfiguration_fics_cor_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
@@ -7189,33 +8001,33 @@ union cavm_mdab_dspx_interfaceconfiguration_fics_cor
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_fics_cor_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_fics_cor_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_fics_cor cavm_mdab_dspx_interfaceconfiguration_fics_cor_t;
+typedef union cavm_cbpx_interfaceconfiguration_fics_cor cavm_cbpx_interfaceconfiguration_fics_cor_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICS_COR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICS_COR(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_FICS_COR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_FICS_COR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823504ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_FICS_COR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_FICS_COR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICS_COR(a) cavm_mdab_dspx_interfaceconfiguration_fics_cor_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICS_COR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICS_COR(a) "MDAB_DSPX_INTERFACECONFIGURATION_FICS_COR"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICS_COR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_FICS_COR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_FICS_COR(a) cavm_cbpx_interfaceconfiguration_fics_cor_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_FICS_COR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_FICS_COR(a) "CBPX_INTERFACECONFIGURATION_FICS_COR"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_FICS_COR(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_FICS_COR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_port_rid
+ * Register (RSL32b) cbp#_interfaceconfiguration_port_rid
  *
- * MDAB Dsp Interfaceconfiguration Port Rid Register
+ * CBP Interfaceconfiguration Port Rid Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_port_rid
+union cavm_cbpx_interfaceconfiguration_port_rid
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_port_rid_s
+    struct cavm_cbpx_interfaceconfiguration_port_rid_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t p_id                  : 4;  /**< [ 31: 28](R/W) Core program fetch Read ID */
@@ -7245,33 +8057,33 @@ union cavm_mdab_dspx_interfaceconfiguration_port_rid
         uint32_t p_id                  : 4;  /**< [ 31: 28](R/W) Core program fetch Read ID */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_port_rid_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_port_rid_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_port_rid cavm_mdab_dspx_interfaceconfiguration_port_rid_t;
+typedef union cavm_cbpx_interfaceconfiguration_port_rid cavm_cbpx_interfaceconfiguration_port_rid_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_RID(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_RID(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_PORT_RID(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_PORT_RID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823930ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_PORT_RID", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_PORT_RID", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_RID(a) cavm_mdab_dspx_interfaceconfiguration_port_rid_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_RID(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_RID(a) "MDAB_DSPX_INTERFACECONFIGURATION_PORT_RID"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_RID(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_RID(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_PORT_RID(a) cavm_cbpx_interfaceconfiguration_port_rid_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_PORT_RID(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_PORT_RID(a) "CBPX_INTERFACECONFIGURATION_PORT_RID"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_PORT_RID(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_PORT_RID(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_interfaceconfiguration_port_wid
+ * Register (RSL32b) cbp#_interfaceconfiguration_port_wid
  *
- * MDAB Dsp Interfaceconfiguration Port Wid Register
+ * CBP Interfaceconfiguration Port Wid Register
  */
-union cavm_mdab_dspx_interfaceconfiguration_port_wid
+union cavm_cbpx_interfaceconfiguration_port_wid
 {
     uint32_t u;
-    struct cavm_mdab_dspx_interfaceconfiguration_port_wid_s
+    struct cavm_cbpx_interfaceconfiguration_port_wid_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocem_id               : 4;  /**< [ 31: 28](R/W) OCEM access Read and write ID */
@@ -7293,33 +8105,33 @@ union cavm_mdab_dspx_interfaceconfiguration_port_wid
         uint32_t ocem_id               : 4;  /**< [ 31: 28](R/W) OCEM access Read and write ID */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_interfaceconfiguration_port_wid_s cn; */
+    /* struct cavm_cbpx_interfaceconfiguration_port_wid_s cn; */
 };
-typedef union cavm_mdab_dspx_interfaceconfiguration_port_wid cavm_mdab_dspx_interfaceconfiguration_port_wid_t;
+typedef union cavm_cbpx_interfaceconfiguration_port_wid cavm_cbpx_interfaceconfiguration_port_wid_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_WID(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_WID(unsigned long a)
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_PORT_WID(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_INTERFACECONFIGURATION_PORT_WID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823934ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_INTERFACECONFIGURATION_PORT_WID", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_INTERFACECONFIGURATION_PORT_WID", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_WID(a) cavm_mdab_dspx_interfaceconfiguration_port_wid_t
-#define bustype_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_WID(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_WID(a) "MDAB_DSPX_INTERFACECONFIGURATION_PORT_WID"
-#define busnum_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_WID(a) (a)
-#define arguments_CAVM_MDAB_DSPX_INTERFACECONFIGURATION_PORT_WID(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_INTERFACECONFIGURATION_PORT_WID(a) cavm_cbpx_interfaceconfiguration_port_wid_t
+#define bustype_CAVM_CBPX_INTERFACECONFIGURATION_PORT_WID(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_INTERFACECONFIGURATION_PORT_WID(a) "CBPX_INTERFACECONFIGURATION_PORT_WID"
+#define busnum_CAVM_CBPX_INTERFACECONFIGURATION_PORT_WID(a) (a)
+#define arguments_CAVM_CBPX_INTERFACECONFIGURATION_PORT_WID(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_lrua_lru_slt_hi
+ * Register (RSL32b) cbp#_lrua_lru_slt_hi
  *
- * MDAB Dsp Lrua Lru Slt Hi Register
+ * CBP Lrua Lru Slt Hi Register
  */
-union cavm_mdab_dspx_lrua_lru_slt_hi
+union cavm_cbpx_lrua_lru_slt_hi
 {
     uint32_t u;
-    struct cavm_mdab_dspx_lrua_lru_slt_hi_s
+    struct cavm_cbpx_lrua_lru_slt_hi_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
@@ -7439,33 +8251,33 @@ union cavm_mdab_dspx_lrua_lru_slt_hi
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_lrua_lru_slt_hi_s cn; */
+    /* struct cavm_cbpx_lrua_lru_slt_hi_s cn; */
 };
-typedef union cavm_mdab_dspx_lrua_lru_slt_hi cavm_mdab_dspx_lrua_lru_slt_hi_t;
+typedef union cavm_cbpx_lrua_lru_slt_hi cavm_cbpx_lrua_lru_slt_hi_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_LRUA_LRU_SLT_HI(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_LRUA_LRU_SLT_HI(unsigned long a)
+static inline uint64_t CAVM_CBPX_LRUA_LRU_SLT_HI(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_LRUA_LRU_SLT_HI(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448222a4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_LRUA_LRU_SLT_HI", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_LRUA_LRU_SLT_HI", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_LRUA_LRU_SLT_HI(a) cavm_mdab_dspx_lrua_lru_slt_hi_t
-#define bustype_CAVM_MDAB_DSPX_LRUA_LRU_SLT_HI(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_LRUA_LRU_SLT_HI(a) "MDAB_DSPX_LRUA_LRU_SLT_HI"
-#define busnum_CAVM_MDAB_DSPX_LRUA_LRU_SLT_HI(a) (a)
-#define arguments_CAVM_MDAB_DSPX_LRUA_LRU_SLT_HI(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_LRUA_LRU_SLT_HI(a) cavm_cbpx_lrua_lru_slt_hi_t
+#define bustype_CAVM_CBPX_LRUA_LRU_SLT_HI(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_LRUA_LRU_SLT_HI(a) "CBPX_LRUA_LRU_SLT_HI"
+#define busnum_CAVM_CBPX_LRUA_LRU_SLT_HI(a) (a)
+#define arguments_CAVM_CBPX_LRUA_LRU_SLT_HI(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_lrua_lru_slt_lo
+ * Register (RSL32b) cbp#_lrua_lru_slt_lo
  *
- * MDAB Dsp Lrua Lru Slt Lo Register
+ * CBP Lrua Lru Slt Lo Register
  */
-union cavm_mdab_dspx_lrua_lru_slt_lo
+union cavm_cbpx_lrua_lru_slt_lo
 {
     uint32_t u;
-    struct cavm_mdab_dspx_lrua_lru_slt_lo_s
+    struct cavm_cbpx_lrua_lru_slt_lo_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t slot7_reqm            : 4;  /**< [ 31: 28](R/W) Initial assignment to slot 7
@@ -7695,33 +8507,33 @@ union cavm_mdab_dspx_lrua_lru_slt_lo
                                                                  15:12      Reserved */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_lrua_lru_slt_lo_s cn; */
+    /* struct cavm_cbpx_lrua_lru_slt_lo_s cn; */
 };
-typedef union cavm_mdab_dspx_lrua_lru_slt_lo cavm_mdab_dspx_lrua_lru_slt_lo_t;
+typedef union cavm_cbpx_lrua_lru_slt_lo cavm_cbpx_lrua_lru_slt_lo_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_LRUA_LRU_SLT_LO(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_LRUA_LRU_SLT_LO(unsigned long a)
+static inline uint64_t CAVM_CBPX_LRUA_LRU_SLT_LO(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_LRUA_LRU_SLT_LO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448222a0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_LRUA_LRU_SLT_LO", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_LRUA_LRU_SLT_LO", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_LRUA_LRU_SLT_LO(a) cavm_mdab_dspx_lrua_lru_slt_lo_t
-#define bustype_CAVM_MDAB_DSPX_LRUA_LRU_SLT_LO(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_LRUA_LRU_SLT_LO(a) "MDAB_DSPX_LRUA_LRU_SLT_LO"
-#define busnum_CAVM_MDAB_DSPX_LRUA_LRU_SLT_LO(a) (a)
-#define arguments_CAVM_MDAB_DSPX_LRUA_LRU_SLT_LO(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_LRUA_LRU_SLT_LO(a) cavm_cbpx_lrua_lru_slt_lo_t
+#define bustype_CAVM_CBPX_LRUA_LRU_SLT_LO(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_LRUA_LRU_SLT_LO(a) "CBPX_LRUA_LRU_SLT_LO"
+#define busnum_CAVM_CBPX_LRUA_LRU_SLT_LO(a) (a)
+#define arguments_CAVM_CBPX_LRUA_LRU_SLT_LO(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_lrua_lru_slt_pri
+ * Register (RSL32b) cbp#_lrua_lru_slt_pri
  *
- * MDAB Dsp Lrua Lru Slt Pri Register
+ * CBP Lrua Lru Slt Pri Register
  */
-union cavm_mdab_dspx_lrua_lru_slt_pri
+union cavm_cbpx_lrua_lru_slt_pri
 {
     uint32_t u;
-    struct cavm_mdab_dspx_lrua_lru_slt_pri_s
+    struct cavm_cbpx_lrua_lru_slt_pri_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_12_31        : 20;
@@ -7735,33 +8547,33 @@ union cavm_mdab_dspx_lrua_lru_slt_pri
         uint32_t reserved_12_31        : 20;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_lrua_lru_slt_pri_s cn; */
+    /* struct cavm_cbpx_lrua_lru_slt_pri_s cn; */
 };
-typedef union cavm_mdab_dspx_lrua_lru_slt_pri cavm_mdab_dspx_lrua_lru_slt_pri_t;
+typedef union cavm_cbpx_lrua_lru_slt_pri cavm_cbpx_lrua_lru_slt_pri_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_LRUA_LRU_SLT_PRI(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_LRUA_LRU_SLT_PRI(unsigned long a)
+static inline uint64_t CAVM_CBPX_LRUA_LRU_SLT_PRI(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_LRUA_LRU_SLT_PRI(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448222a8ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_LRUA_LRU_SLT_PRI", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_LRUA_LRU_SLT_PRI", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_LRUA_LRU_SLT_PRI(a) cavm_mdab_dspx_lrua_lru_slt_pri_t
-#define bustype_CAVM_MDAB_DSPX_LRUA_LRU_SLT_PRI(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_LRUA_LRU_SLT_PRI(a) "MDAB_DSPX_LRUA_LRU_SLT_PRI"
-#define busnum_CAVM_MDAB_DSPX_LRUA_LRU_SLT_PRI(a) (a)
-#define arguments_CAVM_MDAB_DSPX_LRUA_LRU_SLT_PRI(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_LRUA_LRU_SLT_PRI(a) cavm_cbpx_lrua_lru_slt_pri_t
+#define bustype_CAVM_CBPX_LRUA_LRU_SLT_PRI(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_LRUA_LRU_SLT_PRI(a) "CBPX_LRUA_LRU_SLT_PRI"
+#define busnum_CAVM_CBPX_LRUA_LRU_SLT_PRI(a) (a)
+#define arguments_CAVM_CBPX_LRUA_LRU_SLT_PRI(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_lrua_lru_weight_hi
+ * Register (RSL32b) cbp#_lrua_lru_weight_hi
  *
- * MDAB Dsp Lrua Lru Weight Hi Register
+ * CBP Lrua Lru Weight Hi Register
  */
-union cavm_mdab_dspx_lrua_lru_weight_hi
+union cavm_cbpx_lrua_lru_weight_hi
 {
     uint32_t u;
-    struct cavm_mdab_dspx_lrua_lru_weight_hi_s
+    struct cavm_cbpx_lrua_lru_weight_hi_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_15_31        : 17;
@@ -7783,33 +8595,33 @@ union cavm_mdab_dspx_lrua_lru_weight_hi
         uint32_t reserved_15_31        : 17;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_lrua_lru_weight_hi_s cn; */
+    /* struct cavm_cbpx_lrua_lru_weight_hi_s cn; */
 };
-typedef union cavm_mdab_dspx_lrua_lru_weight_hi cavm_mdab_dspx_lrua_lru_weight_hi_t;
+typedef union cavm_cbpx_lrua_lru_weight_hi cavm_cbpx_lrua_lru_weight_hi_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_HI(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_HI(unsigned long a)
+static inline uint64_t CAVM_CBPX_LRUA_LRU_WEIGHT_HI(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_LRUA_LRU_WEIGHT_HI(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448222b0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_LRUA_LRU_WEIGHT_HI", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_LRUA_LRU_WEIGHT_HI", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_HI(a) cavm_mdab_dspx_lrua_lru_weight_hi_t
-#define bustype_CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_HI(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_HI(a) "MDAB_DSPX_LRUA_LRU_WEIGHT_HI"
-#define busnum_CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_HI(a) (a)
-#define arguments_CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_HI(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_LRUA_LRU_WEIGHT_HI(a) cavm_cbpx_lrua_lru_weight_hi_t
+#define bustype_CAVM_CBPX_LRUA_LRU_WEIGHT_HI(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_LRUA_LRU_WEIGHT_HI(a) "CBPX_LRUA_LRU_WEIGHT_HI"
+#define busnum_CAVM_CBPX_LRUA_LRU_WEIGHT_HI(a) (a)
+#define arguments_CAVM_CBPX_LRUA_LRU_WEIGHT_HI(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_lrua_lru_weight_lo
+ * Register (RSL32b) cbp#_lrua_lru_weight_lo
  *
- * MDAB Dsp Lrua Lru Weight Lo Register
+ * CBP Lrua Lru Weight Lo Register
  */
-union cavm_mdab_dspx_lrua_lru_weight_lo
+union cavm_cbpx_lrua_lru_weight_lo
 {
     uint32_t u;
-    struct cavm_mdab_dspx_lrua_lru_weight_lo_s
+    struct cavm_cbpx_lrua_lru_weight_lo_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_31           : 1;
@@ -7847,33 +8659,33 @@ union cavm_mdab_dspx_lrua_lru_weight_lo
         uint32_t reserved_31           : 1;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_lrua_lru_weight_lo_s cn; */
+    /* struct cavm_cbpx_lrua_lru_weight_lo_s cn; */
 };
-typedef union cavm_mdab_dspx_lrua_lru_weight_lo cavm_mdab_dspx_lrua_lru_weight_lo_t;
+typedef union cavm_cbpx_lrua_lru_weight_lo cavm_cbpx_lrua_lru_weight_lo_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_LO(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_LO(unsigned long a)
+static inline uint64_t CAVM_CBPX_LRUA_LRU_WEIGHT_LO(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_LRUA_LRU_WEIGHT_LO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448222acll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_LRUA_LRU_WEIGHT_LO", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_LRUA_LRU_WEIGHT_LO", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_LO(a) cavm_mdab_dspx_lrua_lru_weight_lo_t
-#define bustype_CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_LO(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_LO(a) "MDAB_DSPX_LRUA_LRU_WEIGHT_LO"
-#define busnum_CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_LO(a) (a)
-#define arguments_CAVM_MDAB_DSPX_LRUA_LRU_WEIGHT_LO(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_LRUA_LRU_WEIGHT_LO(a) cavm_cbpx_lrua_lru_weight_lo_t
+#define bustype_CAVM_CBPX_LRUA_LRU_WEIGHT_LO(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_LRUA_LRU_WEIGHT_LO(a) "CBPX_LRUA_LRU_WEIGHT_LO"
+#define busnum_CAVM_CBPX_LRUA_LRU_WEIGHT_LO(a) (a)
+#define arguments_CAVM_CBPX_LRUA_LRU_WEIGHT_LO(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_multicoreconfiguration_com_int_en
+ * Register (RSL32b) cbp#_multicoreconfiguration_com_int_en
  *
- * MDAB Dsp Multicoreconfiguration Com Int En Register
+ * CBP Multicoreconfiguration Com Int En Register
  */
-union cavm_mdab_dspx_multicoreconfiguration_com_int_en
+union cavm_cbpx_multicoreconfiguration_com_int_en
 {
     uint32_t u;
-    struct cavm_mdab_dspx_multicoreconfiguration_com_int_en_s
+    struct cavm_cbpx_multicoreconfiguration_com_int_en_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t com_int_en            : 32; /**< [ 31:  0](R/W) Interrupt masking COM_STS status indication; Each bit corresponds to COM_STS bit respectively.
@@ -7885,34 +8697,34 @@ union cavm_mdab_dspx_multicoreconfiguration_com_int_en
                                                                  1: Enabling */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_multicoreconfiguration_com_int_en_s cn; */
+    /* struct cavm_cbpx_multicoreconfiguration_com_int_en_s cn; */
 };
-typedef union cavm_mdab_dspx_multicoreconfiguration_com_int_en cavm_mdab_dspx_multicoreconfiguration_com_int_en_t;
+typedef union cavm_cbpx_multicoreconfiguration_com_int_en cavm_cbpx_multicoreconfiguration_com_int_en_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_INT_EN(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_INT_EN(unsigned long a)
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_COM_INT_EN(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_COM_INT_EN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044820084ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_MULTICORECONFIGURATION_COM_INT_EN", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_MULTICORECONFIGURATION_COM_INT_EN", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_INT_EN(a) cavm_mdab_dspx_multicoreconfiguration_com_int_en_t
-#define bustype_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_INT_EN(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_INT_EN(a) "MDAB_DSPX_MULTICORECONFIGURATION_COM_INT_EN"
-#define busnum_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_INT_EN(a) (a)
-#define arguments_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_INT_EN(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_MULTICORECONFIGURATION_COM_INT_EN(a) cavm_cbpx_multicoreconfiguration_com_int_en_t
+#define bustype_CAVM_CBPX_MULTICORECONFIGURATION_COM_INT_EN(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_MULTICORECONFIGURATION_COM_INT_EN(a) "CBPX_MULTICORECONFIGURATION_COM_INT_EN"
+#define busnum_CAVM_CBPX_MULTICORECONFIGURATION_COM_INT_EN(a) (a)
+#define arguments_CAVM_CBPX_MULTICORECONFIGURATION_COM_INT_EN(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_multicoreconfiguration_com_reg#
+ * Register (RSL32b) cbp#_multicoreconfiguration_com_reg#
  *
- * MDAB Dsp Multicoreconfiguration Com Reg Register
+ * CBP Multicoreconfiguration Com Reg Register
  * When accessing this register from slave port it is write-only
  */
-union cavm_mdab_dspx_multicoreconfiguration_com_regx
+union cavm_cbpx_multicoreconfiguration_com_regx
 {
     uint32_t u;
-    struct cavm_mdab_dspx_multicoreconfiguration_com_regx_s
+    struct cavm_cbpx_multicoreconfiguration_com_regx_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t com_reg               : 32; /**< [ 31:  0](WO) Messaging memory register space (Command Registers)
@@ -7922,44 +8734,44 @@ union cavm_mdab_dspx_multicoreconfiguration_com_regx
                                                                  This register is write only when accessed through the EDAP or one of the FIC slave ports. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_multicoreconfiguration_com_regx_s cn; */
+    /* struct cavm_cbpx_multicoreconfiguration_com_regx_s cn; */
 };
-typedef union cavm_mdab_dspx_multicoreconfiguration_com_regx cavm_mdab_dspx_multicoreconfiguration_com_regx_t;
+typedef union cavm_cbpx_multicoreconfiguration_com_regx cavm_cbpx_multicoreconfiguration_com_regx_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_REGX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_REGX(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_COM_REGX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_COM_REGX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=31)))
         return 0x87e044820000ll + 0x40000ll * ((a) & 0xf) + 4ll * ((b) & 0x1f);
-    __cavm_csr_fatal("MDAB_DSPX_MULTICORECONFIGURATION_COM_REGX", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_MULTICORECONFIGURATION_COM_REGX", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_REGX(a,b) cavm_mdab_dspx_multicoreconfiguration_com_regx_t
-#define bustype_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_REGX(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_REGX(a,b) "MDAB_DSPX_MULTICORECONFIGURATION_COM_REGX"
-#define busnum_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_REGX(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_REGX(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_MULTICORECONFIGURATION_COM_REGX(a,b) cavm_cbpx_multicoreconfiguration_com_regx_t
+#define bustype_CAVM_CBPX_MULTICORECONFIGURATION_COM_REGX(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_MULTICORECONFIGURATION_COM_REGX(a,b) "CBPX_MULTICORECONFIGURATION_COM_REGX"
+#define busnum_CAVM_CBPX_MULTICORECONFIGURATION_COM_REGX(a,b) (a)
+#define arguments_CAVM_CBPX_MULTICORECONFIGURATION_COM_REGX(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_multicoreconfiguration_com_sts
+ * Register (RSL32b) cbp#_multicoreconfiguration_com_sts
  *
- * MDAB Dsp Multicoreconfiguration Com Sts Register
+ * CBP Multicoreconfiguration Com Sts Register
  * When accessing this register from slave port it is read-only
  */
-union cavm_mdab_dspx_multicoreconfiguration_com_sts
+union cavm_cbpx_multicoreconfiguration_com_sts
 {
     uint32_t u;
-    struct cavm_mdab_dspx_multicoreconfiguration_com_sts_s
+    struct cavm_cbpx_multicoreconfiguration_com_sts_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t com_sts               : 32; /**< [ 31:  0](R/W) Write status COM_REG0-31 registers indication; Each bit corresponds to each
+        uint32_t com_sts               : 32; /**< [ 31:  0](R/W/H) Write status COM_REG0-31 registers indication; Each bit corresponds to each
                                                                  COM_REG respectively (write indication to the command registers).
                                                                  Writing 1 to each bit clears its status indication.
                                                                  0: no write occurred (since the last time it was cleared/reset)
                                                                  1: COM register was written
                                                                  This register is read only when accessed through the EDAP or one of the FIC slave ports. */
 #else /* Word 0 - Little Endian */
-        uint32_t com_sts               : 32; /**< [ 31:  0](R/W) Write status COM_REG0-31 registers indication; Each bit corresponds to each
+        uint32_t com_sts               : 32; /**< [ 31:  0](R/W/H) Write status COM_REG0-31 registers indication; Each bit corresponds to each
                                                                  COM_REG respectively (write indication to the command registers).
                                                                  Writing 1 to each bit clears its status indication.
                                                                  0: no write occurred (since the last time it was cleared/reset)
@@ -7967,89 +8779,89 @@ union cavm_mdab_dspx_multicoreconfiguration_com_sts
                                                                  This register is read only when accessed through the EDAP or one of the FIC slave ports. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_multicoreconfiguration_com_sts_s cn; */
+    /* struct cavm_cbpx_multicoreconfiguration_com_sts_s cn; */
 };
-typedef union cavm_mdab_dspx_multicoreconfiguration_com_sts cavm_mdab_dspx_multicoreconfiguration_com_sts_t;
+typedef union cavm_cbpx_multicoreconfiguration_com_sts cavm_cbpx_multicoreconfiguration_com_sts_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_STS(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_STS(unsigned long a)
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_COM_STS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_COM_STS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044820080ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_MULTICORECONFIGURATION_COM_STS", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_MULTICORECONFIGURATION_COM_STS", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_STS(a) cavm_mdab_dspx_multicoreconfiguration_com_sts_t
-#define bustype_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_STS(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_STS(a) "MDAB_DSPX_MULTICORECONFIGURATION_COM_STS"
-#define busnum_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_STS(a) (a)
-#define arguments_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_COM_STS(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_MULTICORECONFIGURATION_COM_STS(a) cavm_cbpx_multicoreconfiguration_com_sts_t
+#define bustype_CAVM_CBPX_MULTICORECONFIGURATION_COM_STS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_MULTICORECONFIGURATION_COM_STS(a) "CBPX_MULTICORECONFIGURATION_COM_STS"
+#define busnum_CAVM_CBPX_MULTICORECONFIGURATION_COM_STS(a) (a)
+#define arguments_CAVM_CBPX_MULTICORECONFIGURATION_COM_STS(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_multicoreconfiguration_snoop_csr
+ * Register (RSL32b) cbp#_multicoreconfiguration_snoop_csr
  *
- * MDAB Dsp Multicoreconfiguration Snoop Csr Register
+ * CBP Multicoreconfiguration Snoop Csr Register
  */
-union cavm_mdab_dspx_multicoreconfiguration_snoop_csr
+union cavm_cbpx_multicoreconfiguration_snoop_csr
 {
     uint32_t u;
-    struct cavm_mdab_dspx_multicoreconfiguration_snoop_csr_s
+    struct cavm_cbpx_multicoreconfiguration_snoop_csr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_4_31         : 28;
-        uint32_t snoop_int_en          : 1;  /**< [  3:  3](RO) Snooping detection interrupt enable
+        uint32_t snoop_int_en          : 1;  /**< [  3:  3](R/W) Snooping detection interrupt enable
                                                                  0: Disabled
                                                                  1: Enabled */
-        uint32_t snoop_sts             : 1;  /**< [  2:  2](RO) Snooping detection; Writing 0 clears this bit.
+        uint32_t snoop_sts             : 1;  /**< [  2:  2](R/W/H) Snooping detection; Writing 0 clears this bit.
                                                                  0: No access
                                                                  1: IDM accessed */
-        uint32_t snoop_rd_wr           : 2;  /**< [  1:  0](RO) Snooping Read Write Access Type
+        uint32_t snoop_rd_wr           : 2;  /**< [  1:  0](R/W) Snooping Read Write Access Type
                                                                  00: Snoop is disabled.
                                                                  01: Snoop RD is enabled.
                                                                  10: Snoop WR is enabled
                                                                  11: Snoop is enabled for both RD and WR. */
 #else /* Word 0 - Little Endian */
-        uint32_t snoop_rd_wr           : 2;  /**< [  1:  0](RO) Snooping Read Write Access Type
+        uint32_t snoop_rd_wr           : 2;  /**< [  1:  0](R/W) Snooping Read Write Access Type
                                                                  00: Snoop is disabled.
                                                                  01: Snoop RD is enabled.
                                                                  10: Snoop WR is enabled
                                                                  11: Snoop is enabled for both RD and WR. */
-        uint32_t snoop_sts             : 1;  /**< [  2:  2](RO) Snooping detection; Writing 0 clears this bit.
+        uint32_t snoop_sts             : 1;  /**< [  2:  2](R/W/H) Snooping detection; Writing 0 clears this bit.
                                                                  0: No access
                                                                  1: IDM accessed */
-        uint32_t snoop_int_en          : 1;  /**< [  3:  3](RO) Snooping detection interrupt enable
+        uint32_t snoop_int_en          : 1;  /**< [  3:  3](R/W) Snooping detection interrupt enable
                                                                  0: Disabled
                                                                  1: Enabled */
         uint32_t reserved_4_31         : 28;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_multicoreconfiguration_snoop_csr_s cn; */
+    /* struct cavm_cbpx_multicoreconfiguration_snoop_csr_s cn; */
 };
-typedef union cavm_mdab_dspx_multicoreconfiguration_snoop_csr cavm_mdab_dspx_multicoreconfiguration_snoop_csr_t;
+typedef union cavm_cbpx_multicoreconfiguration_snoop_csr cavm_cbpx_multicoreconfiguration_snoop_csr_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_SNOOP_CSR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_SNOOP_CSR(unsigned long a)
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_SNOOP_CSR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_SNOOP_CSR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044820098ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_MULTICORECONFIGURATION_SNOOP_CSR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_MULTICORECONFIGURATION_SNOOP_CSR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_SNOOP_CSR(a) cavm_mdab_dspx_multicoreconfiguration_snoop_csr_t
-#define bustype_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_SNOOP_CSR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_SNOOP_CSR(a) "MDAB_DSPX_MULTICORECONFIGURATION_SNOOP_CSR"
-#define busnum_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_SNOOP_CSR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_SNOOP_CSR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_MULTICORECONFIGURATION_SNOOP_CSR(a) cavm_cbpx_multicoreconfiguration_snoop_csr_t
+#define bustype_CAVM_CBPX_MULTICORECONFIGURATION_SNOOP_CSR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_MULTICORECONFIGURATION_SNOOP_CSR(a) "CBPX_MULTICORECONFIGURATION_SNOOP_CSR"
+#define busnum_CAVM_CBPX_MULTICORECONFIGURATION_SNOOP_CSR(a) (a)
+#define arguments_CAVM_CBPX_MULTICORECONFIGURATION_SNOOP_CSR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_multicoreconfiguration_start_add
+ * Register (RSL32b) cbp#_multicoreconfiguration_start_add
  *
- * MDAB Dsp Multicoreconfiguration Start Add Register
+ * CBP Multicoreconfiguration Start Add Register
  */
-union cavm_mdab_dspx_multicoreconfiguration_start_add
+union cavm_cbpx_multicoreconfiguration_start_add
 {
     uint32_t u;
-    struct cavm_mdab_dspx_multicoreconfiguration_start_add_s
+    struct cavm_cbpx_multicoreconfiguration_start_add_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_21_31        : 11;
@@ -8059,33 +8871,33 @@ union cavm_mdab_dspx_multicoreconfiguration_start_add
         uint32_t reserved_21_31        : 11;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_multicoreconfiguration_start_add_s cn; */
+    /* struct cavm_cbpx_multicoreconfiguration_start_add_s cn; */
 };
-typedef union cavm_mdab_dspx_multicoreconfiguration_start_add cavm_mdab_dspx_multicoreconfiguration_start_add_t;
+typedef union cavm_cbpx_multicoreconfiguration_start_add cavm_cbpx_multicoreconfiguration_start_add_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_START_ADD(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_START_ADD(unsigned long a)
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_START_ADD(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_START_ADD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044820090ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_MULTICORECONFIGURATION_START_ADD", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_MULTICORECONFIGURATION_START_ADD", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_START_ADD(a) cavm_mdab_dspx_multicoreconfiguration_start_add_t
-#define bustype_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_START_ADD(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_START_ADD(a) "MDAB_DSPX_MULTICORECONFIGURATION_START_ADD"
-#define busnum_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_START_ADD(a) (a)
-#define arguments_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_START_ADD(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_MULTICORECONFIGURATION_START_ADD(a) cavm_cbpx_multicoreconfiguration_start_add_t
+#define bustype_CAVM_CBPX_MULTICORECONFIGURATION_START_ADD(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_MULTICORECONFIGURATION_START_ADD(a) "CBPX_MULTICORECONFIGURATION_START_ADD"
+#define busnum_CAVM_CBPX_MULTICORECONFIGURATION_START_ADD(a) (a)
+#define arguments_CAVM_CBPX_MULTICORECONFIGURATION_START_ADD(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_multicoreconfiguration_top_add
+ * Register (RSL32b) cbp#_multicoreconfiguration_top_add
  *
- * MDAB Dsp Multicoreconfiguration Top Add Register
+ * CBP Multicoreconfiguration Top Add Register
  */
-union cavm_mdab_dspx_multicoreconfiguration_top_add
+union cavm_cbpx_multicoreconfiguration_top_add
 {
     uint32_t u;
-    struct cavm_mdab_dspx_multicoreconfiguration_top_add_s
+    struct cavm_cbpx_multicoreconfiguration_top_add_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_21_31        : 11;
@@ -8097,33 +8909,33 @@ union cavm_mdab_dspx_multicoreconfiguration_top_add
         uint32_t reserved_21_31        : 11;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_multicoreconfiguration_top_add_s cn; */
+    /* struct cavm_cbpx_multicoreconfiguration_top_add_s cn; */
 };
-typedef union cavm_mdab_dspx_multicoreconfiguration_top_add cavm_mdab_dspx_multicoreconfiguration_top_add_t;
+typedef union cavm_cbpx_multicoreconfiguration_top_add cavm_cbpx_multicoreconfiguration_top_add_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_TOP_ADD(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_MULTICORECONFIGURATION_TOP_ADD(unsigned long a)
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_TOP_ADD(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_MULTICORECONFIGURATION_TOP_ADD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044820094ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_MULTICORECONFIGURATION_TOP_ADD", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_MULTICORECONFIGURATION_TOP_ADD", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_TOP_ADD(a) cavm_mdab_dspx_multicoreconfiguration_top_add_t
-#define bustype_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_TOP_ADD(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_TOP_ADD(a) "MDAB_DSPX_MULTICORECONFIGURATION_TOP_ADD"
-#define busnum_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_TOP_ADD(a) (a)
-#define arguments_CAVM_MDAB_DSPX_MULTICORECONFIGURATION_TOP_ADD(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_MULTICORECONFIGURATION_TOP_ADD(a) cavm_cbpx_multicoreconfiguration_top_add_t
+#define bustype_CAVM_CBPX_MULTICORECONFIGURATION_TOP_ADD(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_MULTICORECONFIGURATION_TOP_ADD(a) "CBPX_MULTICORECONFIGURATION_TOP_ADD"
+#define busnum_CAVM_CBPX_MULTICORECONFIGURATION_TOP_ADD(a) (a)
+#define arguments_CAVM_CBPX_MULTICORECONFIGURATION_TOP_ADD(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_bpcount_drd_ocm_acount
+ * Register (RSL32b) cbp#_ocem_bpcount_drd_ocm_acount
  *
- * MDAB Dsp Ocem Bpcount Drd Ocm Acount Register
+ * CBP Ocem Bpcount Drd Ocm Acount Register
  */
-union cavm_mdab_dspx_ocem_bpcount_drd_ocm_acount
+union cavm_cbpx_ocem_bpcount_drd_ocm_acount
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_bpcount_drd_ocm_acount_s
+    struct cavm_cbpx_ocem_bpcount_drd_ocm_acount_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
@@ -8139,33 +8951,33 @@ union cavm_mdab_dspx_ocem_bpcount_drd_ocm_acount
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_bpcount_drd_ocm_acount_s cn; */
+    /* struct cavm_cbpx_ocem_bpcount_drd_ocm_acount_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_bpcount_drd_ocm_acount cavm_mdab_dspx_ocem_bpcount_drd_ocm_acount_t;
+typedef union cavm_cbpx_ocem_bpcount_drd_ocm_acount cavm_cbpx_ocem_bpcount_drd_ocm_acount_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448221f0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(a) cavm_mdab_dspx_ocem_bpcount_drd_ocm_acount_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(a) "MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT"
-#define busnum_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(a) cavm_cbpx_ocem_bpcount_drd_ocm_acount_t
+#define bustype_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(a) "CBPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT"
+#define busnum_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(a) (a)
+#define arguments_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_ACOUNT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_bpcount_drd_ocm_dcount
+ * Register (RSL32b) cbp#_ocem_bpcount_drd_ocm_dcount
  *
- * MDAB Dsp Ocem Bpcount Drd Ocm Dcount Register
+ * CBP Ocem Bpcount Drd Ocm Dcount Register
  */
-union cavm_mdab_dspx_ocem_bpcount_drd_ocm_dcount
+union cavm_cbpx_ocem_bpcount_drd_ocm_dcount
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_bpcount_drd_ocm_dcount_s
+    struct cavm_cbpx_ocem_bpcount_drd_ocm_dcount_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
@@ -8179,37 +8991,37 @@ union cavm_mdab_dspx_ocem_bpcount_drd_ocm_dcount
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_bpcount_drd_ocm_dcount_s cn; */
+    /* struct cavm_cbpx_ocem_bpcount_drd_ocm_dcount_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_bpcount_drd_ocm_dcount cavm_mdab_dspx_ocem_bpcount_drd_ocm_dcount_t;
+typedef union cavm_cbpx_ocem_bpcount_drd_ocm_dcount cavm_cbpx_ocem_bpcount_drd_ocm_dcount_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448221f4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(a) cavm_mdab_dspx_ocem_bpcount_drd_ocm_dcount_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(a) "MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT"
-#define busnum_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(a) cavm_cbpx_ocem_bpcount_drd_ocm_dcount_t
+#define bustype_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(a) "CBPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT"
+#define busnum_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(a) (a)
+#define arguments_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCM_DCOUNT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_bpcount_drd_ocore_drd
+ * Register (RSL32b) cbp#_ocem_bpcount_drd_ocore_drd
  *
- * MDAB Dsp Ocem Bpcount Drd Ocore Drd Register
+ * CBP Ocem Bpcount Drd Ocore Drd Register
  * The OCORE_DRD register is written whenever the address 0xFC is used regardless of
  * the iopage field in mod2 register
  * Note: This register is write-only. The host can read the value written to this
  * register by reading scan chain 0x9F.
  */
-union cavm_mdab_dspx_ocem_bpcount_drd_ocore_drd
+union cavm_cbpx_ocem_bpcount_drd_ocore_drd
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_bpcount_drd_ocore_drd_s
+    struct cavm_cbpx_ocem_bpcount_drd_ocore_drd_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocore_drd             : 32; /**< [ 31:  0](R/W) Output core data read register
@@ -8219,33 +9031,33 @@ union cavm_mdab_dspx_ocem_bpcount_drd_ocore_drd
                                                                  The OCORE_DRD register is used by the core software to pass values to the debugger. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_bpcount_drd_ocore_drd_s cn; */
+    /* struct cavm_cbpx_ocem_bpcount_drd_ocore_drd_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_bpcount_drd_ocore_drd cavm_mdab_dspx_ocem_bpcount_drd_ocore_drd_t;
+typedef union cavm_cbpx_ocem_bpcount_drd_ocore_drd cavm_cbpx_ocem_bpcount_drd_ocore_drd_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCORE_DRD(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCORE_DRD(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_BPCOUNT_DRD_OCORE_DRD(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_BPCOUNT_DRD_OCORE_DRD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448221fcll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_BPCOUNT_DRD_OCORE_DRD", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_BPCOUNT_DRD_OCORE_DRD", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCORE_DRD(a) cavm_mdab_dspx_ocem_bpcount_drd_ocore_drd_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCORE_DRD(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCORE_DRD(a) "MDAB_DSPX_OCEM_BPCOUNT_DRD_OCORE_DRD"
-#define busnum_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCORE_DRD(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_BPCOUNT_DRD_OCORE_DRD(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCORE_DRD(a) cavm_cbpx_ocem_bpcount_drd_ocore_drd_t
+#define bustype_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCORE_DRD(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCORE_DRD(a) "CBPX_OCEM_BPCOUNT_DRD_OCORE_DRD"
+#define busnum_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCORE_DRD(a) (a)
+#define arguments_CAVM_CBPX_OCEM_BPCOUNT_DRD_OCORE_DRD(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_cevax_d3_pc
+ * Register (RSL32b) cbp#_ocem_cevax_d3_pc
  *
- * MDAB Dsp Ocem Cevax D3 Pc Register
+ * CBP Ocem Cevax D3 Pc Register
  */
-union cavm_mdab_dspx_ocem_cevax_d3_pc
+union cavm_cbpx_ocem_cevax_d3_pc
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_cevax_d3_pc_s
+    struct cavm_cbpx_ocem_cevax_d3_pc_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ceva_d3_pc            : 32; /**< [ 31:  0](RO) PC of the D3 stage
@@ -8255,33 +9067,33 @@ union cavm_mdab_dspx_ocem_cevax_d3_pc
                                                                  This register is read only */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_cevax_d3_pc_s cn; */
+    /* struct cavm_cbpx_ocem_cevax_d3_pc_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_cevax_d3_pc cavm_mdab_dspx_ocem_cevax_d3_pc_t;
+typedef union cavm_cbpx_ocem_cevax_d3_pc cavm_cbpx_ocem_cevax_d3_pc_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_CEVAX_D3_PC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_CEVAX_D3_PC(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_CEVAX_D3_PC(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_CEVAX_D3_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822134ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_CEVAX_D3_PC", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_CEVAX_D3_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_CEVAX_D3_PC(a) cavm_mdab_dspx_ocem_cevax_d3_pc_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_CEVAX_D3_PC(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_CEVAX_D3_PC(a) "MDAB_DSPX_OCEM_CEVAX_D3_PC"
-#define busnum_CAVM_MDAB_DSPX_OCEM_CEVAX_D3_PC(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_CEVAX_D3_PC(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_CEVAX_D3_PC(a) cavm_cbpx_ocem_cevax_d3_pc_t
+#define bustype_CAVM_CBPX_OCEM_CEVAX_D3_PC(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_CEVAX_D3_PC(a) "CBPX_OCEM_CEVAX_D3_PC"
+#define busnum_CAVM_CBPX_OCEM_CEVAX_D3_PC(a) (a)
+#define arguments_CAVM_CBPX_OCEM_CEVAX_D3_PC(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_core_config
+ * Register (RSL32b) cbp#_ocem_core_config
  *
- * MDAB Dsp Ocem Core Config Register
+ * CBP Ocem Core Config Register
  */
-union cavm_mdab_dspx_ocem_core_config
+union cavm_cbpx_ocem_core_config
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_core_config_s
+    struct cavm_cbpx_ocem_core_config_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t desprdr               : 1;  /**< [ 31: 31](RO) De-spreader configuration
@@ -8441,71 +9253,71 @@ union cavm_mdab_dspx_ocem_core_config
                                                                  0 = De-spreader not included */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_core_config_s cn; */
+    /* struct cavm_cbpx_ocem_core_config_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_core_config cavm_mdab_dspx_ocem_core_config_t;
+typedef union cavm_cbpx_ocem_core_config cavm_cbpx_ocem_core_config_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_CORE_CONFIG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_CORE_CONFIG(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_CORE_CONFIG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_CORE_CONFIG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482217cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_CORE_CONFIG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_CORE_CONFIG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_CORE_CONFIG(a) cavm_mdab_dspx_ocem_core_config_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_CORE_CONFIG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_CORE_CONFIG(a) "MDAB_DSPX_OCEM_CORE_CONFIG"
-#define busnum_CAVM_MDAB_DSPX_OCEM_CORE_CONFIG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_CORE_CONFIG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_CORE_CONFIG(a) cavm_cbpx_ocem_core_config_t
+#define bustype_CAVM_CBPX_OCEM_CORE_CONFIG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_CORE_CONFIG(a) "CBPX_OCEM_CORE_CONFIG"
+#define busnum_CAVM_CBPX_OCEM_CORE_CONFIG(a) (a)
+#define arguments_CAVM_CBPX_OCEM_CORE_CONFIG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_core_id
+ * Register (RSL32b) cbp#_ocem_core_id
  *
- * MDAB Dsp Ocem Core Id Register
+ * CBP Ocem Core Id Register
  */
-union cavm_mdab_dspx_ocem_core_id
+union cavm_cbpx_ocem_core_id
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_core_id_s
+    struct cavm_cbpx_ocem_core_id_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t core_id               : 32; /**< [ 31:  0](RO) The value of this register is sampled at reset from the core_id input bus.
+        uint32_t core_id               : 32; /**< [ 31:  0](RO/H) The value of this register is sampled at reset from the core_id input bus.
                                                                  This register is read only.
                                                                  For EDAP or FICSR ports the CORE_ID register can be  accessed using address 0x40_1004 . */
 #else /* Word 0 - Little Endian */
-        uint32_t core_id               : 32; /**< [ 31:  0](RO) The value of this register is sampled at reset from the core_id input bus.
+        uint32_t core_id               : 32; /**< [ 31:  0](RO/H) The value of this register is sampled at reset from the core_id input bus.
                                                                  This register is read only.
                                                                  For EDAP or FICSR ports the CORE_ID register can be  accessed using address 0x40_1004 . */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_core_id_s cn; */
+    /* struct cavm_cbpx_ocem_core_id_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_core_id cavm_mdab_dspx_ocem_core_id_t;
+typedef union cavm_cbpx_ocem_core_id cavm_cbpx_ocem_core_id_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_CORE_ID(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_CORE_ID(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_CORE_ID(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_CORE_ID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822178ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_CORE_ID", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_CORE_ID", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_CORE_ID(a) cavm_mdab_dspx_ocem_core_id_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_CORE_ID(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_CORE_ID(a) "MDAB_DSPX_OCEM_CORE_ID"
-#define busnum_CAVM_MDAB_DSPX_OCEM_CORE_ID(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_CORE_ID(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_CORE_ID(a) cavm_cbpx_ocem_core_id_t
+#define bustype_CAVM_CBPX_OCEM_CORE_ID(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_CORE_ID(a) "CBPX_OCEM_CORE_ID"
+#define busnum_CAVM_CBPX_OCEM_CORE_ID(a) (a)
+#define arguments_CAVM_CBPX_OCEM_CORE_ID(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_core_version
+ * Register (RSL32b) cbp#_ocem_core_version
  *
- * MDAB Dsp Ocem Core Version Register
+ * CBP Ocem Core Version Register
  */
-union cavm_mdab_dspx_ocem_core_version
+union cavm_cbpx_ocem_core_version
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_core_version_s
+    struct cavm_cbpx_ocem_core_version_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t core_version          : 32; /**< [ 31:  0](RO) Bits [31:16]: DSP core type
@@ -8541,33 +9353,33 @@ union cavm_mdab_dspx_ocem_core_version
                                                                  For EDAP or FICSR ports the CORE_VERSION register can be accessed using address 0x401000. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_core_version_s cn; */
+    /* struct cavm_cbpx_ocem_core_version_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_core_version cavm_mdab_dspx_ocem_core_version_t;
+typedef union cavm_cbpx_ocem_core_version cavm_cbpx_ocem_core_version_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_CORE_VERSION(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_CORE_VERSION(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_CORE_VERSION(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_CORE_VERSION(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822174ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_CORE_VERSION", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_CORE_VERSION", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_CORE_VERSION(a) cavm_mdab_dspx_ocem_core_version_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_CORE_VERSION(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_CORE_VERSION(a) "MDAB_DSPX_OCEM_CORE_VERSION"
-#define busnum_CAVM_MDAB_DSPX_OCEM_CORE_VERSION(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_CORE_VERSION(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_CORE_VERSION(a) cavm_cbpx_ocem_core_version_t
+#define bustype_CAVM_CBPX_OCEM_CORE_VERSION(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_CORE_VERSION(a) "CBPX_OCEM_CORE_VERSION"
+#define busnum_CAVM_CBPX_OCEM_CORE_VERSION(a) (a)
+#define arguments_CAVM_CBPX_OCEM_CORE_VERSION(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ficm_config
+ * Register (RSL32b) cbp#_ocem_ficm_config
  *
- * MDAB Dsp Ocem Ficm Config Register
+ * CBP Ocem Ficm Config Register
  */
-union cavm_mdab_dspx_ocem_ficm_config
+union cavm_cbpx_ocem_ficm_config
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ficm_config_s
+    struct cavm_cbpx_ocem_ficm_config_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_3_31         : 29;
@@ -8591,33 +9403,33 @@ union cavm_mdab_dspx_ocem_ficm_config
         uint32_t reserved_3_31         : 29;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ficm_config_s cn; */
+    /* struct cavm_cbpx_ocem_ficm_config_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ficm_config cavm_mdab_dspx_ocem_ficm_config_t;
+typedef union cavm_cbpx_ocem_ficm_config cavm_cbpx_ocem_ficm_config_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_FICM_CONFIG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_FICM_CONFIG(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_FICM_CONFIG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_FICM_CONFIG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822168ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_FICM_CONFIG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_FICM_CONFIG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_FICM_CONFIG(a) cavm_mdab_dspx_ocem_ficm_config_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_FICM_CONFIG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_FICM_CONFIG(a) "MDAB_DSPX_OCEM_FICM_CONFIG"
-#define busnum_CAVM_MDAB_DSPX_OCEM_FICM_CONFIG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_FICM_CONFIG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_FICM_CONFIG(a) cavm_cbpx_ocem_ficm_config_t
+#define bustype_CAVM_CBPX_OCEM_FICM_CONFIG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_FICM_CONFIG(a) "CBPX_OCEM_FICM_CONFIG"
+#define busnum_CAVM_CBPX_OCEM_FICM_CONFIG(a) (a)
+#define arguments_CAVM_CBPX_OCEM_FICM_CONFIG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_fics_config
+ * Register (RSL32b) cbp#_ocem_fics_config
  *
- * MDAB Dsp Ocem Fics Config Register
+ * CBP Ocem Fics Config Register
  */
-union cavm_mdab_dspx_ocem_fics_config
+union cavm_cbpx_ocem_fics_config
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_fics_config_s
+    struct cavm_cbpx_ocem_fics_config_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_31           : 1;
@@ -8783,33 +9595,33 @@ union cavm_mdab_dspx_ocem_fics_config
         uint32_t reserved_31           : 1;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_fics_config_s cn; */
+    /* struct cavm_cbpx_ocem_fics_config_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_fics_config cavm_mdab_dspx_ocem_fics_config_t;
+typedef union cavm_cbpx_ocem_fics_config cavm_cbpx_ocem_fics_config_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_FICS_CONFIG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_FICS_CONFIG(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_FICS_CONFIG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_FICS_CONFIG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482216cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_FICS_CONFIG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_FICS_CONFIG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_FICS_CONFIG(a) cavm_mdab_dspx_ocem_fics_config_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_FICS_CONFIG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_FICS_CONFIG(a) "MDAB_DSPX_OCEM_FICS_CONFIG"
-#define busnum_CAVM_MDAB_DSPX_OCEM_FICS_CONFIG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_FICS_CONFIG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_FICS_CONFIG(a) cavm_cbpx_ocem_fics_config_t
+#define bustype_CAVM_CBPX_OCEM_FICS_CONFIG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_FICS_CONFIG(a) "CBPX_OCEM_FICS_CONFIG"
+#define busnum_CAVM_CBPX_OCEM_FICS_CONFIG(a) (a)
+#define arguments_CAVM_CBPX_OCEM_FICS_CONFIG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_mss_config
+ * Register (RSL32b) cbp#_ocem_mss_config
  *
- * MDAB Dsp Ocem Mss Config Register
+ * CBP Ocem Mss Config Register
  */
-union cavm_mdab_dspx_ocem_mss_config
+union cavm_cbpx_ocem_mss_config
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_mss_config_s
+    struct cavm_cbpx_ocem_mss_config_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_13_31        : 19;
@@ -8843,33 +9655,33 @@ union cavm_mdab_dspx_ocem_mss_config
         uint32_t reserved_13_31        : 19;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_mss_config_s cn; */
+    /* struct cavm_cbpx_ocem_mss_config_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_mss_config cavm_mdab_dspx_ocem_mss_config_t;
+typedef union cavm_cbpx_ocem_mss_config cavm_cbpx_ocem_mss_config_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_MSS_CONFIG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_MSS_CONFIG(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_MSS_CONFIG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_MSS_CONFIG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482215cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_MSS_CONFIG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_MSS_CONFIG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_MSS_CONFIG(a) cavm_mdab_dspx_ocem_mss_config_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_MSS_CONFIG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_MSS_CONFIG(a) "MDAB_DSPX_OCEM_MSS_CONFIG"
-#define busnum_CAVM_MDAB_DSPX_OCEM_MSS_CONFIG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_MSS_CONFIG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_MSS_CONFIG(a) cavm_cbpx_ocem_mss_config_t
+#define bustype_CAVM_CBPX_OCEM_MSS_CONFIG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_MSS_CONFIG(a) "CBPX_OCEM_MSS_CONFIG"
+#define busnum_CAVM_CBPX_OCEM_MSS_CONFIG(a) (a)
+#define arguments_CAVM_CBPX_OCEM_MSS_CONFIG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_control
+ * Register (RSL32b) cbp#_ocem_ocm_control
  *
- * MDAB Dsp Ocem Ocm Control Register
+ * CBP Ocem Ocm Control Register
  */
-union cavm_mdab_dspx_ocem_ocm_control
+union cavm_cbpx_ocem_ocm_control
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_control_s
+    struct cavm_cbpx_ocem_ocm_control_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
@@ -8927,33 +9739,33 @@ union cavm_mdab_dspx_ocem_ocm_control
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_control_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_control_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_control cavm_mdab_dspx_ocem_ocm_control_t;
+typedef union cavm_cbpx_ocem_ocm_control cavm_cbpx_ocem_ocm_control_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_CONTROL(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_CONTROL(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_CONTROL(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_CONTROL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822150ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_CONTROL", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_CONTROL", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_CONTROL(a) cavm_mdab_dspx_ocem_ocm_control_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_CONTROL(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_CONTROL(a) "MDAB_DSPX_OCEM_OCM_CONTROL"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_CONTROL(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_CONTROL(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_CONTROL(a) cavm_cbpx_ocem_ocm_control_t
+#define bustype_CAVM_CBPX_OCEM_OCM_CONTROL(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_CONTROL(a) "CBPX_OCEM_OCM_CONTROL"
+#define busnum_CAVM_CBPX_OCEM_OCM_CONTROL(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_CONTROL(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_dadd_high
+ * Register (RSL32b) cbp#_ocem_ocm_dadd_high
  *
- * MDAB Dsp Ocem Ocm Dadd High Register
+ * CBP Ocem Ocm Dadd High Register
  */
-union cavm_mdab_dspx_ocem_ocm_dadd_high
+union cavm_cbpx_ocem_ocm_dadd_high
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_dadd_high_s
+    struct cavm_cbpx_ocem_ocm_dadd_high_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_dadd_high         : 32; /**< [ 31:  0](R/W) Data address breakpoint higher address:
@@ -8963,33 +9775,33 @@ union cavm_mdab_dspx_ocem_ocm_dadd_high
                                                                  This register represents the upper boundary of the data address range. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_dadd_high_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_dadd_high_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_dadd_high cavm_mdab_dspx_ocem_ocm_dadd_high_t;
+typedef union cavm_cbpx_ocem_ocm_dadd_high cavm_cbpx_ocem_ocm_dadd_high_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_DADD_HIGH(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_DADD_HIGH(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_DADD_HIGH(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_DADD_HIGH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822140ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_DADD_HIGH", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_DADD_HIGH", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_DADD_HIGH(a) cavm_mdab_dspx_ocem_ocm_dadd_high_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_DADD_HIGH(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_DADD_HIGH(a) "MDAB_DSPX_OCEM_OCM_DADD_HIGH"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_DADD_HIGH(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_DADD_HIGH(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_DADD_HIGH(a) cavm_cbpx_ocem_ocm_dadd_high_t
+#define bustype_CAVM_CBPX_OCEM_OCM_DADD_HIGH(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_DADD_HIGH(a) "CBPX_OCEM_OCM_DADD_HIGH"
+#define busnum_CAVM_CBPX_OCEM_OCM_DADD_HIGH(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_DADD_HIGH(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_dadd_low
+ * Register (RSL32b) cbp#_ocem_ocm_dadd_low
  *
- * MDAB Dsp Ocem Ocm Dadd Low Register
+ * CBP Ocem Ocm Dadd Low Register
  */
-union cavm_mdab_dspx_ocem_ocm_dadd_low
+union cavm_cbpx_ocem_ocm_dadd_low
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_dadd_low_s
+    struct cavm_cbpx_ocem_ocm_dadd_low_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_dadd_low          : 32; /**< [ 31:  0](R/W) Data address breakpoint lower address:
@@ -8999,33 +9811,33 @@ union cavm_mdab_dspx_ocem_ocm_dadd_low
                                                                  This register represents the lower boundary of the data address range. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_dadd_low_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_dadd_low_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_dadd_low cavm_mdab_dspx_ocem_ocm_dadd_low_t;
+typedef union cavm_cbpx_ocem_ocm_dadd_low cavm_cbpx_ocem_ocm_dadd_low_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_DADD_LOW(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_DADD_LOW(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_DADD_LOW(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_DADD_LOW(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822130ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_DADD_LOW", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_DADD_LOW", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_DADD_LOW(a) cavm_mdab_dspx_ocem_ocm_dadd_low_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_DADD_LOW(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_DADD_LOW(a) "MDAB_DSPX_OCEM_OCM_DADD_LOW"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_DADD_LOW(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_DADD_LOW(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_DADD_LOW(a) cavm_cbpx_ocem_ocm_dadd_low_t
+#define bustype_CAVM_CBPX_OCEM_OCM_DADD_LOW(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_DADD_LOW(a) "CBPX_OCEM_OCM_DADD_LOW"
+#define busnum_CAVM_CBPX_OCEM_OCM_DADD_LOW(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_DADD_LOW(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_dvm
+ * Register (RSL32b) cbp#_ocem_ocm_dvm
  *
- * MDAB Dsp Ocem Ocm Dvm Register
+ * CBP Ocem Ocm Dvm Register
  */
-union cavm_mdab_dspx_ocem_ocm_dvm
+union cavm_cbpx_ocem_ocm_dvm
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_dvm_s
+    struct cavm_cbpx_ocem_ocm_dvm_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_dvm               : 32; /**< [ 31:  0](R/W) Data value match register (Enhanced mode only):
@@ -9037,33 +9849,33 @@ union cavm_mdab_dspx_ocem_ocm_dvm
                                                                  register is coupled with the OCM_DCOUNT register. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_dvm_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_dvm_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_dvm cavm_mdab_dspx_ocem_ocm_dvm_t;
+typedef union cavm_cbpx_ocem_ocm_dvm cavm_cbpx_ocem_ocm_dvm_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_DVM(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_DVM(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_DVM(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_DVM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822104ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_DVM", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_DVM", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_DVM(a) cavm_mdab_dspx_ocem_ocm_dvm_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_DVM(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_DVM(a) "MDAB_DSPX_OCEM_OCM_DVM"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_DVM(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_DVM(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_DVM(a) cavm_cbpx_ocem_ocm_dvm_t
+#define bustype_CAVM_CBPX_OCEM_OCM_DVM(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_DVM(a) "CBPX_OCEM_OCM_DVM"
+#define busnum_CAVM_CBPX_OCEM_OCM_DVM(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_DVM(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_ofio1
+ * Register (RSL32b) cbp#_ocem_ocm_ofio1
  *
- * MDAB Dsp Ocem Ocm Ofio1 Register
+ * CBP Ocem Ocm Ofio1 Register
  */
-union cavm_mdab_dspx_ocem_ocm_ofio1
+union cavm_cbpx_ocem_ocm_ofio1
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_ofio1_s
+    struct cavm_cbpx_ocem_ocm_ofio1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_ofio1             : 32; /**< [ 31:  0](R/W) File I/O #1 register */
@@ -9071,33 +9883,33 @@ union cavm_mdab_dspx_ocem_ocm_ofio1
         uint32_t ocm_ofio1             : 32; /**< [ 31:  0](R/W) File I/O #1 register */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_ofio1_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_ofio1_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_ofio1 cavm_mdab_dspx_ocem_ocm_ofio1_t;
+typedef union cavm_cbpx_ocem_ocm_ofio1 cavm_cbpx_ocem_ocm_ofio1_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO1(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO1(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO1(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822118ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_OFIO1", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_OFIO1", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_OFIO1(a) cavm_mdab_dspx_ocem_ocm_ofio1_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_OFIO1(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_OFIO1(a) "MDAB_DSPX_OCEM_OCM_OFIO1"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_OFIO1(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_OFIO1(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_OFIO1(a) cavm_cbpx_ocem_ocm_ofio1_t
+#define bustype_CAVM_CBPX_OCEM_OCM_OFIO1(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_OFIO1(a) "CBPX_OCEM_OCM_OFIO1"
+#define busnum_CAVM_CBPX_OCEM_OCM_OFIO1(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_OFIO1(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_ofio2
+ * Register (RSL32b) cbp#_ocem_ocm_ofio2
  *
- * MDAB Dsp Ocem Ocm Ofio2 Register
+ * CBP Ocem Ocm Ofio2 Register
  */
-union cavm_mdab_dspx_ocem_ocm_ofio2
+union cavm_cbpx_ocem_ocm_ofio2
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_ofio2_s
+    struct cavm_cbpx_ocem_ocm_ofio2_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_ofio2             : 32; /**< [ 31:  0](R/W) File I/O #2 register */
@@ -9105,33 +9917,33 @@ union cavm_mdab_dspx_ocem_ocm_ofio2
         uint32_t ocm_ofio2             : 32; /**< [ 31:  0](R/W) File I/O #2 register */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_ofio2_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_ofio2_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_ofio2 cavm_mdab_dspx_ocem_ocm_ofio2_t;
+typedef union cavm_cbpx_ocem_ocm_ofio2 cavm_cbpx_ocem_ocm_ofio2_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO2(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO2(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO2(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482211cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_OFIO2", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_OFIO2", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_OFIO2(a) cavm_mdab_dspx_ocem_ocm_ofio2_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_OFIO2(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_OFIO2(a) "MDAB_DSPX_OCEM_OCM_OFIO2"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_OFIO2(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_OFIO2(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_OFIO2(a) cavm_cbpx_ocem_ocm_ofio2_t
+#define bustype_CAVM_CBPX_OCEM_OCM_OFIO2(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_OFIO2(a) "CBPX_OCEM_OCM_OFIO2"
+#define busnum_CAVM_CBPX_OCEM_OCM_OFIO2(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_OFIO2(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_ofio3
+ * Register (RSL32b) cbp#_ocem_ocm_ofio3
  *
- * MDAB Dsp Ocem Ocm Ofio3 Register
+ * CBP Ocem Ocm Ofio3 Register
  */
-union cavm_mdab_dspx_ocem_ocm_ofio3
+union cavm_cbpx_ocem_ocm_ofio3
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_ofio3_s
+    struct cavm_cbpx_ocem_ocm_ofio3_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_ofio3             : 32; /**< [ 31:  0](R/W) File I/O #3 register */
@@ -9139,33 +9951,33 @@ union cavm_mdab_dspx_ocem_ocm_ofio3
         uint32_t ocm_ofio3             : 32; /**< [ 31:  0](R/W) File I/O #3 register */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_ofio3_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_ofio3_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_ofio3 cavm_mdab_dspx_ocem_ocm_ofio3_t;
+typedef union cavm_cbpx_ocem_ocm_ofio3 cavm_cbpx_ocem_ocm_ofio3_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO3(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO3(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO3(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822128ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_OFIO3", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_OFIO3", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_OFIO3(a) cavm_mdab_dspx_ocem_ocm_ofio3_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_OFIO3(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_OFIO3(a) "MDAB_DSPX_OCEM_OCM_OFIO3"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_OFIO3(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_OFIO3(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_OFIO3(a) cavm_cbpx_ocem_ocm_ofio3_t
+#define bustype_CAVM_CBPX_OCEM_OCM_OFIO3(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_OFIO3(a) "CBPX_OCEM_OCM_OFIO3"
+#define busnum_CAVM_CBPX_OCEM_OCM_OFIO3(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_OFIO3(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_ofio4
+ * Register (RSL32b) cbp#_ocem_ocm_ofio4
  *
- * MDAB Dsp Ocem Ocm Ofio4 Register
+ * CBP Ocem Ocm Ofio4 Register
  */
-union cavm_mdab_dspx_ocem_ocm_ofio4
+union cavm_cbpx_ocem_ocm_ofio4
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_ofio4_s
+    struct cavm_cbpx_ocem_ocm_ofio4_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_ofio4             : 32; /**< [ 31:  0](R/W) File I/O #4 register */
@@ -9173,33 +9985,33 @@ union cavm_mdab_dspx_ocem_ocm_ofio4
         uint32_t ocm_ofio4             : 32; /**< [ 31:  0](R/W) File I/O #4 register */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_ofio4_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_ofio4_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_ofio4 cavm_mdab_dspx_ocem_ocm_ofio4_t;
+typedef union cavm_cbpx_ocem_ocm_ofio4 cavm_cbpx_ocem_ocm_ofio4_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO4(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO4(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO4(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482212cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_OFIO4", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_OFIO4", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_OFIO4(a) cavm_mdab_dspx_ocem_ocm_ofio4_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_OFIO4(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_OFIO4(a) "MDAB_DSPX_OCEM_OCM_OFIO4"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_OFIO4(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_OFIO4(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_OFIO4(a) cavm_cbpx_ocem_ocm_ofio4_t
+#define bustype_CAVM_CBPX_OCEM_OCM_OFIO4(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_OFIO4(a) "CBPX_OCEM_OCM_OFIO4"
+#define busnum_CAVM_CBPX_OCEM_OCM_OFIO4(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_OFIO4(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_ofio5
+ * Register (RSL32b) cbp#_ocem_ocm_ofio5
  *
- * MDAB Dsp Ocem Ocm Ofio5 Register
+ * CBP Ocem Ocm Ofio5 Register
  */
-union cavm_mdab_dspx_ocem_ocm_ofio5
+union cavm_cbpx_ocem_ocm_ofio5
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_ofio5_s
+    struct cavm_cbpx_ocem_ocm_ofio5_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_ofio5             : 32; /**< [ 31:  0](R/W) File I/O #5 register */
@@ -9207,33 +10019,33 @@ union cavm_mdab_dspx_ocem_ocm_ofio5
         uint32_t ocm_ofio5             : 32; /**< [ 31:  0](R/W) File I/O #5 register */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_ofio5_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_ofio5_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_ofio5 cavm_mdab_dspx_ocem_ocm_ofio5_t;
+typedef union cavm_cbpx_ocem_ocm_ofio5 cavm_cbpx_ocem_ocm_ofio5_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO5(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO5(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO5(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO5(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822138ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_OFIO5", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_OFIO5", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_OFIO5(a) cavm_mdab_dspx_ocem_ocm_ofio5_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_OFIO5(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_OFIO5(a) "MDAB_DSPX_OCEM_OCM_OFIO5"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_OFIO5(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_OFIO5(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_OFIO5(a) cavm_cbpx_ocem_ocm_ofio5_t
+#define bustype_CAVM_CBPX_OCEM_OCM_OFIO5(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_OFIO5(a) "CBPX_OCEM_OCM_OFIO5"
+#define busnum_CAVM_CBPX_OCEM_OCM_OFIO5(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_OFIO5(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_ofio6
+ * Register (RSL32b) cbp#_ocem_ocm_ofio6
  *
- * MDAB Dsp Ocem Ocm Ofio6 Register
+ * CBP Ocem Ocm Ofio6 Register
  */
-union cavm_mdab_dspx_ocem_ocm_ofio6
+union cavm_cbpx_ocem_ocm_ofio6
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_ofio6_s
+    struct cavm_cbpx_ocem_ocm_ofio6_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_ofio6             : 32; /**< [ 31:  0](R/W) File I/O #6 register */
@@ -9241,33 +10053,33 @@ union cavm_mdab_dspx_ocem_ocm_ofio6
         uint32_t ocm_ofio6             : 32; /**< [ 31:  0](R/W) File I/O #6 register */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_ofio6_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_ofio6_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_ofio6 cavm_mdab_dspx_ocem_ocm_ofio6_t;
+typedef union cavm_cbpx_ocem_ocm_ofio6 cavm_cbpx_ocem_ocm_ofio6_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO6(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO6(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO6(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO6(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482213cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_OFIO6", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_OFIO6", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_OFIO6(a) cavm_mdab_dspx_ocem_ocm_ofio6_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_OFIO6(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_OFIO6(a) "MDAB_DSPX_OCEM_OCM_OFIO6"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_OFIO6(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_OFIO6(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_OFIO6(a) cavm_cbpx_ocem_ocm_ofio6_t
+#define bustype_CAVM_CBPX_OCEM_OCM_OFIO6(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_OFIO6(a) "CBPX_OCEM_OCM_OFIO6"
+#define busnum_CAVM_CBPX_OCEM_OCM_OFIO6(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_OFIO6(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_ofio7
+ * Register (RSL32b) cbp#_ocem_ocm_ofio7
  *
- * MDAB Dsp Ocem Ocm Ofio7 Register
+ * CBP Ocem Ocm Ofio7 Register
  */
-union cavm_mdab_dspx_ocem_ocm_ofio7
+union cavm_cbpx_ocem_ocm_ofio7
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_ofio7_s
+    struct cavm_cbpx_ocem_ocm_ofio7_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_ofio7             : 32; /**< [ 31:  0](R/W) File I/O #7 register */
@@ -9275,33 +10087,33 @@ union cavm_mdab_dspx_ocem_ocm_ofio7
         uint32_t ocm_ofio7             : 32; /**< [ 31:  0](R/W) File I/O #7 register */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_ofio7_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_ofio7_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_ofio7 cavm_mdab_dspx_ocem_ocm_ofio7_t;
+typedef union cavm_cbpx_ocem_ocm_ofio7 cavm_cbpx_ocem_ocm_ofio7_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO7(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO7(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO7(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO7(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822148ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_OFIO7", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_OFIO7", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_OFIO7(a) cavm_mdab_dspx_ocem_ocm_ofio7_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_OFIO7(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_OFIO7(a) "MDAB_DSPX_OCEM_OCM_OFIO7"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_OFIO7(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_OFIO7(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_OFIO7(a) cavm_cbpx_ocem_ocm_ofio7_t
+#define bustype_CAVM_CBPX_OCEM_OCM_OFIO7(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_OFIO7(a) "CBPX_OCEM_OCM_OFIO7"
+#define busnum_CAVM_CBPX_OCEM_OCM_OFIO7(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_OFIO7(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_ofio7p
+ * Register (RSL32b) cbp#_ocem_ocm_ofio7p
  *
- * MDAB Dsp Ocem Ocm Ofio7p Register
+ * CBP Ocem Ocm Ofio7p Register
  */
-union cavm_mdab_dspx_ocem_ocm_ofio7p
+union cavm_cbpx_ocem_ocm_ofio7p
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_ofio7p_s
+    struct cavm_cbpx_ocem_ocm_ofio7p_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_ofio7p            : 32; /**< [ 31:  0](RO) "File I/O #7 register
@@ -9315,33 +10127,33 @@ union cavm_mdab_dspx_ocem_ocm_ofio7p
                                                                  through the JTAG scan chain without changing its value (read only)." */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_ofio7p_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_ofio7p_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_ofio7p cavm_mdab_dspx_ocem_ocm_ofio7p_t;
+typedef union cavm_cbpx_ocem_ocm_ofio7p cavm_cbpx_ocem_ocm_ofio7p_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO7P(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO7P(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO7P(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO7P(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822108ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_OFIO7P", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_OFIO7P", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_OFIO7P(a) cavm_mdab_dspx_ocem_ocm_ofio7p_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_OFIO7P(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_OFIO7P(a) "MDAB_DSPX_OCEM_OCM_OFIO7P"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_OFIO7P(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_OFIO7P(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_OFIO7P(a) cavm_cbpx_ocem_ocm_ofio7p_t
+#define bustype_CAVM_CBPX_OCEM_OCM_OFIO7P(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_OFIO7P(a) "CBPX_OCEM_OCM_OFIO7P"
+#define busnum_CAVM_CBPX_OCEM_OCM_OFIO7P(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_OFIO7P(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_ofio8
+ * Register (RSL32b) cbp#_ocem_ocm_ofio8
  *
- * MDAB Dsp Ocem Ocm Ofio8 Register
+ * CBP Ocem Ocm Ofio8 Register
  */
-union cavm_mdab_dspx_ocem_ocm_ofio8
+union cavm_cbpx_ocem_ocm_ofio8
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_ofio8_s
+    struct cavm_cbpx_ocem_ocm_ofio8_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_ofio8             : 32; /**< [ 31:  0](R/W) File I/O #8 register */
@@ -9349,33 +10161,33 @@ union cavm_mdab_dspx_ocem_ocm_ofio8
         uint32_t ocm_ofio8             : 32; /**< [ 31:  0](R/W) File I/O #8 register */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_ofio8_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_ofio8_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_ofio8 cavm_mdab_dspx_ocem_ocm_ofio8_t;
+typedef union cavm_cbpx_ocem_ocm_ofio8 cavm_cbpx_ocem_ocm_ofio8_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO8(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO8(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO8(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO8(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482214cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_OFIO8", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_OFIO8", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_OFIO8(a) cavm_mdab_dspx_ocem_ocm_ofio8_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_OFIO8(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_OFIO8(a) "MDAB_DSPX_OCEM_OCM_OFIO8"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_OFIO8(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_OFIO8(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_OFIO8(a) cavm_cbpx_ocem_ocm_ofio8_t
+#define bustype_CAVM_CBPX_OCEM_OCM_OFIO8(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_OFIO8(a) "CBPX_OCEM_OCM_OFIO8"
+#define busnum_CAVM_CBPX_OCEM_OCM_OFIO8(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_OFIO8(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_ofio8p
+ * Register (RSL32b) cbp#_ocem_ocm_ofio8p
  *
- * MDAB Dsp Ocem Ocm Ofio8p Register
+ * CBP Ocem Ocm Ofio8p Register
  */
-union cavm_mdab_dspx_ocem_ocm_ofio8p
+union cavm_cbpx_ocem_ocm_ofio8p
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_ofio8p_s
+    struct cavm_cbpx_ocem_ocm_ofio8p_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_ofio8p            : 32; /**< [ 31:  0](RO) "File I/O #8 register
@@ -9389,33 +10201,33 @@ union cavm_mdab_dspx_ocem_ocm_ofio8p
                                                                  through the JTAG scan chain without changing its value (read only)." */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_ofio8p_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_ofio8p_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_ofio8p cavm_mdab_dspx_ocem_ocm_ofio8p_t;
+typedef union cavm_cbpx_ocem_ocm_ofio8p cavm_cbpx_ocem_ocm_ofio8p_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO8P(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_OFIO8P(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO8P(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_OFIO8P(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482210cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_OFIO8P", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_OFIO8P", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_OFIO8P(a) cavm_mdab_dspx_ocem_ocm_ofio8p_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_OFIO8P(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_OFIO8P(a) "MDAB_DSPX_OCEM_OCM_OFIO8P"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_OFIO8P(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_OFIO8P(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_OFIO8P(a) cavm_cbpx_ocem_ocm_ofio8p_t
+#define bustype_CAVM_CBPX_OCEM_OCM_OFIO8P(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_OFIO8P(a) "CBPX_OCEM_OCM_OFIO8P"
+#define busnum_CAVM_CBPX_OCEM_OCM_OFIO8P(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_OFIO8P(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_padd1
+ * Register (RSL32b) cbp#_ocem_ocm_padd1
  *
- * MDAB Dsp Ocem Ocm Padd1 Register
+ * CBP Ocem Ocm Padd1 Register
  */
-union cavm_mdab_dspx_ocem_ocm_padd1
+union cavm_cbpx_ocem_ocm_padd1
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_padd1_s
+    struct cavm_cbpx_ocem_ocm_padd1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_padd1             : 32; /**< [ 31:  0](R/W) "Program address breakpoint  #1 value:
@@ -9427,33 +10239,33 @@ union cavm_mdab_dspx_ocem_ocm_padd1
                                                                  register is coupled with the OCM_PCOUNT1 register." */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_padd1_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_padd1_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_padd1 cavm_mdab_dspx_ocem_ocm_padd1_t;
+typedef union cavm_cbpx_ocem_ocm_padd1 cavm_cbpx_ocem_ocm_padd1_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_PADD1(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_PADD1(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_PADD1(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_PADD1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822110ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_PADD1", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_PADD1", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_PADD1(a) cavm_mdab_dspx_ocem_ocm_padd1_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_PADD1(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_PADD1(a) "MDAB_DSPX_OCEM_OCM_PADD1"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_PADD1(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_PADD1(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_PADD1(a) cavm_cbpx_ocem_ocm_padd1_t
+#define bustype_CAVM_CBPX_OCEM_OCM_PADD1(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_PADD1(a) "CBPX_OCEM_OCM_PADD1"
+#define busnum_CAVM_CBPX_OCEM_OCM_PADD1(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_PADD1(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_padd2
+ * Register (RSL32b) cbp#_ocem_ocm_padd2
  *
- * MDAB Dsp Ocem Ocm Padd2 Register
+ * CBP Ocem Ocm Padd2 Register
  */
-union cavm_mdab_dspx_ocem_ocm_padd2
+union cavm_cbpx_ocem_ocm_padd2
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_padd2_s
+    struct cavm_cbpx_ocem_ocm_padd2_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_padd2             : 32; /**< [ 31:  0](R/W) "Program address breakpoint  #2 value:
@@ -9465,33 +10277,33 @@ union cavm_mdab_dspx_ocem_ocm_padd2
                                                                  register is coupled with the OCM_PCOUNT2 register." */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_padd2_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_padd2_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_padd2 cavm_mdab_dspx_ocem_ocm_padd2_t;
+typedef union cavm_cbpx_ocem_ocm_padd2 cavm_cbpx_ocem_ocm_padd2_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_PADD2(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_PADD2(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_PADD2(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_PADD2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822114ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_PADD2", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_PADD2", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_PADD2(a) cavm_mdab_dspx_ocem_ocm_padd2_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_PADD2(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_PADD2(a) "MDAB_DSPX_OCEM_OCM_PADD2"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_PADD2(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_PADD2(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_PADD2(a) cavm_cbpx_ocem_ocm_padd2_t
+#define bustype_CAVM_CBPX_OCEM_OCM_PADD2(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_PADD2(a) "CBPX_OCEM_OCM_PADD2"
+#define busnum_CAVM_CBPX_OCEM_OCM_PADD2(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_PADD2(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_pcount1
+ * Register (RSL32b) cbp#_ocem_ocm_pcount1
  *
- * MDAB Dsp Ocem Ocm Pcount1 Register
+ * CBP Ocem Ocm Pcount1 Register
  */
-union cavm_mdab_dspx_ocem_ocm_pcount1
+union cavm_cbpx_ocem_ocm_pcount1
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_pcount1_s
+    struct cavm_cbpx_ocem_ocm_pcount1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_pcount1           : 32; /**< [ 31:  0](R/W) "Program address breakpoint #1 count value:
@@ -9501,33 +10313,33 @@ union cavm_mdab_dspx_ocem_ocm_pcount1
                                                                  Triggers a breakpoint and is cleared once the OCM_PADD1 breakpoint counter is equal to this value." */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_pcount1_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_pcount1_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_pcount1 cavm_mdab_dspx_ocem_ocm_pcount1_t;
+typedef union cavm_cbpx_ocem_ocm_pcount1 cavm_cbpx_ocem_ocm_pcount1_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT1(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT1(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_PCOUNT1(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_PCOUNT1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822120ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_PCOUNT1", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_PCOUNT1", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT1(a) cavm_mdab_dspx_ocem_ocm_pcount1_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT1(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT1(a) "MDAB_DSPX_OCEM_OCM_PCOUNT1"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT1(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT1(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_PCOUNT1(a) cavm_cbpx_ocem_ocm_pcount1_t
+#define bustype_CAVM_CBPX_OCEM_OCM_PCOUNT1(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_PCOUNT1(a) "CBPX_OCEM_OCM_PCOUNT1"
+#define busnum_CAVM_CBPX_OCEM_OCM_PCOUNT1(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_PCOUNT1(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_pcount2
+ * Register (RSL32b) cbp#_ocem_ocm_pcount2
  *
- * MDAB Dsp Ocem Ocm Pcount2 Register
+ * CBP Ocem Ocm Pcount2 Register
  */
-union cavm_mdab_dspx_ocem_ocm_pcount2
+union cavm_cbpx_ocem_ocm_pcount2
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_pcount2_s
+    struct cavm_cbpx_ocem_ocm_pcount2_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ocm_pcount2           : 32; /**< [ 31:  0](R/W) "Program address breakpoint #2 count value:
@@ -9537,37 +10349,37 @@ union cavm_mdab_dspx_ocem_ocm_pcount2
                                                                  Triggers a breakpoint and is cleared once the OCM_PADD2 breakpoint counter is equal to this value." */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_pcount2_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_pcount2_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_pcount2 cavm_mdab_dspx_ocem_ocm_pcount2_t;
+typedef union cavm_cbpx_ocem_ocm_pcount2 cavm_cbpx_ocem_ocm_pcount2_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT2(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT2(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_PCOUNT2(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_PCOUNT2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822124ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_PCOUNT2", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_PCOUNT2", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT2(a) cavm_mdab_dspx_ocem_ocm_pcount2_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT2(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT2(a) "MDAB_DSPX_OCEM_OCM_PCOUNT2"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT2(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_PCOUNT2(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_PCOUNT2(a) cavm_cbpx_ocem_ocm_pcount2_t
+#define bustype_CAVM_CBPX_OCEM_OCM_PCOUNT2(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_PCOUNT2(a) "CBPX_OCEM_OCM_PCOUNT2"
+#define busnum_CAVM_CBPX_OCEM_OCM_PCOUNT2(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_PCOUNT2(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_sa_bp_en
+ * Register (RSL32b) cbp#_ocem_ocm_sa_bp_en
  *
- * MDAB Dsp Ocem Ocm Sa Bp En Register
+ * CBP Ocem Ocm Sa Bp En Register
  * Note:
  * 	For all breakpoints: 0: breakpoint is disabled, 1: breakpoint enabled.
  *         When enabling read and write breakpoints together the breakpoint counter
  * will increment for both accesses.
  */
-union cavm_mdab_dspx_ocem_ocm_sa_bp_en
+union cavm_cbpx_ocem_ocm_sa_bp_en
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_sa_bp_en_s
+    struct cavm_cbpx_ocem_ocm_sa_bp_en_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
@@ -9613,204 +10425,204 @@ union cavm_mdab_dspx_ocem_ocm_sa_bp_en
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_sa_bp_en_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_sa_bp_en_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_sa_bp_en cavm_mdab_dspx_ocem_ocm_sa_bp_en_t;
+typedef union cavm_cbpx_ocem_ocm_sa_bp_en cavm_cbpx_ocem_ocm_sa_bp_en_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_EN(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_EN(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_SA_BP_EN(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_SA_BP_EN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822154ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_SA_BP_EN", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_SA_BP_EN", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_EN(a) cavm_mdab_dspx_ocem_ocm_sa_bp_en_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_EN(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_EN(a) "MDAB_DSPX_OCEM_OCM_SA_BP_EN"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_EN(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_EN(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_SA_BP_EN(a) cavm_cbpx_ocem_ocm_sa_bp_en_t
+#define bustype_CAVM_CBPX_OCEM_OCM_SA_BP_EN(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_SA_BP_EN(a) "CBPX_OCEM_OCM_SA_BP_EN"
+#define busnum_CAVM_CBPX_OCEM_OCM_SA_BP_EN(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_SA_BP_EN(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_sa_bp_st
+ * Register (RSL32b) cbp#_ocem_ocm_sa_bp_st
  *
- * MDAB Dsp Ocem Ocm Sa Bp St Register
+ * CBP Ocem Ocm Sa Bp St Register
  * For all breakpoints: 0: breakpoint not accepted, 1: breakpoint accepted
  * 	When enabling read and write breakpoints together, only the last access will set the status bit.
  */
-union cavm_mdab_dspx_ocem_ocm_sa_bp_st
+union cavm_cbpx_ocem_ocm_sa_bp_st
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_sa_bp_st_s
+    struct cavm_cbpx_ocem_ocm_sa_bp_st_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
-        uint32_t sa_comb_wr_st         : 1;  /**< [ 19: 19](RO) Status of combined data address and data value match breakpoint
+        uint32_t sa_comb_wr_st         : 1;  /**< [ 19: 19](RO/H) Status of combined data address and data value match breakpoint
                                                                  write access (Enhanced mode only) */
-        uint32_t sa_comb_rd_st         : 1;  /**< [ 18: 18](RO) Status of combined data address and data value match breakpoint
+        uint32_t sa_comb_rd_st         : 1;  /**< [ 18: 18](RO/H) Status of combined data address and data value match breakpoint
                                                                  read access (Enhanced mode only) */
         uint32_t reserved_17           : 1;
-        uint32_t sa_dvm_st             : 1;  /**< [ 16: 16](RO) Status of  data value match breakpoint (Enhanced mode only) */
+        uint32_t sa_dvm_st             : 1;  /**< [ 16: 16](RO/H) Status of  data value match breakpoint (Enhanced mode only) */
         uint32_t reserved_13_15        : 3;
-        uint32_t sa_da_wr_st           : 1;  /**< [ 12: 12](RO) Status of data address breakpoint for write access */
+        uint32_t sa_da_wr_st           : 1;  /**< [ 12: 12](RO/H) Status of data address breakpoint for write access */
         uint32_t reserved_9_11         : 3;
-        uint32_t sa_da_rd_st           : 1;  /**< [  8:  8](RO) Status of data address breakpoint for read access */
+        uint32_t sa_da_rd_st           : 1;  /**< [  8:  8](RO/H) Status of data address breakpoint for read access */
         uint32_t reserved_6_7          : 2;
-        uint32_t sa_pa_st              : 2;  /**< [  5:  4](RO) Program address breakpoint status:
+        uint32_t sa_pa_st              : 2;  /**< [  5:  4](RO/H) Program address breakpoint status:
                                                                  Bit5: SA_PA2
                                                                  Bit4: SA_PA1 */
-        uint32_t dma_da_st             : 1;  /**< [  3:  3](RO) Status of DMA data address match breakpoint */
+        uint32_t dma_da_st             : 1;  /**< [  3:  3](RO/H) Status of DMA data address match breakpoint */
         uint32_t reserved_2            : 1;
-        uint32_t sa_ext_st             : 2;  /**< [  1:  0](RO) Breakpoint status for external request 2-1 respectively:
+        uint32_t sa_ext_st             : 2;  /**< [  1:  0](RO/H) Breakpoint status for external request 2-1 respectively:
                                                                  Bit1: SA_EXT2
                                                                  Bit0: SA_EXT1 */
 #else /* Word 0 - Little Endian */
-        uint32_t sa_ext_st             : 2;  /**< [  1:  0](RO) Breakpoint status for external request 2-1 respectively:
+        uint32_t sa_ext_st             : 2;  /**< [  1:  0](RO/H) Breakpoint status for external request 2-1 respectively:
                                                                  Bit1: SA_EXT2
                                                                  Bit0: SA_EXT1 */
         uint32_t reserved_2            : 1;
-        uint32_t dma_da_st             : 1;  /**< [  3:  3](RO) Status of DMA data address match breakpoint */
-        uint32_t sa_pa_st              : 2;  /**< [  5:  4](RO) Program address breakpoint status:
+        uint32_t dma_da_st             : 1;  /**< [  3:  3](RO/H) Status of DMA data address match breakpoint */
+        uint32_t sa_pa_st              : 2;  /**< [  5:  4](RO/H) Program address breakpoint status:
                                                                  Bit5: SA_PA2
                                                                  Bit4: SA_PA1 */
         uint32_t reserved_6_7          : 2;
-        uint32_t sa_da_rd_st           : 1;  /**< [  8:  8](RO) Status of data address breakpoint for read access */
+        uint32_t sa_da_rd_st           : 1;  /**< [  8:  8](RO/H) Status of data address breakpoint for read access */
         uint32_t reserved_9_11         : 3;
-        uint32_t sa_da_wr_st           : 1;  /**< [ 12: 12](RO) Status of data address breakpoint for write access */
+        uint32_t sa_da_wr_st           : 1;  /**< [ 12: 12](RO/H) Status of data address breakpoint for write access */
         uint32_t reserved_13_15        : 3;
-        uint32_t sa_dvm_st             : 1;  /**< [ 16: 16](RO) Status of  data value match breakpoint (Enhanced mode only) */
+        uint32_t sa_dvm_st             : 1;  /**< [ 16: 16](RO/H) Status of  data value match breakpoint (Enhanced mode only) */
         uint32_t reserved_17           : 1;
-        uint32_t sa_comb_rd_st         : 1;  /**< [ 18: 18](RO) Status of combined data address and data value match breakpoint
+        uint32_t sa_comb_rd_st         : 1;  /**< [ 18: 18](RO/H) Status of combined data address and data value match breakpoint
                                                                  read access (Enhanced mode only) */
-        uint32_t sa_comb_wr_st         : 1;  /**< [ 19: 19](RO) Status of combined data address and data value match breakpoint
+        uint32_t sa_comb_wr_st         : 1;  /**< [ 19: 19](RO/H) Status of combined data address and data value match breakpoint
                                                                  write access (Enhanced mode only) */
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_sa_bp_st_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_sa_bp_st_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_sa_bp_st cavm_mdab_dspx_ocem_ocm_sa_bp_st_t;
+typedef union cavm_cbpx_ocem_ocm_sa_bp_st cavm_cbpx_ocem_ocm_sa_bp_st_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_ST(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_ST(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_SA_BP_ST(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_SA_BP_ST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822164ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_SA_BP_ST", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_SA_BP_ST", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_ST(a) cavm_mdab_dspx_ocem_ocm_sa_bp_st_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_ST(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_ST(a) "MDAB_DSPX_OCEM_OCM_SA_BP_ST"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_ST(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_SA_BP_ST(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_SA_BP_ST(a) cavm_cbpx_ocem_ocm_sa_bp_st_t
+#define bustype_CAVM_CBPX_OCEM_OCM_SA_BP_ST(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_SA_BP_ST(a) "CBPX_OCEM_OCM_SA_BP_ST"
+#define busnum_CAVM_CBPX_OCEM_OCM_SA_BP_ST(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_SA_BP_ST(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_ocem_ocm_status
+ * Register (RSL32b) cbp#_ocem_ocm_status
  *
- * MDAB Dsp Ocem Ocm Status Register
+ * CBP Ocem Ocm Status Register
  * Note: All the status bits are cleared when the debugger reads the status register.
  * This functionality enables the debugger to identify multiple occurrences of the
  * events that these status bits reflect, within the same debug session. They are also
  * cleared when the debug session ends.
  */
-union cavm_mdab_dspx_ocem_ocm_status
+union cavm_cbpx_ocem_ocm_status
 {
     uint32_t u;
-    struct cavm_mdab_dspx_ocem_ocm_status_s
+    struct cavm_cbpx_ocem_ocm_status_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
-        uint32_t snoop_idle            : 1;  /**< [ 19: 19](RO) Indicates that there are no ongoing SNOOP is in MSS */
-        uint32_t wait_f                : 1;  /**< [ 18: 18](RO) Indicates that the core is in wait */
-        uint32_t axi_dmm_wr            : 1;  /**< [ 17: 17](RO) Indicates that the external Data memory write request was confirmed by the AXI
+        uint32_t snoop_idle            : 1;  /**< [ 19: 19](RO/H) Indicates that there are no ongoing SNOOP is in MSS */
+        uint32_t wait_f                : 1;  /**< [ 18: 18](RO/H) Indicates that the core is in wait */
+        uint32_t axi_dmm_wr            : 1;  /**< [ 17: 17](RO/H) Indicates that the external Data memory write request was confirmed by the AXI
                                                                  * */
-        uint32_t axi_pmm_wr            : 1;  /**< [ 16: 16](RO) Indicates that the external Program memory write request was confirmed by the AXI
+        uint32_t axi_pmm_wr            : 1;  /**< [ 16: 16](RO/H) Indicates that the external Program memory write request was confirmed by the AXI
                                                                  * */
         uint32_t reserved_15           : 1;
-        uint32_t ocem_wait_f           : 1;  /**< [ 14: 14](RO) Wait initiated by the OCEM after branch to self */
-        uint32_t dmss_idle_ocem        : 1;  /**< [ 13: 13](RO) Indicates all memory access are complete and memory access can be performed using the OCEM.
+        uint32_t ocem_wait_f           : 1;  /**< [ 14: 14](RO/H) Wait initiated by the OCEM after branch to self */
+        uint32_t dmss_idle_ocem        : 1;  /**< [ 13: 13](RO/H) Indicates all memory access are complete and memory access can be performed using the OCEM.
                                                                  This bit is set when:
                                                                  Write buffer is empty
                                                                  EDP has no pending read or write transactions
                                                                  FICM0 has no pending read or write transactions
                                                                  FICM1 has no pending read or write transactions
                                                                  EPP has no pending read or write transactions */
-        uint32_t dactive_trans         : 1;  /**< [ 12: 12](RO) External data memory active-transaction indication
+        uint32_t dactive_trans         : 1;  /**< [ 12: 12](RO/H) External data memory active-transaction indication
                                                                  * */
         uint32_t reserved_10_11        : 2;
-        uint32_t pdma_active           : 1;  /**< [  9:  9](RO) The Program external port is occupied by the PDMA */
+        uint32_t pdma_active           : 1;  /**< [  9:  9](RO/H) The Program external port is occupied by the PDMA */
         uint32_t trape_inst            : 1;  /**< [  8:  8](RO) Debug mode was entered due to a trape instruction */
-        uint32_t pactive_trans         : 1;  /**< [  7:  7](RO) External program memory active-transaction indication */
-        uint32_t clk_applied           : 1;  /**< [  6:  6](RO) Indicates that the total number of clock cycles that the debugger requested were
+        uint32_t pactive_trans         : 1;  /**< [  7:  7](RO/H) External program memory active-transaction indication */
+        uint32_t clk_applied           : 1;  /**< [  6:  6](RO/H) Indicates that the total number of clock cycles that the debugger requested were
                                                                  applied by the OCEM */
-        uint32_t q_flush               : 1;  /**< [  5:  5](RO) Indicates that the queue is empty (flushed) */
-        uint32_t pmem_ext_wr           : 1;  /**< [  4:  4](RO) Indicates that the external program memory was written (by any master) */
-        uint32_t pmem_b1_wr            : 1;  /**< [  3:  3](RO) Indicates that block1 of the internal program memory was written */
-        uint32_t pmem_b0_wr            : 1;  /**< [  2:  2](RO) Indicates that block0 of the internal program memory was written */
-        uint32_t rst_dur_dbg           : 1;  /**< [  1:  1](RO) Indicates that there was a user reset during the debug session */
-        uint32_t dbg_mode              : 1;  /**< [  0:  0](RO) Indicates that the OCEM is in debug mode (a breakpoint was accepted) */
+        uint32_t q_flush               : 1;  /**< [  5:  5](RO/H) Indicates that the queue is empty (flushed) */
+        uint32_t pmem_ext_wr           : 1;  /**< [  4:  4](RO/H) Indicates that the external program memory was written (by any master) */
+        uint32_t pmem_b1_wr            : 1;  /**< [  3:  3](RO/H) Indicates that block1 of the internal program memory was written */
+        uint32_t pmem_b0_wr            : 1;  /**< [  2:  2](RO/H) Indicates that block0 of the internal program memory was written */
+        uint32_t rst_dur_dbg           : 1;  /**< [  1:  1](RO/H) Indicates that there was a user reset during the debug session */
+        uint32_t dbg_mode              : 1;  /**< [  0:  0](RO/H) Indicates that the OCEM is in debug mode (a breakpoint was accepted) */
 #else /* Word 0 - Little Endian */
-        uint32_t dbg_mode              : 1;  /**< [  0:  0](RO) Indicates that the OCEM is in debug mode (a breakpoint was accepted) */
-        uint32_t rst_dur_dbg           : 1;  /**< [  1:  1](RO) Indicates that there was a user reset during the debug session */
-        uint32_t pmem_b0_wr            : 1;  /**< [  2:  2](RO) Indicates that block0 of the internal program memory was written */
-        uint32_t pmem_b1_wr            : 1;  /**< [  3:  3](RO) Indicates that block1 of the internal program memory was written */
-        uint32_t pmem_ext_wr           : 1;  /**< [  4:  4](RO) Indicates that the external program memory was written (by any master) */
-        uint32_t q_flush               : 1;  /**< [  5:  5](RO) Indicates that the queue is empty (flushed) */
-        uint32_t clk_applied           : 1;  /**< [  6:  6](RO) Indicates that the total number of clock cycles that the debugger requested were
+        uint32_t dbg_mode              : 1;  /**< [  0:  0](RO/H) Indicates that the OCEM is in debug mode (a breakpoint was accepted) */
+        uint32_t rst_dur_dbg           : 1;  /**< [  1:  1](RO/H) Indicates that there was a user reset during the debug session */
+        uint32_t pmem_b0_wr            : 1;  /**< [  2:  2](RO/H) Indicates that block0 of the internal program memory was written */
+        uint32_t pmem_b1_wr            : 1;  /**< [  3:  3](RO/H) Indicates that block1 of the internal program memory was written */
+        uint32_t pmem_ext_wr           : 1;  /**< [  4:  4](RO/H) Indicates that the external program memory was written (by any master) */
+        uint32_t q_flush               : 1;  /**< [  5:  5](RO/H) Indicates that the queue is empty (flushed) */
+        uint32_t clk_applied           : 1;  /**< [  6:  6](RO/H) Indicates that the total number of clock cycles that the debugger requested were
                                                                  applied by the OCEM */
-        uint32_t pactive_trans         : 1;  /**< [  7:  7](RO) External program memory active-transaction indication */
+        uint32_t pactive_trans         : 1;  /**< [  7:  7](RO/H) External program memory active-transaction indication */
         uint32_t trape_inst            : 1;  /**< [  8:  8](RO) Debug mode was entered due to a trape instruction */
-        uint32_t pdma_active           : 1;  /**< [  9:  9](RO) The Program external port is occupied by the PDMA */
+        uint32_t pdma_active           : 1;  /**< [  9:  9](RO/H) The Program external port is occupied by the PDMA */
         uint32_t reserved_10_11        : 2;
-        uint32_t dactive_trans         : 1;  /**< [ 12: 12](RO) External data memory active-transaction indication
+        uint32_t dactive_trans         : 1;  /**< [ 12: 12](RO/H) External data memory active-transaction indication
                                                                  * */
-        uint32_t dmss_idle_ocem        : 1;  /**< [ 13: 13](RO) Indicates all memory access are complete and memory access can be performed using the OCEM.
+        uint32_t dmss_idle_ocem        : 1;  /**< [ 13: 13](RO/H) Indicates all memory access are complete and memory access can be performed using the OCEM.
                                                                  This bit is set when:
                                                                  Write buffer is empty
                                                                  EDP has no pending read or write transactions
                                                                  FICM0 has no pending read or write transactions
                                                                  FICM1 has no pending read or write transactions
                                                                  EPP has no pending read or write transactions */
-        uint32_t ocem_wait_f           : 1;  /**< [ 14: 14](RO) Wait initiated by the OCEM after branch to self */
+        uint32_t ocem_wait_f           : 1;  /**< [ 14: 14](RO/H) Wait initiated by the OCEM after branch to self */
         uint32_t reserved_15           : 1;
-        uint32_t axi_pmm_wr            : 1;  /**< [ 16: 16](RO) Indicates that the external Program memory write request was confirmed by the AXI
+        uint32_t axi_pmm_wr            : 1;  /**< [ 16: 16](RO/H) Indicates that the external Program memory write request was confirmed by the AXI
                                                                  * */
-        uint32_t axi_dmm_wr            : 1;  /**< [ 17: 17](RO) Indicates that the external Data memory write request was confirmed by the AXI
+        uint32_t axi_dmm_wr            : 1;  /**< [ 17: 17](RO/H) Indicates that the external Data memory write request was confirmed by the AXI
                                                                  * */
-        uint32_t wait_f                : 1;  /**< [ 18: 18](RO) Indicates that the core is in wait */
-        uint32_t snoop_idle            : 1;  /**< [ 19: 19](RO) Indicates that there are no ongoing SNOOP is in MSS */
+        uint32_t wait_f                : 1;  /**< [ 18: 18](RO/H) Indicates that the core is in wait */
+        uint32_t snoop_idle            : 1;  /**< [ 19: 19](RO/H) Indicates that there are no ongoing SNOOP is in MSS */
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_ocem_ocm_status_s cn; */
+    /* struct cavm_cbpx_ocem_ocm_status_s cn; */
 };
-typedef union cavm_mdab_dspx_ocem_ocm_status cavm_mdab_dspx_ocem_ocm_status_t;
+typedef union cavm_cbpx_ocem_ocm_status cavm_cbpx_ocem_ocm_status_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_STATUS(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_OCEM_OCM_STATUS(unsigned long a)
+static inline uint64_t CAVM_CBPX_OCEM_OCM_STATUS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_OCEM_OCM_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822160ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_OCEM_OCM_STATUS", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_OCEM_OCM_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_OCEM_OCM_STATUS(a) cavm_mdab_dspx_ocem_ocm_status_t
-#define bustype_CAVM_MDAB_DSPX_OCEM_OCM_STATUS(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_OCEM_OCM_STATUS(a) "MDAB_DSPX_OCEM_OCM_STATUS"
-#define busnum_CAVM_MDAB_DSPX_OCEM_OCM_STATUS(a) (a)
-#define arguments_CAVM_MDAB_DSPX_OCEM_OCM_STATUS(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_OCEM_OCM_STATUS(a) cavm_cbpx_ocem_ocm_status_t
+#define bustype_CAVM_CBPX_OCEM_OCM_STATUS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_OCEM_OCM_STATUS(a) "CBPX_OCEM_OCM_STATUS"
+#define busnum_CAVM_CBPX_OCEM_OCM_STATUS(a) (a)
+#define arguments_CAVM_CBPX_OCEM_OCM_STATUS(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_pmss_mss_pb1ba
+ * Register (RSL32b) cbp#_pmss_mss_pb1ba
  *
- * MDAB Dsp Pmss Mss Pb1ba Register
+ * CBP Pmss Mss Pb1ba Register
  * Note: Block1 is mapped immediately following Block0.
  */
-union cavm_mdab_dspx_pmss_mss_pb1ba
+union cavm_cbpx_pmss_mss_pb1ba
 {
     uint32_t u;
-    struct cavm_mdab_dspx_pmss_mss_pb1ba_s
+    struct cavm_cbpx_pmss_mss_pb1ba_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t pb1ba                 : 32; /**< [ 31:  0](RO) Read only Block1 base address */
@@ -9818,71 +10630,71 @@ union cavm_mdab_dspx_pmss_mss_pb1ba
         uint32_t pb1ba                 : 32; /**< [ 31:  0](RO) Read only Block1 base address */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_pmss_mss_pb1ba_s cn; */
+    /* struct cavm_cbpx_pmss_mss_pb1ba_s cn; */
 };
-typedef union cavm_mdab_dspx_pmss_mss_pb1ba cavm_mdab_dspx_pmss_mss_pb1ba_t;
+typedef union cavm_cbpx_pmss_mss_pb1ba cavm_cbpx_pmss_mss_pb1ba_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PMSS_MSS_PB1BA(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PMSS_MSS_PB1BA(unsigned long a)
+static inline uint64_t CAVM_CBPX_PMSS_MSS_PB1BA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PMSS_MSS_PB1BA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822004ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PMSS_MSS_PB1BA", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PMSS_MSS_PB1BA", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PMSS_MSS_PB1BA(a) cavm_mdab_dspx_pmss_mss_pb1ba_t
-#define bustype_CAVM_MDAB_DSPX_PMSS_MSS_PB1BA(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PMSS_MSS_PB1BA(a) "MDAB_DSPX_PMSS_MSS_PB1BA"
-#define busnum_CAVM_MDAB_DSPX_PMSS_MSS_PB1BA(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PMSS_MSS_PB1BA(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PMSS_MSS_PB1BA(a) cavm_cbpx_pmss_mss_pb1ba_t
+#define bustype_CAVM_CBPX_PMSS_MSS_PB1BA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PMSS_MSS_PB1BA(a) "CBPX_PMSS_MSS_PB1BA"
+#define busnum_CAVM_CBPX_PMSS_MSS_PB1BA(a) (a)
+#define arguments_CAVM_CBPX_PMSS_MSS_PB1BA(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_pmss_mss_pdea
+ * Register (RSL32b) cbp#_pmss_mss_pdea
  *
- * MDAB Dsp Pmss Mss Pdea Register
+ * CBP Pmss Mss Pdea Register
  * Note: Bits [4:0] are written as 0.
  */
-union cavm_mdab_dspx_pmss_mss_pdea
+union cavm_cbpx_pmss_mss_pdea
 {
     uint32_t u;
-    struct cavm_mdab_dspx_pmss_mss_pdea_s
+    struct cavm_cbpx_pmss_mss_pdea_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t pdea                  : 32; /**< [ 31:  0](R/W) PDMA external source address: This field is incremented by one fetch-line after
+        uint32_t pdea                  : 32; /**< [ 31:  0](R/W/H) PDMA external source address: This field is incremented by one fetch-line after
                                                                  each external read burst.
                                                                  Note: If AXI_B strap pin is asserted, the address configured in the PDEA must be:
                                                                  1. aligned to 64B and PBSZ set to 01
                                                                  2. or aligned to 32B and PBSZ set to 00 */
 #else /* Word 0 - Little Endian */
-        uint32_t pdea                  : 32; /**< [ 31:  0](R/W) PDMA external source address: This field is incremented by one fetch-line after
+        uint32_t pdea                  : 32; /**< [ 31:  0](R/W/H) PDMA external source address: This field is incremented by one fetch-line after
                                                                  each external read burst.
                                                                  Note: If AXI_B strap pin is asserted, the address configured in the PDEA must be:
                                                                  1. aligned to 64B and PBSZ set to 01
                                                                  2. or aligned to 32B and PBSZ set to 00 */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_pmss_mss_pdea_s cn; */
+    /* struct cavm_cbpx_pmss_mss_pdea_s cn; */
 };
-typedef union cavm_mdab_dspx_pmss_mss_pdea cavm_mdab_dspx_pmss_mss_pdea_t;
+typedef union cavm_cbpx_pmss_mss_pdea cavm_cbpx_pmss_mss_pdea_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PMSS_MSS_PDEA(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PMSS_MSS_PDEA(unsigned long a)
+static inline uint64_t CAVM_CBPX_PMSS_MSS_PDEA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PMSS_MSS_PDEA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822008ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PMSS_MSS_PDEA", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PMSS_MSS_PDEA", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PMSS_MSS_PDEA(a) cavm_mdab_dspx_pmss_mss_pdea_t
-#define bustype_CAVM_MDAB_DSPX_PMSS_MSS_PDEA(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PMSS_MSS_PDEA(a) "MDAB_DSPX_PMSS_MSS_PDEA"
-#define busnum_CAVM_MDAB_DSPX_PMSS_MSS_PDEA(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PMSS_MSS_PDEA(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PMSS_MSS_PDEA(a) cavm_cbpx_pmss_mss_pdea_t
+#define bustype_CAVM_CBPX_PMSS_MSS_PDEA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PMSS_MSS_PDEA(a) "CBPX_PMSS_MSS_PDEA"
+#define busnum_CAVM_CBPX_PMSS_MSS_PDEA(a) (a)
+#define arguments_CAVM_CBPX_PMSS_MSS_PDEA(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_pmss_mss_pdia
+ * Register (RSL32b) cbp#_pmss_mss_pdia
  *
- * MDAB Dsp Pmss Mss Pdia Register
+ * CBP Pmss Mss Pdia Register
  * Note: Bits [4:0] are written as 0.
  *             Bits [31:16] are ignored when accessing 32KB TCM or cache.
  *             Bits [31:17] are ignored when only accessing 64KB TCM.
@@ -9890,47 +10702,47 @@ static inline uint64_t CAVM_MDAB_DSPX_PMSS_MSS_PDEA(unsigned long a)
  *             Bits [31:19] are ignored when only accessing 256KB TCM.
  *             Bits [31:20] are ignored when only accessing 512KB TCM.
  */
-union cavm_mdab_dspx_pmss_mss_pdia
+union cavm_cbpx_pmss_mss_pdia
 {
     uint32_t u;
-    struct cavm_mdab_dspx_pmss_mss_pdia_s
+    struct cavm_cbpx_pmss_mss_pdia_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t pdia                  : 32; /**< [ 31:  0](R/W) PDMA internal destination address: This field is incremented by one fetch-line
+        uint32_t pdia                  : 32; /**< [ 31:  0](R/W/H) PDMA internal destination address: This field is incremented by one fetch-line
                                                                  after a fetch-line is written into the internal memory. */
 #else /* Word 0 - Little Endian */
-        uint32_t pdia                  : 32; /**< [ 31:  0](R/W) PDMA internal destination address: This field is incremented by one fetch-line
+        uint32_t pdia                  : 32; /**< [ 31:  0](R/W/H) PDMA internal destination address: This field is incremented by one fetch-line
                                                                  after a fetch-line is written into the internal memory. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_pmss_mss_pdia_s cn; */
+    /* struct cavm_cbpx_pmss_mss_pdia_s cn; */
 };
-typedef union cavm_mdab_dspx_pmss_mss_pdia cavm_mdab_dspx_pmss_mss_pdia_t;
+typedef union cavm_cbpx_pmss_mss_pdia cavm_cbpx_pmss_mss_pdia_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PMSS_MSS_PDIA(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PMSS_MSS_PDIA(unsigned long a)
+static inline uint64_t CAVM_CBPX_PMSS_MSS_PDIA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PMSS_MSS_PDIA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482200cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PMSS_MSS_PDIA", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PMSS_MSS_PDIA", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PMSS_MSS_PDIA(a) cavm_mdab_dspx_pmss_mss_pdia_t
-#define bustype_CAVM_MDAB_DSPX_PMSS_MSS_PDIA(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PMSS_MSS_PDIA(a) "MDAB_DSPX_PMSS_MSS_PDIA"
-#define busnum_CAVM_MDAB_DSPX_PMSS_MSS_PDIA(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PMSS_MSS_PDIA(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PMSS_MSS_PDIA(a) cavm_cbpx_pmss_mss_pdia_t
+#define bustype_CAVM_CBPX_PMSS_MSS_PDIA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PMSS_MSS_PDIA(a) "CBPX_PMSS_MSS_PDIA"
+#define busnum_CAVM_CBPX_PMSS_MSS_PDIA(a) (a)
+#define arguments_CAVM_CBPX_PMSS_MSS_PDIA(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_pmss_mss_pdtc
+ * Register (RSL32b) cbp#_pmss_mss_pdtc
  *
- * MDAB Dsp Pmss Mss Pdtc Register
+ * CBP Pmss Mss Pdtc Register
  * * The PDTC field is an example for 32KB configuration.
  */
-union cavm_mdab_dspx_pmss_mss_pdtc
+union cavm_cbpx_pmss_mss_pdtc
 {
     uint32_t u;
-    struct cavm_mdab_dspx_pmss_mss_pdtc_s
+    struct cavm_cbpx_pmss_mss_pdtc_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t pdie                  : 1;  /**< [ 31: 31](R/W) Program DMA interrupt enable: when set, the Program DMA interrupt at the end of
@@ -9938,7 +10750,7 @@ union cavm_mdab_dspx_pmss_mss_pdtc
         uint32_t cac_inv               : 1;  /**< [ 30: 30](R/W) Cache invalidate: When set, the cache is invalidated by the PDMA. This process takes 1,024 cycles.
                                                                  The cache size in bytes (32 KB) is loaded into PDTC, and PDST is set.
                                                                  CAC_INV is automatically cleared when PDST is cleared and the entire cache is invalidated. */
-        uint32_t pdst                  : 1;  /**< [ 29: 29](RO) PDMA status: This read-only bit indicates the PDMA status. When set, the Program
+        uint32_t pdst                  : 1;  /**< [ 29: 29](RO/H) PDMA status: This read-only bit indicates the PDMA status. When set, the Program
                                                                  DMA is busy  that is: a frame is currently being transferred. When cleared, the
                                                                  DMA is not busy. This bit is automatically set by hardware when a frame transfer
                                                                  starts, and is cleared when the frame transfer has been completed. */
@@ -9952,12 +10764,12 @@ union cavm_mdab_dspx_pmss_mss_pdtc
                                                                  10: 8 beats
                                                                  11: 16 beats */
         uint32_t reserved_22_24        : 3;
-        uint32_t pdtc                  : 22; /**< [ 21:  0](R/W) PDMA transfer count: Number of program bytes to be transferred in a frame. (The
+        uint32_t pdtc                  : 22; /**< [ 21:  0](R/W/H) PDMA transfer count: Number of program bytes to be transferred in a frame. (The
                                                                  value is rounded by instruction fetch-line width. Bits [4:0] are always zero.)
                                                                  This field is decremented by one fetch-line width after each IPM write access.
                                                                  Writing a value to this register starts the DMA transfer. */
 #else /* Word 0 - Little Endian */
-        uint32_t pdtc                  : 22; /**< [ 21:  0](R/W) PDMA transfer count: Number of program bytes to be transferred in a frame. (The
+        uint32_t pdtc                  : 22; /**< [ 21:  0](R/W/H) PDMA transfer count: Number of program bytes to be transferred in a frame. (The
                                                                  value is rounded by instruction fetch-line width. Bits [4:0] are always zero.)
                                                                  This field is decremented by one fetch-line width after each IPM write access.
                                                                  Writing a value to this register starts the DMA transfer. */
@@ -9971,7 +10783,7 @@ union cavm_mdab_dspx_pmss_mss_pdtc
                                                                  00 : 1 outstanding
                                                                  01 : 2 outstanding
                                                                  10 : 4 outstanding */
-        uint32_t pdst                  : 1;  /**< [ 29: 29](RO) PDMA status: This read-only bit indicates the PDMA status. When set, the Program
+        uint32_t pdst                  : 1;  /**< [ 29: 29](RO/H) PDMA status: This read-only bit indicates the PDMA status. When set, the Program
                                                                  DMA is busy  that is: a frame is currently being transferred. When cleared, the
                                                                  DMA is not busy. This bit is automatically set by hardware when a frame transfer
                                                                  starts, and is cleared when the frame transfer has been completed. */
@@ -9982,35 +10794,35 @@ union cavm_mdab_dspx_pmss_mss_pdtc
                                                                  the transfer is enabled. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_pmss_mss_pdtc_s cn; */
+    /* struct cavm_cbpx_pmss_mss_pdtc_s cn; */
 };
-typedef union cavm_mdab_dspx_pmss_mss_pdtc cavm_mdab_dspx_pmss_mss_pdtc_t;
+typedef union cavm_cbpx_pmss_mss_pdtc cavm_cbpx_pmss_mss_pdtc_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PMSS_MSS_PDTC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PMSS_MSS_PDTC(unsigned long a)
+static inline uint64_t CAVM_CBPX_PMSS_MSS_PDTC(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PMSS_MSS_PDTC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822010ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PMSS_MSS_PDTC", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PMSS_MSS_PDTC", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PMSS_MSS_PDTC(a) cavm_mdab_dspx_pmss_mss_pdtc_t
-#define bustype_CAVM_MDAB_DSPX_PMSS_MSS_PDTC(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PMSS_MSS_PDTC(a) "MDAB_DSPX_PMSS_MSS_PDTC"
-#define busnum_CAVM_MDAB_DSPX_PMSS_MSS_PDTC(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PMSS_MSS_PDTC(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PMSS_MSS_PDTC(a) cavm_cbpx_pmss_mss_pdtc_t
+#define bustype_CAVM_CBPX_PMSS_MSS_PDTC(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PMSS_MSS_PDTC(a) "CBPX_PMSS_MSS_PDTC"
+#define busnum_CAVM_CBPX_PMSS_MSS_PDTC(a) (a)
+#define arguments_CAVM_CBPX_PMSS_MSS_PDTC(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_pmss_pmss_pcr
+ * Register (RSL32b) cbp#_pmss_pmss_pcr
  *
- * MDAB Dsp Pmss Pmss Pcr Register
+ * CBP Pmss Pmss Pcr Register
  * Note: If the invalidate cache input strap pin is set during reset, the value after
  * reset is 0x0000_000B (meaning that the cache is disabled).
  */
-union cavm_mdab_dspx_pmss_pmss_pcr
+union cavm_cbpx_pmss_pmss_pcr
 {
     uint32_t u;
-    struct cavm_mdab_dspx_pmss_pmss_pcr_s
+    struct cavm_cbpx_pmss_pmss_pcr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_4_31         : 28;
@@ -10042,33 +10854,33 @@ union cavm_mdab_dspx_pmss_pmss_pcr
         uint32_t reserved_4_31         : 28;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_pmss_pmss_pcr_s cn; */
+    /* struct cavm_cbpx_pmss_pmss_pcr_s cn; */
 };
-typedef union cavm_mdab_dspx_pmss_pmss_pcr cavm_mdab_dspx_pmss_pmss_pcr_t;
+typedef union cavm_cbpx_pmss_pmss_pcr cavm_cbpx_pmss_pmss_pcr_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PMSS_PMSS_PCR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PMSS_PMSS_PCR(unsigned long a)
+static inline uint64_t CAVM_CBPX_PMSS_PMSS_PCR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PMSS_PMSS_PCR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822000ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PMSS_PMSS_PCR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PMSS_PMSS_PCR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PMSS_PMSS_PCR(a) cavm_mdab_dspx_pmss_pmss_pcr_t
-#define bustype_CAVM_MDAB_DSPX_PMSS_PMSS_PCR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PMSS_PMSS_PCR(a) "MDAB_DSPX_PMSS_PMSS_PCR"
-#define busnum_CAVM_MDAB_DSPX_PMSS_PMSS_PCR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PMSS_PMSS_PCR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PMSS_PMSS_PCR(a) cavm_cbpx_pmss_pmss_pcr_t
+#define bustype_CAVM_CBPX_PMSS_PMSS_PCR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PMSS_PMSS_PCR(a) "CBPX_PMSS_PMSS_PCR"
+#define busnum_CAVM_CBPX_PMSS_PMSS_PCR(a) (a)
+#define arguments_CAVM_CBPX_PMSS_PMSS_PCR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_psu_dbc
+ * Register (RSL32b) cbp#_psu_dbc
  *
- * MDAB Dsp Psu Dbc Register
+ * CBP Psu Dbc Register
  */
-union cavm_mdab_dspx_psu_dbc
+union cavm_cbpx_psu_dbc
 {
     uint32_t u;
-    struct cavm_mdab_dspx_psu_dbc_s
+    struct cavm_cbpx_psu_dbc_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_1_31         : 31;
@@ -10086,33 +10898,33 @@ union cavm_mdab_dspx_psu_dbc
         uint32_t reserved_1_31         : 31;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_psu_dbc_s cn; */
+    /* struct cavm_cbpx_psu_dbc_s cn; */
 };
-typedef union cavm_mdab_dspx_psu_dbc cavm_mdab_dspx_psu_dbc_t;
+typedef union cavm_cbpx_psu_dbc cavm_cbpx_psu_dbc_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PSU_DBC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PSU_DBC(unsigned long a)
+static inline uint64_t CAVM_CBPX_PSU_DBC(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PSU_DBC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822254ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PSU_DBC", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PSU_DBC", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PSU_DBC(a) cavm_mdab_dspx_psu_dbc_t
-#define bustype_CAVM_MDAB_DSPX_PSU_DBC(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PSU_DBC(a) "MDAB_DSPX_PSU_DBC"
-#define busnum_CAVM_MDAB_DSPX_PSU_DBC(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PSU_DBC(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PSU_DBC(a) cavm_cbpx_psu_dbc_t
+#define bustype_CAVM_CBPX_PSU_DBC(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PSU_DBC(a) "CBPX_PSU_DBC"
+#define busnum_CAVM_CBPX_PSU_DBC(a) (a)
+#define arguments_CAVM_CBPX_PSU_DBC(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_psu_pgr
+ * Register (RSL32b) cbp#_psu_pgr
  *
- * MDAB Dsp Psu Pgr Register
+ * CBP Psu Pgr Register
  */
-union cavm_mdab_dspx_psu_pgr
+union cavm_cbpx_psu_pgr
 {
     uint32_t u;
-    struct cavm_mdab_dspx_psu_pgr_s
+    struct cavm_cbpx_psu_pgr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_1_31         : 31;
@@ -10126,33 +10938,33 @@ union cavm_mdab_dspx_psu_pgr
         uint32_t reserved_1_31         : 31;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_psu_pgr_s cn; */
+    /* struct cavm_cbpx_psu_pgr_s cn; */
 };
-typedef union cavm_mdab_dspx_psu_pgr cavm_mdab_dspx_psu_pgr_t;
+typedef union cavm_cbpx_psu_pgr cavm_cbpx_psu_pgr_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PSU_PGR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PSU_PGR(unsigned long a)
+static inline uint64_t CAVM_CBPX_PSU_PGR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PSU_PGR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822258ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PSU_PGR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PSU_PGR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PSU_PGR(a) cavm_mdab_dspx_psu_pgr_t
-#define bustype_CAVM_MDAB_DSPX_PSU_PGR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PSU_PGR(a) "MDAB_DSPX_PSU_PGR"
-#define busnum_CAVM_MDAB_DSPX_PSU_PGR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PSU_PGR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PSU_PGR(a) cavm_cbpx_psu_pgr_t
+#define bustype_CAVM_CBPX_PSU_PGR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PSU_PGR(a) "CBPX_PSU_PGR"
+#define busnum_CAVM_CBPX_PSU_PGR(a) (a)
+#define arguments_CAVM_CBPX_PSU_PGR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_psu_psvm_hi
+ * Register (RSL32b) cbp#_psu_psvm_hi
  *
- * MDAB Dsp Psu Psvm Hi Register
+ * CBP Psu Psvm Hi Register
  */
-union cavm_mdab_dspx_psu_psvm_hi
+union cavm_cbpx_psu_psvm_hi
 {
     uint32_t u;
-    struct cavm_mdab_dspx_psu_psvm_hi_s
+    struct cavm_cbpx_psu_psvm_hi_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_21_31        : 11;
@@ -10262,33 +11074,33 @@ union cavm_mdab_dspx_psu_psvm_hi
         uint32_t reserved_21_31        : 11;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_psu_psvm_hi_s cn; */
+    /* struct cavm_cbpx_psu_psvm_hi_s cn; */
 };
-typedef union cavm_mdab_dspx_psu_psvm_hi cavm_mdab_dspx_psu_psvm_hi_t;
+typedef union cavm_cbpx_psu_psvm_hi cavm_cbpx_psu_psvm_hi_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PSU_PSVM_HI(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PSU_PSVM_HI(unsigned long a)
+static inline uint64_t CAVM_CBPX_PSU_PSVM_HI(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PSU_PSVM_HI(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482224cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PSU_PSVM_HI", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PSU_PSVM_HI", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PSU_PSVM_HI(a) cavm_mdab_dspx_psu_psvm_hi_t
-#define bustype_CAVM_MDAB_DSPX_PSU_PSVM_HI(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PSU_PSVM_HI(a) "MDAB_DSPX_PSU_PSVM_HI"
-#define busnum_CAVM_MDAB_DSPX_PSU_PSVM_HI(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PSU_PSVM_HI(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PSU_PSVM_HI(a) cavm_cbpx_psu_psvm_hi_t
+#define bustype_CAVM_CBPX_PSU_PSVM_HI(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PSU_PSVM_HI(a) "CBPX_PSU_PSVM_HI"
+#define busnum_CAVM_CBPX_PSU_PSVM_HI(a) (a)
+#define arguments_CAVM_CBPX_PSU_PSVM_HI(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_psu_psvm_lo
+ * Register (RSL32b) cbp#_psu_psvm_lo
  *
- * MDAB Dsp Psu Psvm Lo Register
+ * CBP Psu Psvm Lo Register
  */
-union cavm_mdab_dspx_psu_psvm_lo
+union cavm_cbpx_psu_psvm_lo
 {
     uint32_t u;
-    struct cavm_mdab_dspx_psu_psvm_lo_s
+    struct cavm_cbpx_psu_psvm_lo_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_30_31        : 2;
@@ -10434,33 +11246,33 @@ union cavm_mdab_dspx_psu_psvm_lo
         uint32_t reserved_30_31        : 2;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_psu_psvm_lo_s cn; */
+    /* struct cavm_cbpx_psu_psvm_lo_s cn; */
 };
-typedef union cavm_mdab_dspx_psu_psvm_lo cavm_mdab_dspx_psu_psvm_lo_t;
+typedef union cavm_cbpx_psu_psvm_lo cavm_cbpx_psu_psvm_lo_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PSU_PSVM_LO(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PSU_PSVM_LO(unsigned long a)
+static inline uint64_t CAVM_CBPX_PSU_PSVM_LO(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PSU_PSVM_LO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822250ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PSU_PSVM_LO", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PSU_PSVM_LO", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PSU_PSVM_LO(a) cavm_mdab_dspx_psu_psvm_lo_t
-#define bustype_CAVM_MDAB_DSPX_PSU_PSVM_LO(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PSU_PSVM_LO(a) "MDAB_DSPX_PSU_PSVM_LO"
-#define busnum_CAVM_MDAB_DSPX_PSU_PSVM_LO(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PSU_PSVM_LO(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PSU_PSVM_LO(a) cavm_cbpx_psu_psvm_lo_t
+#define bustype_CAVM_CBPX_PSU_PSVM_LO(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PSU_PSVM_LO(a) "CBPX_PSU_PSVM_LO"
+#define busnum_CAVM_CBPX_PSU_PSVM_LO(a) (a)
+#define arguments_CAVM_CBPX_PSU_PSVM_LO(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_psu_spret
+ * Register (RSL32b) cbp#_psu_spret
  *
- * MDAB Dsp Psu Spret Register
+ * CBP Psu Spret Register
  */
-union cavm_mdab_dspx_psu_spret
+union cavm_cbpx_psu_spret
 {
     uint32_t u;
-    struct cavm_mdab_dspx_psu_spret_s
+    struct cavm_cbpx_psu_spret_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
@@ -10472,33 +11284,33 @@ union cavm_mdab_dspx_psu_spret
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_psu_spret_s cn; */
+    /* struct cavm_cbpx_psu_spret_s cn; */
 };
-typedef union cavm_mdab_dspx_psu_spret cavm_mdab_dspx_psu_spret_t;
+typedef union cavm_cbpx_psu_spret cavm_cbpx_psu_spret_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PSU_SPRET(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PSU_SPRET(unsigned long a)
+static inline uint64_t CAVM_CBPX_PSU_SPRET(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PSU_SPRET(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822260ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PSU_SPRET", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PSU_SPRET", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PSU_SPRET(a) cavm_mdab_dspx_psu_spret_t
-#define bustype_CAVM_MDAB_DSPX_PSU_SPRET(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PSU_SPRET(a) "MDAB_DSPX_PSU_SPRET"
-#define busnum_CAVM_MDAB_DSPX_PSU_SPRET(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PSU_SPRET(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PSU_SPRET(a) cavm_cbpx_psu_spret_t
+#define bustype_CAVM_CBPX_PSU_SPRET(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PSU_SPRET(a) "CBPX_PSU_SPRET"
+#define busnum_CAVM_CBPX_PSU_SPRET(a) (a)
+#define arguments_CAVM_CBPX_PSU_SPRET(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_psu_spsd
+ * Register (RSL32b) cbp#_psu_spsd
  *
- * MDAB Dsp Psu Spsd Register
+ * CBP Psu Spsd Register
  */
-union cavm_mdab_dspx_psu_spsd
+union cavm_cbpx_psu_spsd
 {
     uint32_t u;
-    struct cavm_mdab_dspx_psu_spsd_s
+    struct cavm_cbpx_psu_spsd_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
@@ -10508,33 +11320,33 @@ union cavm_mdab_dspx_psu_spsd
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_psu_spsd_s cn; */
+    /* struct cavm_cbpx_psu_spsd_s cn; */
 };
-typedef union cavm_mdab_dspx_psu_spsd cavm_mdab_dspx_psu_spsd_t;
+typedef union cavm_cbpx_psu_spsd cavm_cbpx_psu_spsd_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PSU_SPSD(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PSU_SPSD(unsigned long a)
+static inline uint64_t CAVM_CBPX_PSU_SPSD(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PSU_SPSD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822268ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PSU_SPSD", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PSU_SPSD", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PSU_SPSD(a) cavm_mdab_dspx_psu_spsd_t
-#define bustype_CAVM_MDAB_DSPX_PSU_SPSD(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PSU_SPSD(a) "MDAB_DSPX_PSU_SPSD"
-#define busnum_CAVM_MDAB_DSPX_PSU_SPSD(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PSU_SPSD(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PSU_SPSD(a) cavm_cbpx_psu_spsd_t
+#define bustype_CAVM_CBPX_PSU_SPSD(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PSU_SPSD(a) "CBPX_PSU_SPSD"
+#define busnum_CAVM_CBPX_PSU_SPSD(a) (a)
+#define arguments_CAVM_CBPX_PSU_SPSD(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_psu_stret
+ * Register (RSL32b) cbp#_psu_stret
  *
- * MDAB Dsp Psu Stret Register
+ * CBP Psu Stret Register
  */
-union cavm_mdab_dspx_psu_stret
+union cavm_cbpx_psu_stret
 {
     uint32_t u;
-    struct cavm_mdab_dspx_psu_stret_s
+    struct cavm_cbpx_psu_stret_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
@@ -10546,33 +11358,33 @@ union cavm_mdab_dspx_psu_stret
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_psu_stret_s cn; */
+    /* struct cavm_cbpx_psu_stret_s cn; */
 };
-typedef union cavm_mdab_dspx_psu_stret cavm_mdab_dspx_psu_stret_t;
+typedef union cavm_cbpx_psu_stret cavm_cbpx_psu_stret_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PSU_STRET(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PSU_STRET(unsigned long a)
+static inline uint64_t CAVM_CBPX_PSU_STRET(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PSU_STRET(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482225cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PSU_STRET", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PSU_STRET", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PSU_STRET(a) cavm_mdab_dspx_psu_stret_t
-#define bustype_CAVM_MDAB_DSPX_PSU_STRET(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PSU_STRET(a) "MDAB_DSPX_PSU_STRET"
-#define busnum_CAVM_MDAB_DSPX_PSU_STRET(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PSU_STRET(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PSU_STRET(a) cavm_cbpx_psu_stret_t
+#define bustype_CAVM_CBPX_PSU_STRET(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PSU_STRET(a) "CBPX_PSU_STRET"
+#define busnum_CAVM_CBPX_PSU_STRET(a) (a)
+#define arguments_CAVM_CBPX_PSU_STRET(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_psu_stsd
+ * Register (RSL32b) cbp#_psu_stsd
  *
- * MDAB Dsp Psu Stsd Register
+ * CBP Psu Stsd Register
  */
-union cavm_mdab_dspx_psu_stsd
+union cavm_cbpx_psu_stsd
 {
     uint32_t u;
-    struct cavm_mdab_dspx_psu_stsd_s
+    struct cavm_cbpx_psu_stsd_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
@@ -10584,33 +11396,33 @@ union cavm_mdab_dspx_psu_stsd
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_psu_stsd_s cn; */
+    /* struct cavm_cbpx_psu_stsd_s cn; */
 };
-typedef union cavm_mdab_dspx_psu_stsd cavm_mdab_dspx_psu_stsd_t;
+typedef union cavm_cbpx_psu_stsd cavm_cbpx_psu_stsd_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_PSU_STSD(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_PSU_STSD(unsigned long a)
+static inline uint64_t CAVM_CBPX_PSU_STSD(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_PSU_STSD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822264ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_PSU_STSD", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_PSU_STSD", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_PSU_STSD(a) cavm_mdab_dspx_psu_stsd_t
-#define bustype_CAVM_MDAB_DSPX_PSU_STSD(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_PSU_STSD(a) "MDAB_DSPX_PSU_STSD"
-#define busnum_CAVM_MDAB_DSPX_PSU_STSD(a) (a)
-#define arguments_CAVM_MDAB_DSPX_PSU_STSD(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_PSU_STSD(a) cavm_cbpx_psu_stsd_t
+#define bustype_CAVM_CBPX_PSU_STSD(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_PSU_STSD(a) "CBPX_PSU_STSD"
+#define busnum_CAVM_CBPX_PSU_STSD(a) (a)
+#define arguments_CAVM_CBPX_PSU_STSD(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_qman_bman_cntrl_bman_irq_addr_reg
+ * Register (RSL32b) cbp#_qman_bman_cntrl_bman_irq_addr_reg
  *
- * MDAB Dsp Qman Bman Cntrl Bman Irq Addr Reg Register
+ * CBP Qman Bman Cntrl Bman Irq Addr Reg Register
  */
-union cavm_mdab_dspx_qman_bman_cntrl_bman_irq_addr_reg
+union cavm_cbpx_qman_bman_cntrl_bman_irq_addr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_qman_bman_cntrl_bman_irq_addr_reg_s
+    struct cavm_cbpx_qman_bman_cntrl_bman_irq_addr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_20_31        : 12;
@@ -10622,36 +11434,36 @@ union cavm_mdab_dspx_qman_bman_cntrl_bman_irq_addr_reg
         uint32_t reserved_20_31        : 12;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_qman_bman_cntrl_bman_irq_addr_reg_s cn; */
+    /* struct cavm_cbpx_qman_bman_cntrl_bman_irq_addr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_qman_bman_cntrl_bman_irq_addr_reg cavm_mdab_dspx_qman_bman_cntrl_bman_irq_addr_reg_t;
+typedef union cavm_cbpx_qman_bman_cntrl_bman_irq_addr_reg cavm_cbpx_qman_bman_cntrl_bman_irq_addr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227e4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(a) cavm_mdab_dspx_qman_bman_cntrl_bman_irq_addr_reg_t
-#define bustype_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(a) "MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG"
-#define busnum_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(a) cavm_cbpx_qman_bman_cntrl_bman_irq_addr_reg_t
+#define bustype_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(a) "CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG"
+#define busnum_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(a) (a)
+#define arguments_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_ADDR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_qman_bman_cntrl_bman_irq_cfg_reg
+ * Register (RSL32b) cbp#_qman_bman_cntrl_bman_irq_cfg_reg
  *
- * MDAB Dsp Qman Bman Cntrl Bman Irq Cfg Reg Register
+ * CBP Qman Bman Cntrl Bman Irq Cfg Reg Register
  */
-union cavm_mdab_dspx_qman_bman_cntrl_bman_irq_cfg_reg
+union cavm_cbpx_qman_bman_cntrl_bman_irq_cfg_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_qman_bman_cntrl_bman_irq_cfg_reg_s
+    struct cavm_cbpx_qman_bman_cntrl_bman_irq_cfg_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t dsp_empty             : 1;  /**< [ 31: 31](RO) Read only register holding the status of the buffer in use when BMAN_IRQ_SEL==11
+        uint32_t dsp_empty             : 1;  /**< [ 31: 31](RO/H) Read only register holding the status of the buffer in use when BMAN_IRQ_SEL==11
                                                                  0-	Buffer is not empty
                                                                  1-	Buffer is almost empty */
         uint32_t reserved_20_30        : 11;
@@ -10679,33 +11491,33 @@ union cavm_mdab_dspx_qman_bman_cntrl_bman_irq_cfg_reg
                                                                  10  Interrupt is set when write pointer of selected buffer is equal to BMAN_IRQ_ADDR.
                                                                  11  Interrupt is set when DSP reads from an almost empty buffer. */
         uint32_t reserved_20_30        : 11;
-        uint32_t dsp_empty             : 1;  /**< [ 31: 31](RO) Read only register holding the status of the buffer in use when BMAN_IRQ_SEL==11
+        uint32_t dsp_empty             : 1;  /**< [ 31: 31](RO/H) Read only register holding the status of the buffer in use when BMAN_IRQ_SEL==11
                                                                  0-	Buffer is not empty
                                                                  1-	Buffer is almost empty */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_qman_bman_cntrl_bman_irq_cfg_reg_s cn; */
+    /* struct cavm_cbpx_qman_bman_cntrl_bman_irq_cfg_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_qman_bman_cntrl_bman_irq_cfg_reg cavm_mdab_dspx_qman_bman_cntrl_bman_irq_cfg_reg_t;
+typedef union cavm_cbpx_qman_bman_cntrl_bman_irq_cfg_reg cavm_cbpx_qman_bman_cntrl_bman_irq_cfg_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227e0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(a) cavm_mdab_dspx_qman_bman_cntrl_bman_irq_cfg_reg_t
-#define bustype_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(a) "MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG"
-#define busnum_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(a) cavm_cbpx_qman_bman_cntrl_bman_irq_cfg_reg_t
+#define bustype_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(a) "CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG"
+#define busnum_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(a) (a)
+#define arguments_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_qman_bman_cntrl_bman_rst_reg
+ * Register (RSL32b) cbp#_qman_bman_cntrl_bman_rst_reg
  *
- * MDAB Dsp Qman Bman Cntrl Bman Rst Reg Register
+ * CBP Qman Bman Cntrl Bman Rst Reg Register
  * Reset Value:
  * 	Twenty four BMANs hardware configuration - 0x00FF_FFFF
  * 	Sixteen BMANs hardware configuration - 0x0000_FFFF
@@ -10714,10 +11526,10 @@ static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_IRQ_CFG_REG(unsigned 
  * 	Four BMANs hardware configuration - 0x0000_000F
  * 	Zero BMANs hardware configuration - Reserved
  */
-union cavm_mdab_dspx_qman_bman_cntrl_bman_rst_reg
+union cavm_cbpx_qman_bman_cntrl_bman_rst_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_qman_bman_cntrl_bman_rst_reg_s
+    struct cavm_cbpx_qman_bman_cntrl_bman_rst_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -10779,33 +11591,33 @@ union cavm_mdab_dspx_qman_bman_cntrl_bman_rst_reg
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_qman_bman_cntrl_bman_rst_reg_s cn; */
+    /* struct cavm_cbpx_qman_bman_cntrl_bman_rst_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_qman_bman_cntrl_bman_rst_reg cavm_mdab_dspx_qman_bman_cntrl_bman_rst_reg_t;
+typedef union cavm_cbpx_qman_bman_cntrl_bman_rst_reg cavm_cbpx_qman_bman_cntrl_bman_rst_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227f8ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_RST_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QMAN_BMAN_CNTRL_BMAN_RST_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(a) cavm_mdab_dspx_qman_bman_cntrl_bman_rst_reg_t
-#define bustype_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(a) "MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_RST_REG"
-#define busnum_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(a) cavm_cbpx_qman_bman_cntrl_bman_rst_reg_t
+#define bustype_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(a) "CBPX_QMAN_BMAN_CNTRL_BMAN_RST_REG"
+#define busnum_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(a) (a)
+#define arguments_CAVM_CBPX_QMAN_BMAN_CNTRL_BMAN_RST_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_qman_bman_cntrl_dsp_pkt_size_reg
+ * Register (RSL32b) cbp#_qman_bman_cntrl_dsp_pkt_size_reg
  *
- * MDAB Dsp Qman Bman Cntrl Dsp Pkt Size Reg Register
+ * CBP Qman Bman Cntrl Dsp Pkt Size Reg Register
  */
-union cavm_mdab_dspx_qman_bman_cntrl_dsp_pkt_size_reg
+union cavm_cbpx_qman_bman_cntrl_dsp_pkt_size_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_qman_bman_cntrl_dsp_pkt_size_reg_s
+    struct cavm_cbpx_qman_bman_cntrl_dsp_pkt_size_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
@@ -10825,279 +11637,279 @@ union cavm_mdab_dspx_qman_bman_cntrl_dsp_pkt_size_reg
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_qman_bman_cntrl_dsp_pkt_size_reg_s cn; */
+    /* struct cavm_cbpx_qman_bman_cntrl_dsp_pkt_size_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_qman_bman_cntrl_dsp_pkt_size_reg cavm_mdab_dspx_qman_bman_cntrl_dsp_pkt_size_reg_t;
+typedef union cavm_cbpx_qman_bman_cntrl_dsp_pkt_size_reg cavm_cbpx_qman_bman_cntrl_dsp_pkt_size_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227e8ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(a) cavm_mdab_dspx_qman_bman_cntrl_dsp_pkt_size_reg_t
-#define bustype_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(a) "MDAB_DSPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG"
-#define busnum_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(a) cavm_cbpx_qman_bman_cntrl_dsp_pkt_size_reg_t
+#define bustype_CAVM_CBPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(a) "CBPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG"
+#define busnum_CAVM_CBPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(a) (a)
+#define arguments_CAVM_CBPX_QMAN_BMAN_CNTRL_DSP_PKT_SIZE_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_qman_bman_cntrl_qbman_irq_status_reg
+ * Register (RSL32b) cbp#_qman_bman_cntrl_qbman_irq_status_reg
  *
- * MDAB Dsp Qman Bman Cntrl Qbman Irq Status Reg Register
+ * CBP Qman Bman Cntrl Qbman Irq Status Reg Register
  */
-union cavm_mdab_dspx_qman_bman_cntrl_qbman_irq_status_reg
+union cavm_cbpx_qman_bman_cntrl_qbman_irq_status_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_qman_bman_cntrl_qbman_irq_status_reg_s
+    struct cavm_cbpx_qman_bman_cntrl_qbman_irq_status_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t bman_irq_status       : 1;  /**< [ 17: 17](R/W) BMAN interrupt status.
+        uint32_t bman_irq_status       : 1;  /**< [ 17: 17](R/W/H) BMAN interrupt status.
                                                                  This bit is set when a selected buffer read or write pointers reach a
                                                                  preconfigured address or when the buffer used by the DSP is almost empty.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register bit. */
-        uint32_t fnum_vi               : 1;  /**< [ 16: 16](R/W) Frame number violation interrupt status.
+        uint32_t fnum_vi               : 1;  /**< [ 16: 16](R/W/H) Frame number violation interrupt status.
                                                                  This bit is set when two or more tasks are accessing the queue arbitration with
                                                                  same absolute priority and non-consecutive frame number.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register bit. */
         uint32_t reserved_12_15        : 4;
-        uint32_t empty_vi              : 12; /**< [ 11:  0](R/W) Queue empty violation interrupt status.
+        uint32_t empty_vi              : 12; /**< [ 11:  0](R/W/H) Queue empty violation interrupt status.
                                                                  Each bit is used as an empty violation interrupt status.
                                                                  Each bit is set if the corresponding queue is empty and its enabled task counter
                                                                  indicates active tasks in the queue.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register bit. */
 #else /* Word 0 - Little Endian */
-        uint32_t empty_vi              : 12; /**< [ 11:  0](R/W) Queue empty violation interrupt status.
+        uint32_t empty_vi              : 12; /**< [ 11:  0](R/W/H) Queue empty violation interrupt status.
                                                                  Each bit is used as an empty violation interrupt status.
                                                                  Each bit is set if the corresponding queue is empty and its enabled task counter
                                                                  indicates active tasks in the queue.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register bit. */
         uint32_t reserved_12_15        : 4;
-        uint32_t fnum_vi               : 1;  /**< [ 16: 16](R/W) Frame number violation interrupt status.
+        uint32_t fnum_vi               : 1;  /**< [ 16: 16](R/W/H) Frame number violation interrupt status.
                                                                  This bit is set when two or more tasks are accessing the queue arbitration with
                                                                  same absolute priority and non-consecutive frame number.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register bit. */
-        uint32_t bman_irq_status       : 1;  /**< [ 17: 17](R/W) BMAN interrupt status.
+        uint32_t bman_irq_status       : 1;  /**< [ 17: 17](R/W/H) BMAN interrupt status.
                                                                  This bit is set when a selected buffer read or write pointers reach a
                                                                  preconfigured address or when the buffer used by the DSP is almost empty.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register bit. */
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_qman_bman_cntrl_qbman_irq_status_reg_s cn; */
+    /* struct cavm_cbpx_qman_bman_cntrl_qbman_irq_status_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_qman_bman_cntrl_qbman_irq_status_reg cavm_mdab_dspx_qman_bman_cntrl_qbman_irq_status_reg_t;
+typedef union cavm_cbpx_qman_bman_cntrl_qbman_irq_status_reg cavm_cbpx_qman_bman_cntrl_qbman_irq_status_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227f0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(a) cavm_mdab_dspx_qman_bman_cntrl_qbman_irq_status_reg_t
-#define bustype_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(a) "MDAB_DSPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG"
-#define busnum_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(a) cavm_cbpx_qman_bman_cntrl_qbman_irq_status_reg_t
+#define bustype_CAVM_CBPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(a) "CBPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG"
+#define busnum_CAVM_CBPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(a) (a)
+#define arguments_CAVM_CBPX_QMAN_BMAN_CNTRL_QBMAN_IRQ_STATUS_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_qman_bman_cntrl_qman_active_reg
+ * Register (RSL32b) cbp#_qman_bman_cntrl_qman_active_reg
  *
- * MDAB Dsp Qman Bman Cntrl Qman Active Reg Register
+ * CBP Qman Bman Cntrl Qman Active Reg Register
  */
-union cavm_mdab_dspx_qman_bman_cntrl_qman_active_reg
+union cavm_cbpx_qman_bman_cntrl_qman_active_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_qman_bman_cntrl_qman_active_reg_s
+    struct cavm_cbpx_qman_bman_cntrl_qman_active_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
-        uint32_t q11_active            : 1;  /**< [ 27: 27](RO) Queue 11 active status indication.
+        uint32_t q11_active            : 1;  /**< [ 27: 27](RO/H) Queue 11 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q10_active            : 1;  /**< [ 26: 26](RO) Queue 10 active status indication.
+        uint32_t q10_active            : 1;  /**< [ 26: 26](RO/H) Queue 10 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q9_active             : 1;  /**< [ 25: 25](RO) Queue 9 active status indication.
+        uint32_t q9_active             : 1;  /**< [ 25: 25](RO/H) Queue 9 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q8_active             : 1;  /**< [ 24: 24](RO) Queue 8 active status indication.
+        uint32_t q8_active             : 1;  /**< [ 24: 24](RO/H) Queue 8 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q7_active             : 1;  /**< [ 23: 23](RO) Queue 0 active status indication.
+        uint32_t q7_active             : 1;  /**< [ 23: 23](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q6_active             : 1;  /**< [ 22: 22](RO) Queue 0 active status indication.
+        uint32_t q6_active             : 1;  /**< [ 22: 22](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q5_active             : 1;  /**< [ 21: 21](RO) Queue 0 active status indication.
+        uint32_t q5_active             : 1;  /**< [ 21: 21](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q4_active             : 1;  /**< [ 20: 20](RO) Queue 0 active status indication.
+        uint32_t q4_active             : 1;  /**< [ 20: 20](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q3_active             : 1;  /**< [ 19: 19](RO) Queue 0 active status indication.
+        uint32_t q3_active             : 1;  /**< [ 19: 19](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q2_active             : 1;  /**< [ 18: 18](RO) Queue 0 active status indication.
+        uint32_t q2_active             : 1;  /**< [ 18: 18](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q1_active             : 1;  /**< [ 17: 17](RO) Queue 0 active status indication.
+        uint32_t q1_active             : 1;  /**< [ 17: 17](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q0_active             : 1;  /**< [ 16: 16](RO) Queue 0 active status indication.
+        uint32_t q0_active             : 1;  /**< [ 16: 16](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
         uint32_t reserved_12_15        : 4;
-        uint32_t q11_idm_cros          : 1;  /**< [ 11: 11](R/W) Error indication QMAN11 internal access crossed IDM last address.
+        uint32_t q11_idm_cros          : 1;  /**< [ 11: 11](R/W/H) Error indication QMAN11 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q10_idm_cros          : 1;  /**< [ 10: 10](R/W) Error indication QMAN10 internal access crossed IDM last address.
+        uint32_t q10_idm_cros          : 1;  /**< [ 10: 10](R/W/H) Error indication QMAN10 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q9_idm_cros           : 1;  /**< [  9:  9](R/W) Error indication QMAN9 internal access crossed IDM last address.
+        uint32_t q9_idm_cros           : 1;  /**< [  9:  9](R/W/H) Error indication QMAN9 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q8_idm_cros           : 1;  /**< [  8:  8](R/W) Error indication QMAN8 internal access crossed IDM last address.
+        uint32_t q8_idm_cros           : 1;  /**< [  8:  8](R/W/H) Error indication QMAN8 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q7_idm_cros           : 1;  /**< [  7:  7](R/W) Error indication QMAN7 internal access crossed IDM last address.
+        uint32_t q7_idm_cros           : 1;  /**< [  7:  7](R/W/H) Error indication QMAN7 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q6_idm_cros           : 1;  /**< [  6:  6](R/W) Error indication QMAN6 internal access crossed IDM last address.
+        uint32_t q6_idm_cros           : 1;  /**< [  6:  6](R/W/H) Error indication QMAN6 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q5_idm_cros           : 1;  /**< [  5:  5](R/W) Error indication QMAN5 internal access crossed IDM last address.
+        uint32_t q5_idm_cros           : 1;  /**< [  5:  5](R/W/H) Error indication QMAN5 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q4_idm_cros           : 1;  /**< [  4:  4](R/W) Error indication QMAN4 internal access crossed IDM last address.
+        uint32_t q4_idm_cros           : 1;  /**< [  4:  4](R/W/H) Error indication QMAN4 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q3_idm_cros           : 1;  /**< [  3:  3](R/W) Error indication QMAN3 internal access crossed IDM last address.
+        uint32_t q3_idm_cros           : 1;  /**< [  3:  3](R/W/H) Error indication QMAN3 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q2_idm_cros           : 1;  /**< [  2:  2](R/W) Error indication QMAN2 internal access crossed IDM last address.
+        uint32_t q2_idm_cros           : 1;  /**< [  2:  2](R/W/H) Error indication QMAN2 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q1_idm_cros           : 1;  /**< [  1:  1](R/W) Error indication QMAN1 internal access crossed IDM last address.
+        uint32_t q1_idm_cros           : 1;  /**< [  1:  1](R/W/H) Error indication QMAN1 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q0_idm_cros           : 1;  /**< [  0:  0](R/W) Error indication QMAN0 internal access crossed IDM last address.
+        uint32_t q0_idm_cros           : 1;  /**< [  0:  0](R/W/H) Error indication QMAN0 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
 #else /* Word 0 - Little Endian */
-        uint32_t q0_idm_cros           : 1;  /**< [  0:  0](R/W) Error indication QMAN0 internal access crossed IDM last address.
+        uint32_t q0_idm_cros           : 1;  /**< [  0:  0](R/W/H) Error indication QMAN0 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q1_idm_cros           : 1;  /**< [  1:  1](R/W) Error indication QMAN1 internal access crossed IDM last address.
+        uint32_t q1_idm_cros           : 1;  /**< [  1:  1](R/W/H) Error indication QMAN1 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q2_idm_cros           : 1;  /**< [  2:  2](R/W) Error indication QMAN2 internal access crossed IDM last address.
+        uint32_t q2_idm_cros           : 1;  /**< [  2:  2](R/W/H) Error indication QMAN2 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q3_idm_cros           : 1;  /**< [  3:  3](R/W) Error indication QMAN3 internal access crossed IDM last address.
+        uint32_t q3_idm_cros           : 1;  /**< [  3:  3](R/W/H) Error indication QMAN3 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q4_idm_cros           : 1;  /**< [  4:  4](R/W) Error indication QMAN4 internal access crossed IDM last address.
+        uint32_t q4_idm_cros           : 1;  /**< [  4:  4](R/W/H) Error indication QMAN4 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q5_idm_cros           : 1;  /**< [  5:  5](R/W) Error indication QMAN5 internal access crossed IDM last address.
+        uint32_t q5_idm_cros           : 1;  /**< [  5:  5](R/W/H) Error indication QMAN5 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q6_idm_cros           : 1;  /**< [  6:  6](R/W) Error indication QMAN6 internal access crossed IDM last address.
+        uint32_t q6_idm_cros           : 1;  /**< [  6:  6](R/W/H) Error indication QMAN6 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q7_idm_cros           : 1;  /**< [  7:  7](R/W) Error indication QMAN7 internal access crossed IDM last address.
+        uint32_t q7_idm_cros           : 1;  /**< [  7:  7](R/W/H) Error indication QMAN7 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q8_idm_cros           : 1;  /**< [  8:  8](R/W) Error indication QMAN8 internal access crossed IDM last address.
+        uint32_t q8_idm_cros           : 1;  /**< [  8:  8](R/W/H) Error indication QMAN8 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q9_idm_cros           : 1;  /**< [  9:  9](R/W) Error indication QMAN9 internal access crossed IDM last address.
+        uint32_t q9_idm_cros           : 1;  /**< [  9:  9](R/W/H) Error indication QMAN9 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q10_idm_cros          : 1;  /**< [ 10: 10](R/W) Error indication QMAN10 internal access crossed IDM last address.
+        uint32_t q10_idm_cros          : 1;  /**< [ 10: 10](R/W/H) Error indication QMAN10 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
-        uint32_t q11_idm_cros          : 1;  /**< [ 11: 11](R/W) Error indication QMAN11 internal access crossed IDM last address.
+        uint32_t q11_idm_cros          : 1;  /**< [ 11: 11](R/W/H) Error indication QMAN11 internal access crossed IDM last address.
                                                                  This bit is a sticky bit and is cleared by writing 1 to this register. */
         uint32_t reserved_12_15        : 4;
-        uint32_t q0_active             : 1;  /**< [ 16: 16](RO) Queue 0 active status indication.
+        uint32_t q0_active             : 1;  /**< [ 16: 16](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q1_active             : 1;  /**< [ 17: 17](RO) Queue 0 active status indication.
+        uint32_t q1_active             : 1;  /**< [ 17: 17](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q2_active             : 1;  /**< [ 18: 18](RO) Queue 0 active status indication.
+        uint32_t q2_active             : 1;  /**< [ 18: 18](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q3_active             : 1;  /**< [ 19: 19](RO) Queue 0 active status indication.
+        uint32_t q3_active             : 1;  /**< [ 19: 19](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q4_active             : 1;  /**< [ 20: 20](RO) Queue 0 active status indication.
+        uint32_t q4_active             : 1;  /**< [ 20: 20](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q5_active             : 1;  /**< [ 21: 21](RO) Queue 0 active status indication.
+        uint32_t q5_active             : 1;  /**< [ 21: 21](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q6_active             : 1;  /**< [ 22: 22](RO) Queue 0 active status indication.
+        uint32_t q6_active             : 1;  /**< [ 22: 22](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q7_active             : 1;  /**< [ 23: 23](RO) Queue 0 active status indication.
+        uint32_t q7_active             : 1;  /**< [ 23: 23](RO/H) Queue 0 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q8_active             : 1;  /**< [ 24: 24](RO) Queue 8 active status indication.
+        uint32_t q8_active             : 1;  /**< [ 24: 24](RO/H) Queue 8 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q9_active             : 1;  /**< [ 25: 25](RO) Queue 9 active status indication.
+        uint32_t q9_active             : 1;  /**< [ 25: 25](RO/H) Queue 9 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q10_active            : 1;  /**< [ 26: 26](RO) Queue 10 active status indication.
+        uint32_t q10_active            : 1;  /**< [ 26: 26](RO/H) Queue 10 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
-        uint32_t q11_active            : 1;  /**< [ 27: 27](RO) Queue 11 active status indication.
+        uint32_t q11_active            : 1;  /**< [ 27: 27](RO/H) Queue 11 active status indication.
                                                                  Indicates the status of the QMAN state machine.
                                                                  0-QMAN is not active
                                                                  1-QMAN is active */
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_qman_bman_cntrl_qman_active_reg_s cn; */
+    /* struct cavm_cbpx_qman_bman_cntrl_qman_active_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_qman_bman_cntrl_qman_active_reg cavm_mdab_dspx_qman_bman_cntrl_qman_active_reg_t;
+typedef union cavm_cbpx_qman_bman_cntrl_qman_active_reg cavm_cbpx_qman_bman_cntrl_qman_active_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227dcll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(a) cavm_mdab_dspx_qman_bman_cntrl_qman_active_reg_t
-#define bustype_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(a) "MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG"
-#define busnum_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(a) cavm_cbpx_qman_bman_cntrl_qman_active_reg_t
+#define bustype_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(a) "CBPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG"
+#define busnum_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(a) (a)
+#define arguments_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_ACTIVE_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_qman_bman_cntrl_qman_rst_reg
+ * Register (RSL32b) cbp#_qman_bman_cntrl_qman_rst_reg
  *
- * MDAB Dsp Qman Bman Cntrl Qman Rst Reg Register
+ * CBP Qman Bman Cntrl Qman Rst Reg Register
  * Twelve QMANs hardware configuration - 0x0000_0FFF
  * 	Eight QMANs hardware configuration - 0x0000_00FF
  * 	Four QMANs hardware configuration - 0x0000_000F
  * 	Zero QMANs hardware configuration - 0x0000_0000
  */
-union cavm_mdab_dspx_qman_bman_cntrl_qman_rst_reg
+union cavm_cbpx_qman_bman_cntrl_qman_rst_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_qman_bman_cntrl_qman_rst_reg_s
+    struct cavm_cbpx_qman_bman_cntrl_qman_rst_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -11185,33 +11997,33 @@ union cavm_mdab_dspx_qman_bman_cntrl_qman_rst_reg
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_qman_bman_cntrl_qman_rst_reg_s cn; */
+    /* struct cavm_cbpx_qman_bman_cntrl_qman_rst_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_qman_bman_cntrl_qman_rst_reg cavm_mdab_dspx_qman_bman_cntrl_qman_rst_reg_t;
+typedef union cavm_cbpx_qman_bman_cntrl_qman_rst_reg cavm_cbpx_qman_bman_cntrl_qman_rst_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227f4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_RST_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QMAN_BMAN_CNTRL_QMAN_RST_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(a) cavm_mdab_dspx_qman_bman_cntrl_qman_rst_reg_t
-#define bustype_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(a) "MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_RST_REG"
-#define busnum_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(a) cavm_cbpx_qman_bman_cntrl_qman_rst_reg_t
+#define bustype_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(a) "CBPX_QMAN_BMAN_CNTRL_QMAN_RST_REG"
+#define busnum_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(a) (a)
+#define arguments_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_RST_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_qman_bman_cntrl_qman_vi_mask_reg
+ * Register (RSL32b) cbp#_qman_bman_cntrl_qman_vi_mask_reg
  *
- * MDAB Dsp Qman Bman Cntrl Qman Vi Mask Reg Register
+ * CBP Qman Bman Cntrl Qman Vi Mask Reg Register
  */
-union cavm_mdab_dspx_qman_bman_cntrl_qman_vi_mask_reg
+union cavm_cbpx_qman_bman_cntrl_qman_vi_mask_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_qman_bman_cntrl_qman_vi_mask_reg_s
+    struct cavm_cbpx_qman_bman_cntrl_qman_vi_mask_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_17_31        : 15;
@@ -11251,33 +12063,33 @@ union cavm_mdab_dspx_qman_bman_cntrl_qman_vi_mask_reg
         uint32_t reserved_17_31        : 15;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_qman_bman_cntrl_qman_vi_mask_reg_s cn; */
+    /* struct cavm_cbpx_qman_bman_cntrl_qman_vi_mask_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_qman_bman_cntrl_qman_vi_mask_reg cavm_mdab_dspx_qman_bman_cntrl_qman_vi_mask_reg_t;
+typedef union cavm_cbpx_qman_bman_cntrl_qman_vi_mask_reg cavm_cbpx_qman_bman_cntrl_qman_vi_mask_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227ecll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(a) cavm_mdab_dspx_qman_bman_cntrl_qman_vi_mask_reg_t
-#define bustype_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(a) "MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG"
-#define busnum_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(a) cavm_cbpx_qman_bman_cntrl_qman_vi_mask_reg_t
+#define bustype_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(a) "CBPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG"
+#define busnum_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(a) (a)
+#define arguments_CAVM_CBPX_QMAN_BMAN_CNTRL_QMAN_VI_MASK_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuedescriptor_qpush_dsc_ext_ptr_reg
+ * Register (RSL32b) cbp#_queuedescriptor_qpush_dsc_ext_ptr_reg
  *
- * MDAB Dsp Queuedescriptor Qpush Dsc Ext Ptr Reg Register
+ * CBP Queuedescriptor Qpush Dsc Ext Ptr Reg Register
  */
-union cavm_mdab_dspx_queuedescriptor_qpush_dsc_ext_ptr_reg
+union cavm_cbpx_queuedescriptor_qpush_dsc_ext_ptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuedescriptor_qpush_dsc_ext_ptr_reg_s
+    struct cavm_cbpx_queuedescriptor_qpush_dsc_ext_ptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qpush_dsc_ext_ptr     : 32; /**< [ 31:  0](R/W) 32 LSBs of the new descriptor to be pushed into a queue.
@@ -11287,33 +12099,33 @@ union cavm_mdab_dspx_queuedescriptor_qpush_dsc_ext_ptr_reg
                                                                  Contains the External address pointer descriptor field to be pushed into a queue. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuedescriptor_qpush_dsc_ext_ptr_reg_s cn; */
+    /* struct cavm_cbpx_queuedescriptor_qpush_dsc_ext_ptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuedescriptor_qpush_dsc_ext_ptr_reg cavm_mdab_dspx_queuedescriptor_qpush_dsc_ext_ptr_reg_t;
+typedef union cavm_cbpx_queuedescriptor_qpush_dsc_ext_ptr_reg cavm_cbpx_queuedescriptor_qpush_dsc_ext_ptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227c0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(a) cavm_mdab_dspx_queuedescriptor_qpush_dsc_ext_ptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(a) "MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(a) cavm_cbpx_queuedescriptor_qpush_dsc_ext_ptr_reg_t
+#define bustype_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(a) "CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG"
+#define busnum_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(a) (a)
+#define arguments_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_EXT_PTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuedescriptor_qpush_dsc_int_ptr_reg
+ * Register (RSL32b) cbp#_queuedescriptor_qpush_dsc_int_ptr_reg
  *
- * MDAB Dsp Queuedescriptor Qpush Dsc Int Ptr Reg Register
+ * CBP Queuedescriptor Qpush Dsc Int Ptr Reg Register
  */
-union cavm_mdab_dspx_queuedescriptor_qpush_dsc_int_ptr_reg
+union cavm_cbpx_queuedescriptor_qpush_dsc_int_ptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuedescriptor_qpush_dsc_int_ptr_reg_s
+    struct cavm_cbpx_queuedescriptor_qpush_dsc_int_ptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qpush_dsc_int_ptr     : 32; /**< [ 31:  0](R/W) Bits [63:32] of the new descriptor to be pushed into a queue
@@ -11323,33 +12135,33 @@ union cavm_mdab_dspx_queuedescriptor_qpush_dsc_int_ptr_reg
                                                                  Contains the internal address pointer descriptor field to be pushed into a queue */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuedescriptor_qpush_dsc_int_ptr_reg_s cn; */
+    /* struct cavm_cbpx_queuedescriptor_qpush_dsc_int_ptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuedescriptor_qpush_dsc_int_ptr_reg cavm_mdab_dspx_queuedescriptor_qpush_dsc_int_ptr_reg_t;
+typedef union cavm_cbpx_queuedescriptor_qpush_dsc_int_ptr_reg cavm_cbpx_queuedescriptor_qpush_dsc_int_ptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227c4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(a) cavm_mdab_dspx_queuedescriptor_qpush_dsc_int_ptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(a) "MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(a) cavm_cbpx_queuedescriptor_qpush_dsc_int_ptr_reg_t
+#define bustype_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(a) "CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG"
+#define busnum_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(a) (a)
+#define arguments_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_INT_PTR_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuedescriptor_qpush_dsc_tctl_reg
+ * Register (RSL32b) cbp#_queuedescriptor_qpush_dsc_tctl_reg
  *
- * MDAB Dsp Queuedescriptor Qpush Dsc Tctl Reg Register
+ * CBP Queuedescriptor Qpush Dsc Tctl Reg Register
  */
-union cavm_mdab_dspx_queuedescriptor_qpush_dsc_tctl_reg
+union cavm_cbpx_queuedescriptor_qpush_dsc_tctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuedescriptor_qpush_dsc_tctl_reg_s
+    struct cavm_cbpx_queuedescriptor_qpush_dsc_tctl_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qpush_dsc_tctl        : 32; /**< [ 31:  0](R/W) Bits [95:64] of the new descriptor to be pushed into a queue
@@ -11359,33 +12171,33 @@ union cavm_mdab_dspx_queuedescriptor_qpush_dsc_tctl_reg
                                                                  Contains the TCTL related descriptor fields to be pushed into a queue */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuedescriptor_qpush_dsc_tctl_reg_s cn; */
+    /* struct cavm_cbpx_queuedescriptor_qpush_dsc_tctl_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuedescriptor_qpush_dsc_tctl_reg cavm_mdab_dspx_queuedescriptor_qpush_dsc_tctl_reg_t;
+typedef union cavm_cbpx_queuedescriptor_qpush_dsc_tctl_reg cavm_cbpx_queuedescriptor_qpush_dsc_tctl_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227c8ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(a) cavm_mdab_dspx_queuedescriptor_qpush_dsc_tctl_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(a) "MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(a) cavm_cbpx_queuedescriptor_qpush_dsc_tctl_reg_t
+#define bustype_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(a) "CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG"
+#define busnum_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(a) (a)
+#define arguments_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TCTL_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuedescriptor_qpush_dsc_tframe_len_reg
+ * Register (RSL32b) cbp#_queuedescriptor_qpush_dsc_tframe_len_reg
  *
- * MDAB Dsp Queuedescriptor Qpush Dsc Tframe Len Reg Register
+ * CBP Queuedescriptor Qpush Dsc Tframe Len Reg Register
  */
-union cavm_mdab_dspx_queuedescriptor_qpush_dsc_tframe_len_reg
+union cavm_cbpx_queuedescriptor_qpush_dsc_tframe_len_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuedescriptor_qpush_dsc_tframe_len_reg_s
+    struct cavm_cbpx_queuedescriptor_qpush_dsc_tframe_len_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -11397,37 +12209,37 @@ union cavm_mdab_dspx_queuedescriptor_qpush_dsc_tframe_len_reg
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuedescriptor_qpush_dsc_tframe_len_reg_s cn; */
+    /* struct cavm_cbpx_queuedescriptor_qpush_dsc_tframe_len_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuedescriptor_qpush_dsc_tframe_len_reg cavm_mdab_dspx_queuedescriptor_qpush_dsc_tframe_len_reg_t;
+typedef union cavm_cbpx_queuedescriptor_qpush_dsc_tframe_len_reg cavm_cbpx_queuedescriptor_qpush_dsc_tframe_len_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227ccll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(a) cavm_mdab_dspx_queuedescriptor_qpush_dsc_tframe_len_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(a) "MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(a) cavm_cbpx_queuedescriptor_qpush_dsc_tframe_len_reg_t
+#define bustype_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(a) "CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG"
+#define busnum_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(a) (a)
+#define arguments_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_DSC_TFRAME_LEN_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuedescriptor_qpush_num_reg
+ * Register (RSL32b) cbp#_queuedescriptor_qpush_num_reg
  *
- * MDAB Dsp Queuedescriptor Qpush Num Reg Register
+ * CBP Queuedescriptor Qpush Num Reg Register
  */
-union cavm_mdab_dspx_queuedescriptor_qpush_num_reg
+union cavm_cbpx_queuedescriptor_qpush_num_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuedescriptor_qpush_num_reg_s
+    struct cavm_cbpx_queuedescriptor_qpush_num_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_18_31        : 14;
-        uint32_t qpush_status          : 1;  /**< [ 17: 17](RO) Read Only register used for indication of the status of the simplified interface.
+        uint32_t qpush_status          : 1;  /**< [ 17: 17](RO/H) Read Only register used for indication of the status of the simplified interface.
                                                                  0  the simplified interface is IDLE
                                                                  1  the simplified interface is BUSY writing the task to the queue (writing new
                                                                  task and read-modify-write for WPTR) */
@@ -11448,40 +12260,40 @@ union cavm_mdab_dspx_queuedescriptor_qpush_num_reg
         uint32_t reserved_4_15         : 12;
         uint32_t qpush_status_rls      : 1;  /**< [ 16: 16](WO) Writing 0x1 to this register releases all QX_STATUS registers to show the real
                                                                  status of the queues without pushing a new descriptor to a queue. */
-        uint32_t qpush_status          : 1;  /**< [ 17: 17](RO) Read Only register used for indication of the status of the simplified interface.
+        uint32_t qpush_status          : 1;  /**< [ 17: 17](RO/H) Read Only register used for indication of the status of the simplified interface.
                                                                  0  the simplified interface is IDLE
                                                                  1  the simplified interface is BUSY writing the task to the queue (writing new
                                                                  task and read-modify-write for WPTR) */
         uint32_t reserved_18_31        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuedescriptor_qpush_num_reg_s cn; */
+    /* struct cavm_cbpx_queuedescriptor_qpush_num_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuedescriptor_qpush_num_reg cavm_mdab_dspx_queuedescriptor_qpush_num_reg_t;
+typedef union cavm_cbpx_queuedescriptor_qpush_num_reg cavm_cbpx_queuedescriptor_qpush_num_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(unsigned long a)
+static inline uint64_t CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448227d0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(a) cavm_mdab_dspx_queuedescriptor_qpush_num_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(a) "MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(a) cavm_cbpx_queuedescriptor_qpush_num_reg_t
+#define bustype_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(a) "CBPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG"
+#define busnum_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(a) (a)
+#define arguments_CAVM_CBPX_QUEUEDESCRIPTOR_QPUSH_NUM_REG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#_base_ptr_reg
+ * Register (RSL32b) cbp#_queuemanager_q#_base_ptr_reg
  *
- * MDAB Dsp Queuemanager Q Base Ptr Reg Register
+ * CBP Queuemanager Q Base Ptr Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qx_base_ptr_reg
+union cavm_cbpx_queuemanager_qx_base_ptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qx_base_ptr_reg_s
+    struct cavm_cbpx_queuemanager_qx_base_ptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qx_base_ptr           : 32; /**< [ 31:  0](R/W) A base pointer (pointer to pointer) used as a pointer to queue X read and write pointers.
@@ -11507,33 +12319,33 @@ union cavm_mdab_dspx_queuemanager_qx_base_ptr_reg
                                                                  The four LSBs of this register are always replaced with 4h0 (QX_RPTR is 16 Byte aligned) */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qx_base_ptr_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qx_base_ptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qx_base_ptr_reg cavm_mdab_dspx_queuemanager_qx_base_ptr_reg_t;
+typedef union cavm_cbpx_queuemanager_qx_base_ptr_reg cavm_cbpx_queuemanager_qx_base_ptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_BASE_PTR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_BASE_PTR_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_BASE_PTR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_BASE_PTR_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822808ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QX_BASE_PTR_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QX_BASE_PTR_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_BASE_PTR_REG(a,b) cavm_mdab_dspx_queuemanager_qx_base_ptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_BASE_PTR_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_BASE_PTR_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QX_BASE_PTR_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_BASE_PTR_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_BASE_PTR_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QX_BASE_PTR_REG(a,b) cavm_cbpx_queuemanager_qx_base_ptr_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QX_BASE_PTR_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QX_BASE_PTR_REG(a,b) "CBPX_QUEUEMANAGER_QX_BASE_PTR_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QX_BASE_PTR_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QX_BASE_PTR_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#_chnk_size_reg
+ * Register (RSL32b) cbp#_queuemanager_q#_chnk_size_reg
  *
- * MDAB Dsp Queuemanager Q Chnk Size Reg Register
+ * CBP Queuemanager Q Chnk Size Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qx_chnk_size_reg
+union cavm_cbpx_queuemanager_qx_chnk_size_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qx_chnk_size_reg_s
+    struct cavm_cbpx_queuemanager_qx_chnk_size_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_14_31        : 18;
@@ -11545,33 +12357,33 @@ union cavm_mdab_dspx_queuemanager_qx_chnk_size_reg
         uint32_t reserved_14_31        : 18;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qx_chnk_size_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qx_chnk_size_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qx_chnk_size_reg cavm_mdab_dspx_queuemanager_qx_chnk_size_reg_t;
+typedef union cavm_cbpx_queuemanager_qx_chnk_size_reg cavm_cbpx_queuemanager_qx_chnk_size_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e04482280cll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QX_CHNK_SIZE_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QX_CHNK_SIZE_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(a,b) cavm_mdab_dspx_queuemanager_qx_chnk_size_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QX_CHNK_SIZE_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(a,b) cavm_cbpx_queuemanager_qx_chnk_size_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(a,b) "CBPX_QUEUEMANAGER_QX_CHNK_SIZE_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QX_CHNK_SIZE_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#_desc_en_inc_reg
+ * Register (RSL32b) cbp#_queuemanager_q#_desc_en_inc_reg
  *
- * MDAB Dsp Queuemanager Q Desc En Inc Reg Register
+ * CBP Queuemanager Q Desc En Inc Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qx_desc_en_inc_reg
+union cavm_cbpx_queuemanager_qx_desc_en_inc_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qx_desc_en_inc_reg_s
+    struct cavm_cbpx_queuemanager_qx_desc_en_inc_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_17_31        : 15;
@@ -11601,33 +12413,33 @@ union cavm_mdab_dspx_queuemanager_qx_desc_en_inc_reg
         uint32_t reserved_17_31        : 15;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qx_desc_en_inc_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qx_desc_en_inc_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qx_desc_en_inc_reg cavm_mdab_dspx_queuemanager_qx_desc_en_inc_reg_t;
+typedef union cavm_cbpx_queuemanager_qx_desc_en_inc_reg cavm_cbpx_queuemanager_qx_desc_en_inc_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822810ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QX_DESC_EN_INC_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QX_DESC_EN_INC_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(a,b) cavm_mdab_dspx_queuemanager_qx_desc_en_inc_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QX_DESC_EN_INC_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(a,b) cavm_cbpx_queuemanager_qx_desc_en_inc_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(a,b) "CBPX_QUEUEMANAGER_QX_DESC_EN_INC_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QX_DESC_EN_INC_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#_dsc_ext_ptr_reg
+ * Register (RSL32b) cbp#_queuemanager_q#_dsc_ext_ptr_reg
  *
- * MDAB Dsp Queuemanager Q Dsc Ext Ptr Reg Register
+ * CBP Queuemanager Q Dsc Ext Ptr Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qx_dsc_ext_ptr_reg
+union cavm_cbpx_queuemanager_qx_dsc_ext_ptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qx_dsc_ext_ptr_reg_s
+    struct cavm_cbpx_queuemanager_qx_dsc_ext_ptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qx_dsc_ext_ptr        : 32; /**< [ 31:  0](RO) Queue X external pointer from last used descriptor
@@ -11643,33 +12455,33 @@ union cavm_mdab_dspx_queuemanager_qx_dsc_ext_ptr_reg
                                                                  This registers gets the value of 0 after QX_RST is set */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qx_dsc_ext_ptr_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qx_dsc_ext_ptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qx_dsc_ext_ptr_reg cavm_mdab_dspx_queuemanager_qx_dsc_ext_ptr_reg_t;
+typedef union cavm_cbpx_queuemanager_qx_dsc_ext_ptr_reg cavm_cbpx_queuemanager_qx_dsc_ext_ptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e04482281cll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(a,b) cavm_mdab_dspx_queuemanager_qx_dsc_ext_ptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(a,b) cavm_cbpx_queuemanager_qx_dsc_ext_ptr_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(a,b) "CBPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QX_DSC_EXT_PTR_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#_dsc_int_ptr_reg
+ * Register (RSL32b) cbp#_queuemanager_q#_dsc_int_ptr_reg
  *
- * MDAB Dsp Queuemanager Q Dsc Int Ptr Reg Register
+ * CBP Queuemanager Q Dsc Int Ptr Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qx_dsc_int_ptr_reg
+union cavm_cbpx_queuemanager_qx_dsc_int_ptr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qx_dsc_int_ptr_reg_s
+    struct cavm_cbpx_queuemanager_qx_dsc_int_ptr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qx_dsc_int_ptr        : 32; /**< [ 31:  0](RO) Queue X internal pointer from last used descriptor
@@ -11685,33 +12497,33 @@ union cavm_mdab_dspx_queuemanager_qx_dsc_int_ptr_reg
                                                                  This registers gets the value of 0 after QX_RST  is set */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qx_dsc_int_ptr_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qx_dsc_int_ptr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qx_dsc_int_ptr_reg cavm_mdab_dspx_queuemanager_qx_dsc_int_ptr_reg_t;
+typedef union cavm_cbpx_queuemanager_qx_dsc_int_ptr_reg cavm_cbpx_queuemanager_qx_dsc_int_ptr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822820ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(a,b) cavm_mdab_dspx_queuemanager_qx_dsc_int_ptr_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(a,b) cavm_cbpx_queuemanager_qx_dsc_int_ptr_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(a,b) "CBPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QX_DSC_INT_PTR_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#_dsc_tctl_reg
+ * Register (RSL32b) cbp#_queuemanager_q#_dsc_tctl_reg
  *
- * MDAB Dsp Queuemanager Q Dsc Tctl Reg Register
+ * CBP Queuemanager Q Dsc Tctl Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qx_dsc_tctl_reg
+union cavm_cbpx_queuemanager_qx_dsc_tctl_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qx_dsc_tctl_reg_s
+    struct cavm_cbpx_queuemanager_qx_dsc_tctl_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qx_dsc_tctl           : 32; /**< [ 31:  0](RO) Queue X internal transfer size from last used descriptor
@@ -11727,33 +12539,33 @@ union cavm_mdab_dspx_queuemanager_qx_dsc_tctl_reg
                                                                  This register gets the value of 0 after QX_RST is set */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qx_dsc_tctl_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qx_dsc_tctl_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qx_dsc_tctl_reg cavm_mdab_dspx_queuemanager_qx_dsc_tctl_reg_t;
+typedef union cavm_cbpx_queuemanager_qx_dsc_tctl_reg cavm_cbpx_queuemanager_qx_dsc_tctl_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TCTL_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TCTL_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_DSC_TCTL_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_DSC_TCTL_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822824ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QX_DSC_TCTL_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QX_DSC_TCTL_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TCTL_REG(a,b) cavm_mdab_dspx_queuemanager_qx_dsc_tctl_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TCTL_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TCTL_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QX_DSC_TCTL_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TCTL_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TCTL_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QX_DSC_TCTL_REG(a,b) cavm_cbpx_queuemanager_qx_dsc_tctl_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QX_DSC_TCTL_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QX_DSC_TCTL_REG(a,b) "CBPX_QUEUEMANAGER_QX_DSC_TCTL_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QX_DSC_TCTL_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QX_DSC_TCTL_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#_dsc_tframe_len_reg
+ * Register (RSL32b) cbp#_queuemanager_q#_dsc_tframe_len_reg
  *
- * MDAB Dsp Queuemanager Q Dsc Tframe Len Reg Register
+ * CBP Queuemanager Q Dsc Tframe Len Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qx_dsc_tframe_len_reg
+union cavm_cbpx_queuemanager_qx_dsc_tframe_len_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qx_dsc_tframe_len_reg_s
+    struct cavm_cbpx_queuemanager_qx_dsc_tframe_len_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qx_dsc_tframe_len     : 32; /**< [ 31:  0](RO) Queue X task frame length from last used descriptor
@@ -11769,33 +12581,33 @@ union cavm_mdab_dspx_queuemanager_qx_dsc_tframe_len_reg
                                                                  This registers gets the value of 0 after QX_RST is set */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qx_dsc_tframe_len_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qx_dsc_tframe_len_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qx_dsc_tframe_len_reg cavm_mdab_dspx_queuemanager_qx_dsc_tframe_len_reg_t;
+typedef union cavm_cbpx_queuemanager_qx_dsc_tframe_len_reg cavm_cbpx_queuemanager_qx_dsc_tframe_len_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822828ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(a,b) cavm_mdab_dspx_queuemanager_qx_dsc_tframe_len_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(a,b) cavm_cbpx_queuemanager_qx_dsc_tframe_len_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(a,b) "CBPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QX_DSC_TFRAME_LEN_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#_en_depth_reg
+ * Register (RSL32b) cbp#_queuemanager_q#_en_depth_reg
  *
- * MDAB Dsp Queuemanager Q En Depth Reg Register
+ * CBP Queuemanager Q En Depth Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qx_en_depth_reg
+union cavm_cbpx_queuemanager_qx_en_depth_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qx_en_depth_reg_s
+    struct cavm_cbpx_queuemanager_qx_en_depth_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qx_en                 : 1;  /**< [ 31: 31](R/W) Enable bit for activating the queue.
@@ -11855,33 +12667,33 @@ union cavm_mdab_dspx_queuemanager_qx_en_depth_reg
                                                                  This registers gets the value of 0 after QX_RST is set */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qx_en_depth_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qx_en_depth_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qx_en_depth_reg cavm_mdab_dspx_queuemanager_qx_en_depth_reg_t;
+typedef union cavm_cbpx_queuemanager_qx_en_depth_reg cavm_cbpx_queuemanager_qx_en_depth_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_EN_DEPTH_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_EN_DEPTH_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_EN_DEPTH_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_EN_DEPTH_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822800ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QX_EN_DEPTH_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QX_EN_DEPTH_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_EN_DEPTH_REG(a,b) cavm_mdab_dspx_queuemanager_qx_en_depth_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_EN_DEPTH_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_EN_DEPTH_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QX_EN_DEPTH_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_EN_DEPTH_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_EN_DEPTH_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QX_EN_DEPTH_REG(a,b) cavm_cbpx_queuemanager_qx_en_depth_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QX_EN_DEPTH_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QX_EN_DEPTH_REG(a,b) "CBPX_QUEUEMANAGER_QX_EN_DEPTH_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QX_EN_DEPTH_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QX_EN_DEPTH_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#_first_addr_reg
+ * Register (RSL32b) cbp#_queuemanager_q#_first_addr_reg
  *
- * MDAB Dsp Queuemanager Q First Addr Reg Register
+ * CBP Queuemanager Q First Addr Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qx_first_addr_reg
+union cavm_cbpx_queuemanager_qx_first_addr_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qx_first_addr_reg_s
+    struct cavm_cbpx_queuemanager_qx_first_addr_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qx_first_addr         : 32; /**< [ 31:  0](R/W) First address of queue X
@@ -11893,33 +12705,33 @@ union cavm_mdab_dspx_queuemanager_qx_first_addr_reg
                                                                  The four LSBs of this register are always replaced with 4h0 (Queue is 16 Byte aligned) */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qx_first_addr_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qx_first_addr_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qx_first_addr_reg cavm_mdab_dspx_queuemanager_qx_first_addr_reg_t;
+typedef union cavm_cbpx_queuemanager_qx_first_addr_reg cavm_cbpx_queuemanager_qx_first_addr_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822804ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QX_FIRST_ADDR_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QX_FIRST_ADDR_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(a,b) cavm_mdab_dspx_queuemanager_qx_first_addr_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QX_FIRST_ADDR_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(a,b) cavm_cbpx_queuemanager_qx_first_addr_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(a,b) "CBPX_QUEUEMANAGER_QX_FIRST_ADDR_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QX_FIRST_ADDR_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#_rptr_int_reg
+ * Register (RSL32b) cbp#_queuemanager_q#_rptr_int_reg
  *
- * MDAB Dsp Queuemanager Q Rptr Int Reg Register
+ * CBP Queuemanager Q Rptr Int Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qx_rptr_int_reg
+union cavm_cbpx_queuemanager_qx_rptr_int_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qx_rptr_int_reg_s
+    struct cavm_cbpx_queuemanager_qx_rptr_int_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_17_31        : 15;
@@ -11935,33 +12747,33 @@ union cavm_mdab_dspx_queuemanager_qx_rptr_int_reg
         uint32_t reserved_17_31        : 15;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qx_rptr_int_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qx_rptr_int_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qx_rptr_int_reg cavm_mdab_dspx_queuemanager_qx_rptr_int_reg_t;
+typedef union cavm_cbpx_queuemanager_qx_rptr_int_reg cavm_cbpx_queuemanager_qx_rptr_int_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_RPTR_INT_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QX_RPTR_INT_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_RPTR_INT_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QX_RPTR_INT_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822818ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QX_RPTR_INT_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QX_RPTR_INT_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_RPTR_INT_REG(a,b) cavm_mdab_dspx_queuemanager_qx_rptr_int_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_RPTR_INT_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_RPTR_INT_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QX_RPTR_INT_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_RPTR_INT_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QX_RPTR_INT_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QX_RPTR_INT_REG(a,b) cavm_cbpx_queuemanager_qx_rptr_int_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QX_RPTR_INT_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QX_RPTR_INT_REG(a,b) "CBPX_QUEUEMANAGER_QX_RPTR_INT_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QX_RPTR_INT_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QX_RPTR_INT_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_queuemanager_q#en_cnt_reg
+ * Register (RSL32b) cbp#_queuemanager_q#en_cnt_reg
  *
- * MDAB Dsp Queuemanager Qen Cnt Reg Register
+ * CBP Queuemanager Qen Cnt Reg Register
  */
-union cavm_mdab_dspx_queuemanager_qxen_cnt_reg
+union cavm_cbpx_queuemanager_qxen_cnt_reg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_queuemanager_qxen_cnt_reg_s
+    struct cavm_cbpx_queuemanager_qxen_cnt_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t qx_status             : 1;  /**< [ 31: 31](RO) Queue X status indication.
@@ -11981,18 +12793,18 @@ union cavm_mdab_dspx_queuemanager_qxen_cnt_reg
                                                                  QPUSH_DSC_EXT_PTR, QPUSH_DSC_INT_PTR,QPUSH_DSC_TCTL and QPUSH_DSC_TFRAME_LEN
                                                                  followed by writing queue number to the QPUSH_NUM register.
                                                                  This registe gets the value of 0 after QX_RST is set */
-        uint32_t qx_wd_wait_f          : 1;  /**< [ 30: 30](RO) Indicates queue X is in a wait state until an upload transaction completes.
+        uint32_t qx_wd_wait_f          : 1;  /**< [ 30: 30](RO/H) Indicates queue X is in a wait state until an upload transaction completes.
                                                                  Queue X waits for this bit to be reset before continue with the next task in the queue. */
         uint32_t reserved_14_29        : 16;
-        uint32_t qx_en_cnt             : 14; /**< [ 13:  0](RO) Queue X descriptor enable counter
+        uint32_t qx_en_cnt             : 14; /**< [ 13:  0](RO/H) Queue X descriptor enable counter
                                                                  This counter indicates the number of enabled descriptors in the queue.
                                                                  This registers gets the value of 0 after QX_RST is set */
 #else /* Word 0 - Little Endian */
-        uint32_t qx_en_cnt             : 14; /**< [ 13:  0](RO) Queue X descriptor enable counter
+        uint32_t qx_en_cnt             : 14; /**< [ 13:  0](RO/H) Queue X descriptor enable counter
                                                                  This counter indicates the number of enabled descriptors in the queue.
                                                                  This registers gets the value of 0 after QX_RST is set */
         uint32_t reserved_14_29        : 16;
-        uint32_t qx_wd_wait_f          : 1;  /**< [ 30: 30](RO) Indicates queue X is in a wait state until an upload transaction completes.
+        uint32_t qx_wd_wait_f          : 1;  /**< [ 30: 30](RO/H) Indicates queue X is in a wait state until an upload transaction completes.
                                                                  Queue X waits for this bit to be reset before continue with the next task in the queue. */
         uint32_t qx_status             : 1;  /**< [ 31: 31](RO) Queue X status indication.
                                                                  This register indicates a queue full status.
@@ -12013,33 +12825,33 @@ union cavm_mdab_dspx_queuemanager_qxen_cnt_reg
                                                                  This registe gets the value of 0 after QX_RST is set */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_queuemanager_qxen_cnt_reg_s cn; */
+    /* struct cavm_cbpx_queuemanager_qxen_cnt_reg_s cn; */
 };
-typedef union cavm_mdab_dspx_queuemanager_qxen_cnt_reg cavm_mdab_dspx_queuemanager_qxen_cnt_reg_t;
+typedef union cavm_cbpx_queuemanager_qxen_cnt_reg cavm_cbpx_queuemanager_qxen_cnt_reg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QXEN_CNT_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_QUEUEMANAGER_QXEN_CNT_REG(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QXEN_CNT_REG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_QUEUEMANAGER_QXEN_CNT_REG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=7)))
         return 0x87e044822814ll + 0x40000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7);
-    __cavm_csr_fatal("MDAB_DSPX_QUEUEMANAGER_QXEN_CNT_REG", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_QUEUEMANAGER_QXEN_CNT_REG", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_QUEUEMANAGER_QXEN_CNT_REG(a,b) cavm_mdab_dspx_queuemanager_qxen_cnt_reg_t
-#define bustype_CAVM_MDAB_DSPX_QUEUEMANAGER_QXEN_CNT_REG(a,b) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_QUEUEMANAGER_QXEN_CNT_REG(a,b) "MDAB_DSPX_QUEUEMANAGER_QXEN_CNT_REG"
-#define busnum_CAVM_MDAB_DSPX_QUEUEMANAGER_QXEN_CNT_REG(a,b) (a)
-#define arguments_CAVM_MDAB_DSPX_QUEUEMANAGER_QXEN_CNT_REG(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CBPX_QUEUEMANAGER_QXEN_CNT_REG(a,b) cavm_cbpx_queuemanager_qxen_cnt_reg_t
+#define bustype_CAVM_CBPX_QUEUEMANAGER_QXEN_CNT_REG(a,b) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_QUEUEMANAGER_QXEN_CNT_REG(a,b) "CBPX_QUEUEMANAGER_QXEN_CNT_REG"
+#define busnum_CAVM_CBPX_QUEUEMANAGER_QXEN_CNT_REG(a,b) (a)
+#define arguments_CAVM_CBPX_QUEUEMANAGER_QXEN_CNT_REG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_swou_barrier
+ * Register (RSL32b) cbp#_swou_barrier
  *
- * MDAB Dsp Swou Barrier Register
+ * CBP Swou Barrier Register
  */
-union cavm_mdab_dspx_swou_barrier
+union cavm_cbpx_swou_barrier
 {
     uint32_t u;
-    struct cavm_mdab_dspx_swou_barrier_s
+    struct cavm_cbpx_swou_barrier_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -12073,35 +12885,35 @@ union cavm_mdab_dspx_swou_barrier
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_swou_barrier_s cn; */
+    /* struct cavm_cbpx_swou_barrier_s cn; */
 };
-typedef union cavm_mdab_dspx_swou_barrier cavm_mdab_dspx_swou_barrier_t;
+typedef union cavm_cbpx_swou_barrier cavm_cbpx_swou_barrier_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_SWOU_BARRIER(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_SWOU_BARRIER(unsigned long a)
+static inline uint64_t CAVM_CBPX_SWOU_BARRIER(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_SWOU_BARRIER(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482334cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_SWOU_BARRIER", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_SWOU_BARRIER", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_SWOU_BARRIER(a) cavm_mdab_dspx_swou_barrier_t
-#define bustype_CAVM_MDAB_DSPX_SWOU_BARRIER(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_SWOU_BARRIER(a) "MDAB_DSPX_SWOU_BARRIER"
-#define busnum_CAVM_MDAB_DSPX_SWOU_BARRIER(a) (a)
-#define arguments_CAVM_MDAB_DSPX_SWOU_BARRIER(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_SWOU_BARRIER(a) cavm_cbpx_swou_barrier_t
+#define bustype_CAVM_CBPX_SWOU_BARRIER(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_SWOU_BARRIER(a) "CBPX_SWOU_BARRIER"
+#define busnum_CAVM_CBPX_SWOU_BARRIER(a) (a)
+#define arguments_CAVM_CBPX_SWOU_BARRIER(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_swou_ccocr
+ * Register (RSL32b) cbp#_swou_ccocr
  *
- * MDAB Dsp Swou Ccocr Register
+ * CBP Swou Ccocr Register
  * Note: In the case of no-cache hardware configuration, this register is read-only and
  * is tied to 0x0.
  */
-union cavm_mdab_dspx_swou_ccocr
+union cavm_cbpx_swou_ccocr
 {
     uint32_t u;
-    struct cavm_mdab_dspx_swou_ccocr_s
+    struct cavm_cbpx_swou_ccocr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t nospl                 : 16; /**< [ 31: 16](R/W) Number of cache lines per line */
@@ -12143,35 +12955,35 @@ union cavm_mdab_dspx_swou_ccocr
         uint32_t nospl                 : 16; /**< [ 31: 16](R/W) Number of cache lines per line */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_swou_ccocr_s cn; */
+    /* struct cavm_cbpx_swou_ccocr_s cn; */
 };
-typedef union cavm_mdab_dspx_swou_ccocr cavm_mdab_dspx_swou_ccocr_t;
+typedef union cavm_cbpx_swou_ccocr cavm_cbpx_swou_ccocr_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_SWOU_CCOCR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_SWOU_CCOCR(unsigned long a)
+static inline uint64_t CAVM_CBPX_SWOU_CCOCR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_SWOU_CCOCR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823348ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_SWOU_CCOCR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_SWOU_CCOCR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_SWOU_CCOCR(a) cavm_mdab_dspx_swou_ccocr_t
-#define bustype_CAVM_MDAB_DSPX_SWOU_CCOCR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_SWOU_CCOCR(a) "MDAB_DSPX_SWOU_CCOCR"
-#define busnum_CAVM_MDAB_DSPX_SWOU_CCOCR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_SWOU_CCOCR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_SWOU_CCOCR(a) cavm_cbpx_swou_ccocr_t
+#define bustype_CAVM_CBPX_SWOU_CCOCR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_SWOU_CCOCR(a) "CBPX_SWOU_CCOCR"
+#define busnum_CAVM_CBPX_SWOU_CCOCR(a) (a)
+#define arguments_CAVM_CBPX_SWOU_CCOCR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_swou_ccosar
+ * Register (RSL32b) cbp#_swou_ccosar
  *
- * MDAB Dsp Swou Ccosar Register
+ * CBP Swou Ccosar Register
  * Note: In the case of no-cache hardware configuration, this register is read-only,
  * and is tied to 0x0.
  */
-union cavm_mdab_dspx_swou_ccosar
+union cavm_cbpx_swou_ccosar
 {
     uint32_t u;
-    struct cavm_mdab_dspx_swou_ccosar_s
+    struct cavm_cbpx_swou_ccosar_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ccosar                : 26; /**< [ 31:  6](R/W) Cache Operations Start Address. */
@@ -12181,33 +12993,33 @@ union cavm_mdab_dspx_swou_ccosar
         uint32_t ccosar                : 26; /**< [ 31:  6](R/W) Cache Operations Start Address. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_swou_ccosar_s cn; */
+    /* struct cavm_cbpx_swou_ccosar_s cn; */
 };
-typedef union cavm_mdab_dspx_swou_ccosar cavm_mdab_dspx_swou_ccosar_t;
+typedef union cavm_cbpx_swou_ccosar cavm_cbpx_swou_ccosar_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_SWOU_CCOSAR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_SWOU_CCOSAR(unsigned long a)
+static inline uint64_t CAVM_CBPX_SWOU_CCOSAR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_SWOU_CCOSAR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823340ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_SWOU_CCOSAR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_SWOU_CCOSAR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_SWOU_CCOSAR(a) cavm_mdab_dspx_swou_ccosar_t
-#define bustype_CAVM_MDAB_DSPX_SWOU_CCOSAR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_SWOU_CCOSAR(a) "MDAB_DSPX_SWOU_CCOSAR"
-#define busnum_CAVM_MDAB_DSPX_SWOU_CCOSAR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_SWOU_CCOSAR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_SWOU_CCOSAR(a) cavm_cbpx_swou_ccosar_t
+#define bustype_CAVM_CBPX_SWOU_CCOSAR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_SWOU_CCOSAR(a) "CBPX_SWOU_CCOSAR"
+#define busnum_CAVM_CBPX_SWOU_CCOSAR(a) (a)
+#define arguments_CAVM_CBPX_SWOU_CCOSAR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_swou_ccoslr
+ * Register (RSL32b) cbp#_swou_ccoslr
  *
- * MDAB Dsp Swou Ccoslr Register
+ * CBP Swou Ccoslr Register
  */
-union cavm_mdab_dspx_swou_ccoslr
+union cavm_cbpx_swou_ccoslr
 {
     uint32_t u;
-    struct cavm_mdab_dspx_swou_ccoslr_s
+    struct cavm_cbpx_swou_ccoslr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t ssz                   : 16; /**< [ 31: 16](R/W) Skip Size. Number of blocks to skip.
@@ -12221,34 +13033,34 @@ union cavm_mdab_dspx_swou_ccoslr
                                                                  During 2D operations, should contain the number of elements to skip over (must not be 0). */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_swou_ccoslr_s cn; */
+    /* struct cavm_cbpx_swou_ccoslr_s cn; */
 };
-typedef union cavm_mdab_dspx_swou_ccoslr cavm_mdab_dspx_swou_ccoslr_t;
+typedef union cavm_cbpx_swou_ccoslr cavm_cbpx_swou_ccoslr_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_SWOU_CCOSLR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_SWOU_CCOSLR(unsigned long a)
+static inline uint64_t CAVM_CBPX_SWOU_CCOSLR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_SWOU_CCOSLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044823344ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_SWOU_CCOSLR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_SWOU_CCOSLR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_SWOU_CCOSLR(a) cavm_mdab_dspx_swou_ccoslr_t
-#define bustype_CAVM_MDAB_DSPX_SWOU_CCOSLR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_SWOU_CCOSLR(a) "MDAB_DSPX_SWOU_CCOSLR"
-#define busnum_CAVM_MDAB_DSPX_SWOU_CCOSLR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_SWOU_CCOSLR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_SWOU_CCOSLR(a) cavm_cbpx_swou_ccoslr_t
+#define bustype_CAVM_CBPX_SWOU_CCOSLR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_SWOU_CCOSLR(a) "CBPX_SWOU_CCOSLR"
+#define busnum_CAVM_CBPX_SWOU_CCOSLR(a) (a)
+#define arguments_CAVM_CBPX_SWOU_CCOSLR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_uop_uop_par
+ * Register (RSL32b) cbp#_uop_uop_par
  *
- * MDAB Dsp Uop Uop Par Register
+ * CBP Uop Uop Par Register
  * Note: Reading the UOP_STS clears all the bits in the register.
  */
-union cavm_mdab_dspx_uop_uop_par
+union cavm_cbpx_uop_uop_par
 {
     uint32_t u;
-    struct cavm_mdab_dspx_uop_uop_par_s
+    struct cavm_cbpx_uop_uop_par_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t par                   : 32; /**< [ 31:  0](RO) Undefined Opcode Packet Address: This field contains the address of the last
@@ -12258,34 +13070,34 @@ union cavm_mdab_dspx_uop_uop_par
                                                                  packet with undefined opcode in it. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_uop_uop_par_s cn; */
+    /* struct cavm_cbpx_uop_uop_par_s cn; */
 };
-typedef union cavm_mdab_dspx_uop_uop_par cavm_mdab_dspx_uop_uop_par_t;
+typedef union cavm_cbpx_uop_uop_par cavm_cbpx_uop_uop_par_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_UOP_UOP_PAR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_UOP_UOP_PAR(unsigned long a)
+static inline uint64_t CAVM_CBPX_UOP_UOP_PAR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_UOP_UOP_PAR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482205cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_UOP_UOP_PAR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_UOP_UOP_PAR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_UOP_UOP_PAR(a) cavm_mdab_dspx_uop_uop_par_t
-#define bustype_CAVM_MDAB_DSPX_UOP_UOP_PAR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_UOP_UOP_PAR(a) "MDAB_DSPX_UOP_UOP_PAR"
-#define busnum_CAVM_MDAB_DSPX_UOP_UOP_PAR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_UOP_UOP_PAR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_UOP_UOP_PAR(a) cavm_cbpx_uop_uop_par_t
+#define bustype_CAVM_CBPX_UOP_UOP_PAR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_UOP_UOP_PAR(a) "CBPX_UOP_UOP_PAR"
+#define busnum_CAVM_CBPX_UOP_UOP_PAR(a) (a)
+#define arguments_CAVM_CBPX_UOP_UOP_PAR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_uop_uop_sts
+ * Register (RSL32b) cbp#_uop_uop_sts
  *
- * MDAB Dsp Uop Uop Sts Register
+ * CBP Uop Uop Sts Register
  * Note: Reading the UOP_STS clears all the bits in the register.
  */
-union cavm_mdab_dspx_uop_uop_sts
+union cavm_cbpx_uop_uop_sts
 {
     uint32_t u;
-    struct cavm_mdab_dspx_uop_uop_sts_s
+    struct cavm_cbpx_uop_uop_sts_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_14_31        : 18;
@@ -12321,28 +13133,28 @@ union cavm_mdab_dspx_uop_uop_sts
         uint32_t reserved_14_31        : 18;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_uop_uop_sts_s cn; */
+    /* struct cavm_cbpx_uop_uop_sts_s cn; */
 };
-typedef union cavm_mdab_dspx_uop_uop_sts cavm_mdab_dspx_uop_uop_sts_t;
+typedef union cavm_cbpx_uop_uop_sts cavm_cbpx_uop_uop_sts_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_UOP_UOP_STS(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_UOP_UOP_STS(unsigned long a)
+static inline uint64_t CAVM_CBPX_UOP_UOP_STS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_UOP_UOP_STS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822058ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_UOP_UOP_STS", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_UOP_UOP_STS", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_UOP_UOP_STS(a) cavm_mdab_dspx_uop_uop_sts_t
-#define bustype_CAVM_MDAB_DSPX_UOP_UOP_STS(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_UOP_UOP_STS(a) "MDAB_DSPX_UOP_UOP_STS"
-#define busnum_CAVM_MDAB_DSPX_UOP_UOP_STS(a) (a)
-#define arguments_CAVM_MDAB_DSPX_UOP_UOP_STS(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_UOP_UOP_STS(a) cavm_cbpx_uop_uop_sts_t
+#define bustype_CAVM_CBPX_UOP_UOP_STS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_UOP_UOP_STS(a) "CBPX_UOP_UOP_STS"
+#define busnum_CAVM_CBPX_UOP_UOP_STS(a) (a)
+#define arguments_CAVM_CBPX_UOP_UOP_STS(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_uop_xci_cor
+ * Register (RSL32b) cbp#_uop_xci_cor
  *
- * MDAB Dsp Uop Xci Cor Register
+ * CBP Uop Xci Cor Register
  * Note:
  *         The CODE_ECC_INT signal may not be detected if an error occurs before
  * configuring the INT_COUNT field. The user is encouraged to read the value of the ECC
@@ -12356,10 +13168,10 @@ static inline uint64_t CAVM_MDAB_DSPX_UOP_UOP_STS(unsigned long a)
  * the rising edge of the UOP_INT signal should be detected even when the signal length
  * is 1 cycle.
  */
-union cavm_mdab_dspx_uop_xci_cor
+union cavm_cbpx_uop_xci_cor
 {
     uint32_t u;
-    struct cavm_mdab_dspx_uop_xci_cor_s
+    struct cavm_cbpx_uop_xci_cor_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_4_31         : 28;
@@ -12371,33 +13183,33 @@ union cavm_mdab_dspx_uop_xci_cor
         uint32_t reserved_4_31         : 28;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_uop_xci_cor_s cn; */
+    /* struct cavm_cbpx_uop_xci_cor_s cn; */
 };
-typedef union cavm_mdab_dspx_uop_xci_cor cavm_mdab_dspx_uop_xci_cor_t;
+typedef union cavm_cbpx_uop_xci_cor cavm_cbpx_uop_xci_cor_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_UOP_XCI_COR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_UOP_XCI_COR(unsigned long a)
+static inline uint64_t CAVM_CBPX_UOP_XCI_COR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_UOP_XCI_COR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822060ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_UOP_XCI_COR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_UOP_XCI_COR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_UOP_XCI_COR(a) cavm_mdab_dspx_uop_xci_cor_t
-#define bustype_CAVM_MDAB_DSPX_UOP_XCI_COR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_UOP_XCI_COR(a) "MDAB_DSPX_UOP_XCI_COR"
-#define busnum_CAVM_MDAB_DSPX_UOP_XCI_COR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_UOP_XCI_COR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_UOP_XCI_COR(a) cavm_cbpx_uop_xci_cor_t
+#define bustype_CAVM_CBPX_UOP_XCI_COR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_UOP_XCI_COR(a) "CBPX_UOP_XCI_COR"
+#define busnum_CAVM_CBPX_UOP_XCI_COR(a) (a)
+#define arguments_CAVM_CBPX_UOP_XCI_COR(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_cid_cnt
+ * Register (RSL32b) cbp#_wrapper_cid_cnt
  *
- * MDAB Dsp Wrapper Cid Cnt Register
+ * CBP Wrapper Cid Cnt Register
  */
-union cavm_mdab_dspx_wrapper_cid_cnt
+union cavm_cbpx_wrapper_cid_cnt
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_cid_cnt_s
+    struct cavm_cbpx_wrapper_cid_cnt_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t rev                   : 28; /**< [ 31:  4](RO) Read only. Revision code. */
@@ -12413,33 +13225,33 @@ union cavm_mdab_dspx_wrapper_cid_cnt
         uint32_t rev                   : 28; /**< [ 31:  4](RO) Read only. Revision code. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_cid_cnt_s cn; */
+    /* struct cavm_cbpx_wrapper_cid_cnt_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_cid_cnt cavm_mdab_dspx_wrapper_cid_cnt_t;
+typedef union cavm_cbpx_wrapper_cid_cnt cavm_cbpx_wrapper_cid_cnt_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CID_CNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CID_CNT(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_CID_CNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_CID_CNT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448221acll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_CID_CNT", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_CID_CNT", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_CID_CNT(a) cavm_mdab_dspx_wrapper_cid_cnt_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_CID_CNT(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_CID_CNT(a) "MDAB_DSPX_WRAPPER_CID_CNT"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_CID_CNT(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_CID_CNT(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_CID_CNT(a) cavm_cbpx_wrapper_cid_cnt_t
+#define bustype_CAVM_CBPX_WRAPPER_CID_CNT(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_CID_CNT(a) "CBPX_WRAPPER_CID_CNT"
+#define busnum_CAVM_CBPX_WRAPPER_CID_CNT(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_CID_CNT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_cmp0_end
+ * Register (RSL32b) cbp#_wrapper_cmp0_end
  *
- * MDAB Dsp Wrapper Cmp0 End Register
+ * CBP Wrapper Cmp0 End Register
  */
-union cavm_mdab_dspx_wrapper_cmp0_end
+union cavm_cbpx_wrapper_cmp0_end
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_cmp0_end_s
+    struct cavm_cbpx_wrapper_cmp0_end_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t comp0_end             : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #0 end address */
@@ -12447,33 +13259,33 @@ union cavm_mdab_dspx_wrapper_cmp0_end
         uint32_t comp0_end             : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #0 end address */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_cmp0_end_s cn; */
+    /* struct cavm_cbpx_wrapper_cmp0_end_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_cmp0_end cavm_mdab_dspx_wrapper_cmp0_end_t;
+typedef union cavm_cbpx_wrapper_cmp0_end cavm_cbpx_wrapper_cmp0_end_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP0_END(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP0_END(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP0_END(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP0_END(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822194ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_CMP0_END", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_CMP0_END", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_CMP0_END(a) cavm_mdab_dspx_wrapper_cmp0_end_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_CMP0_END(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_CMP0_END(a) "MDAB_DSPX_WRAPPER_CMP0_END"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_CMP0_END(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_CMP0_END(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_CMP0_END(a) cavm_cbpx_wrapper_cmp0_end_t
+#define bustype_CAVM_CBPX_WRAPPER_CMP0_END(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_CMP0_END(a) "CBPX_WRAPPER_CMP0_END"
+#define busnum_CAVM_CBPX_WRAPPER_CMP0_END(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_CMP0_END(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_cmp0_start
+ * Register (RSL32b) cbp#_wrapper_cmp0_start
  *
- * MDAB Dsp Wrapper Cmp0 Start Register
+ * CBP Wrapper Cmp0 Start Register
  */
-union cavm_mdab_dspx_wrapper_cmp0_start
+union cavm_cbpx_wrapper_cmp0_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_cmp0_start_s
+    struct cavm_cbpx_wrapper_cmp0_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t comp0_start           : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #0 start address */
@@ -12481,33 +13293,33 @@ union cavm_mdab_dspx_wrapper_cmp0_start
         uint32_t comp0_start           : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #0 start address */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_cmp0_start_s cn; */
+    /* struct cavm_cbpx_wrapper_cmp0_start_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_cmp0_start cavm_mdab_dspx_wrapper_cmp0_start_t;
+typedef union cavm_cbpx_wrapper_cmp0_start cavm_cbpx_wrapper_cmp0_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP0_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP0_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP0_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP0_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822190ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_CMP0_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_CMP0_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_CMP0_START(a) cavm_mdab_dspx_wrapper_cmp0_start_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_CMP0_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_CMP0_START(a) "MDAB_DSPX_WRAPPER_CMP0_START"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_CMP0_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_CMP0_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_CMP0_START(a) cavm_cbpx_wrapper_cmp0_start_t
+#define bustype_CAVM_CBPX_WRAPPER_CMP0_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_CMP0_START(a) "CBPX_WRAPPER_CMP0_START"
+#define busnum_CAVM_CBPX_WRAPPER_CMP0_START(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_CMP0_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_cmp1_end
+ * Register (RSL32b) cbp#_wrapper_cmp1_end
  *
- * MDAB Dsp Wrapper Cmp1 End Register
+ * CBP Wrapper Cmp1 End Register
  */
-union cavm_mdab_dspx_wrapper_cmp1_end
+union cavm_cbpx_wrapper_cmp1_end
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_cmp1_end_s
+    struct cavm_cbpx_wrapper_cmp1_end_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t comp1_end             : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #1 end address */
@@ -12515,33 +13327,33 @@ union cavm_mdab_dspx_wrapper_cmp1_end
         uint32_t comp1_end             : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #1 end address */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_cmp1_end_s cn; */
+    /* struct cavm_cbpx_wrapper_cmp1_end_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_cmp1_end cavm_mdab_dspx_wrapper_cmp1_end_t;
+typedef union cavm_cbpx_wrapper_cmp1_end cavm_cbpx_wrapper_cmp1_end_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP1_END(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP1_END(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP1_END(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP1_END(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482219cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_CMP1_END", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_CMP1_END", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_CMP1_END(a) cavm_mdab_dspx_wrapper_cmp1_end_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_CMP1_END(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_CMP1_END(a) "MDAB_DSPX_WRAPPER_CMP1_END"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_CMP1_END(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_CMP1_END(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_CMP1_END(a) cavm_cbpx_wrapper_cmp1_end_t
+#define bustype_CAVM_CBPX_WRAPPER_CMP1_END(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_CMP1_END(a) "CBPX_WRAPPER_CMP1_END"
+#define busnum_CAVM_CBPX_WRAPPER_CMP1_END(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_CMP1_END(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_cmp1_start
+ * Register (RSL32b) cbp#_wrapper_cmp1_start
  *
- * MDAB Dsp Wrapper Cmp1 Start Register
+ * CBP Wrapper Cmp1 Start Register
  */
-union cavm_mdab_dspx_wrapper_cmp1_start
+union cavm_cbpx_wrapper_cmp1_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_cmp1_start_s
+    struct cavm_cbpx_wrapper_cmp1_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t comp1_start           : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #1 start address */
@@ -12549,33 +13361,33 @@ union cavm_mdab_dspx_wrapper_cmp1_start
         uint32_t comp1_start           : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #1 start address */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_cmp1_start_s cn; */
+    /* struct cavm_cbpx_wrapper_cmp1_start_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_cmp1_start cavm_mdab_dspx_wrapper_cmp1_start_t;
+typedef union cavm_cbpx_wrapper_cmp1_start cavm_cbpx_wrapper_cmp1_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP1_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP1_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP1_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP1_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822198ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_CMP1_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_CMP1_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_CMP1_START(a) cavm_mdab_dspx_wrapper_cmp1_start_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_CMP1_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_CMP1_START(a) "MDAB_DSPX_WRAPPER_CMP1_START"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_CMP1_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_CMP1_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_CMP1_START(a) cavm_cbpx_wrapper_cmp1_start_t
+#define bustype_CAVM_CBPX_WRAPPER_CMP1_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_CMP1_START(a) "CBPX_WRAPPER_CMP1_START"
+#define busnum_CAVM_CBPX_WRAPPER_CMP1_START(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_CMP1_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_cmp2_end
+ * Register (RSL32b) cbp#_wrapper_cmp2_end
  *
- * MDAB Dsp Wrapper Cmp2 End Register
+ * CBP Wrapper Cmp2 End Register
  */
-union cavm_mdab_dspx_wrapper_cmp2_end
+union cavm_cbpx_wrapper_cmp2_end
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_cmp2_end_s
+    struct cavm_cbpx_wrapper_cmp2_end_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t comp2_end             : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #2 end address */
@@ -12583,33 +13395,33 @@ union cavm_mdab_dspx_wrapper_cmp2_end
         uint32_t comp2_end             : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #2 end address */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_cmp2_end_s cn; */
+    /* struct cavm_cbpx_wrapper_cmp2_end_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_cmp2_end cavm_mdab_dspx_wrapper_cmp2_end_t;
+typedef union cavm_cbpx_wrapper_cmp2_end cavm_cbpx_wrapper_cmp2_end_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP2_END(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP2_END(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP2_END(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP2_END(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448221a4ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_CMP2_END", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_CMP2_END", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_CMP2_END(a) cavm_mdab_dspx_wrapper_cmp2_end_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_CMP2_END(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_CMP2_END(a) "MDAB_DSPX_WRAPPER_CMP2_END"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_CMP2_END(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_CMP2_END(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_CMP2_END(a) cavm_cbpx_wrapper_cmp2_end_t
+#define bustype_CAVM_CBPX_WRAPPER_CMP2_END(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_CMP2_END(a) "CBPX_WRAPPER_CMP2_END"
+#define busnum_CAVM_CBPX_WRAPPER_CMP2_END(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_CMP2_END(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_cmp2_start
+ * Register (RSL32b) cbp#_wrapper_cmp2_start
  *
- * MDAB Dsp Wrapper Cmp2 Start Register
+ * CBP Wrapper Cmp2 Start Register
  */
-union cavm_mdab_dspx_wrapper_cmp2_start
+union cavm_cbpx_wrapper_cmp2_start
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_cmp2_start_s
+    struct cavm_cbpx_wrapper_cmp2_start_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t comp2_start           : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #2 start address */
@@ -12617,33 +13429,33 @@ union cavm_mdab_dspx_wrapper_cmp2_start
         uint32_t comp2_start           : 32; /**< [ 31:  0](WO) 32-bit Data Address Range Comparator #2 start address */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_cmp2_start_s cn; */
+    /* struct cavm_cbpx_wrapper_cmp2_start_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_cmp2_start cavm_mdab_dspx_wrapper_cmp2_start_t;
+typedef union cavm_cbpx_wrapper_cmp2_start cavm_cbpx_wrapper_cmp2_start_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP2_START(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP2_START(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP2_START(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP2_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448221a0ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_CMP2_START", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_CMP2_START", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_CMP2_START(a) cavm_mdab_dspx_wrapper_cmp2_start_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_CMP2_START(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_CMP2_START(a) "MDAB_DSPX_WRAPPER_CMP2_START"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_CMP2_START(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_CMP2_START(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_CMP2_START(a) cavm_cbpx_wrapper_cmp2_start_t
+#define bustype_CAVM_CBPX_WRAPPER_CMP2_START(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_CMP2_START(a) "CBPX_WRAPPER_CMP2_START"
+#define busnum_CAVM_CBPX_WRAPPER_CMP2_START(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_CMP2_START(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_cmp_cfg
+ * Register (RSL32b) cbp#_wrapper_cmp_cfg
  *
- * MDAB Dsp Wrapper Cmp Cfg Register
+ * CBP Wrapper Cmp Cfg Register
  */
-union cavm_mdab_dspx_wrapper_cmp_cfg
+union cavm_cbpx_wrapper_cmp_cfg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_cmp_cfg_s
+    struct cavm_cbpx_wrapper_cmp_cfg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -12689,33 +13501,33 @@ union cavm_mdab_dspx_wrapper_cmp_cfg
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_cmp_cfg_s cn; */
+    /* struct cavm_cbpx_wrapper_cmp_cfg_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_cmp_cfg cavm_mdab_dspx_wrapper_cmp_cfg_t;
+typedef union cavm_cbpx_wrapper_cmp_cfg cavm_cbpx_wrapper_cmp_cfg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP_CFG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_CMP_CFG(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP_CFG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_CMP_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822184ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_CMP_CFG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_CMP_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_CMP_CFG(a) cavm_mdab_dspx_wrapper_cmp_cfg_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_CMP_CFG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_CMP_CFG(a) "MDAB_DSPX_WRAPPER_CMP_CFG"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_CMP_CFG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_CMP_CFG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_CMP_CFG(a) cavm_cbpx_wrapper_cmp_cfg_t
+#define bustype_CAVM_CBPX_WRAPPER_CMP_CFG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_CMP_CFG(a) "CBPX_WRAPPER_CMP_CFG"
+#define busnum_CAVM_CBPX_WRAPPER_CMP_CFG(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_CMP_CFG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_ls0_cfg
+ * Register (RSL32b) cbp#_wrapper_ls0_cfg
  *
- * MDAB Dsp Wrapper Ls0 Cfg Register
+ * CBP Wrapper Ls0 Cfg Register
  */
-union cavm_mdab_dspx_wrapper_ls0_cfg
+union cavm_cbpx_wrapper_ls0_cfg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_ls0_cfg_s
+    struct cavm_cbpx_wrapper_ls0_cfg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -12757,33 +13569,33 @@ union cavm_mdab_dspx_wrapper_ls0_cfg
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_ls0_cfg_s cn; */
+    /* struct cavm_cbpx_wrapper_ls0_cfg_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_ls0_cfg cavm_mdab_dspx_wrapper_ls0_cfg_t;
+typedef union cavm_cbpx_wrapper_ls0_cfg cavm_cbpx_wrapper_ls0_cfg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_LS0_CFG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_LS0_CFG(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_LS0_CFG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_LS0_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822188ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_LS0_CFG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_LS0_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_LS0_CFG(a) cavm_mdab_dspx_wrapper_ls0_cfg_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_LS0_CFG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_LS0_CFG(a) "MDAB_DSPX_WRAPPER_LS0_CFG"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_LS0_CFG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_LS0_CFG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_LS0_CFG(a) cavm_cbpx_wrapper_ls0_cfg_t
+#define bustype_CAVM_CBPX_WRAPPER_LS0_CFG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_LS0_CFG(a) "CBPX_WRAPPER_LS0_CFG"
+#define busnum_CAVM_CBPX_WRAPPER_LS0_CFG(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_LS0_CFG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_ls1_cfg
+ * Register (RSL32b) cbp#_wrapper_ls1_cfg
  *
- * MDAB Dsp Wrapper Ls1 Cfg Register
+ * CBP Wrapper Ls1 Cfg Register
  */
-union cavm_mdab_dspx_wrapper_ls1_cfg
+union cavm_cbpx_wrapper_ls1_cfg
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_ls1_cfg_s
+    struct cavm_cbpx_wrapper_ls1_cfg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -12825,33 +13637,33 @@ union cavm_mdab_dspx_wrapper_ls1_cfg
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_ls1_cfg_s cn; */
+    /* struct cavm_cbpx_wrapper_ls1_cfg_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_ls1_cfg cavm_mdab_dspx_wrapper_ls1_cfg_t;
+typedef union cavm_cbpx_wrapper_ls1_cfg cavm_cbpx_wrapper_ls1_cfg_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_LS1_CFG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_LS1_CFG(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_LS1_CFG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_LS1_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e04482218cll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_LS1_CFG", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_LS1_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_LS1_CFG(a) cavm_mdab_dspx_wrapper_ls1_cfg_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_LS1_CFG(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_LS1_CFG(a) "MDAB_DSPX_WRAPPER_LS1_CFG"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_LS1_CFG(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_LS1_CFG(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_LS1_CFG(a) cavm_cbpx_wrapper_ls1_cfg_t
+#define bustype_CAVM_CBPX_WRAPPER_LS1_CFG(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_LS1_CFG(a) "CBPX_WRAPPER_LS1_CFG"
+#define busnum_CAVM_CBPX_WRAPPER_LS1_CFG(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_LS1_CFG(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_mode
+ * Register (RSL32b) cbp#_wrapper_mode
  *
- * MDAB Dsp Wrapper Mode Register
+ * CBP Wrapper Mode Register
  */
-union cavm_mdab_dspx_wrapper_mode
+union cavm_cbpx_wrapper_mode
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_mode_s
+    struct cavm_cbpx_wrapper_mode_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_11_31        : 21;
@@ -12891,33 +13703,33 @@ union cavm_mdab_dspx_wrapper_mode
         uint32_t reserved_11_31        : 21;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_mode_s cn; */
+    /* struct cavm_cbpx_wrapper_mode_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_mode cavm_mdab_dspx_wrapper_mode_t;
+typedef union cavm_cbpx_wrapper_mode cavm_cbpx_wrapper_mode_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_MODE(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_MODE(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_MODE(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_MODE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e044822180ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_MODE", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_MODE", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_MODE(a) cavm_mdab_dspx_wrapper_mode_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_MODE(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_MODE(a) "MDAB_DSPX_WRAPPER_MODE"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_MODE(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_MODE(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_MODE(a) cavm_cbpx_wrapper_mode_t
+#define bustype_CAVM_CBPX_WRAPPER_MODE(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_MODE(a) "CBPX_WRAPPER_MODE"
+#define busnum_CAVM_CBPX_WRAPPER_MODE(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_MODE(a) (a),-1,-1,-1
 
 /**
- * Register (RSL32b) mdab_dsp#_wrapper_pred_addr
+ * Register (RSL32b) cbp#_wrapper_pred_addr
  *
- * MDAB Dsp Wrapper Pred Addr Register
+ * CBP Wrapper Pred Addr Register
  */
-union cavm_mdab_dspx_wrapper_pred_addr
+union cavm_cbpx_wrapper_pred_addr
 {
     uint32_t u;
-    struct cavm_mdab_dspx_wrapper_pred_addr_s
+    struct cavm_cbpx_wrapper_pred_addr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t pred_addr             : 32; /**< [ 31:  0](WO) 32-bit Data Address with which predicate flags are output to the ETM */
@@ -12925,22 +13737,22 @@ union cavm_mdab_dspx_wrapper_pred_addr
         uint32_t pred_addr             : 32; /**< [ 31:  0](WO) 32-bit Data Address with which predicate flags are output to the ETM */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdab_dspx_wrapper_pred_addr_s cn; */
+    /* struct cavm_cbpx_wrapper_pred_addr_s cn; */
 };
-typedef union cavm_mdab_dspx_wrapper_pred_addr cavm_mdab_dspx_wrapper_pred_addr_t;
+typedef union cavm_cbpx_wrapper_pred_addr cavm_cbpx_wrapper_pred_addr_t;
 
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_PRED_ADDR(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_MDAB_DSPX_WRAPPER_PRED_ADDR(unsigned long a)
+static inline uint64_t CAVM_CBPX_WRAPPER_PRED_ADDR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CBPX_WRAPPER_PRED_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x87e0448221a8ll + 0x40000ll * ((a) & 0xf);
-    __cavm_csr_fatal("MDAB_DSPX_WRAPPER_PRED_ADDR", 1, a, 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CBPX_WRAPPER_PRED_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_MDAB_DSPX_WRAPPER_PRED_ADDR(a) cavm_mdab_dspx_wrapper_pred_addr_t
-#define bustype_CAVM_MDAB_DSPX_WRAPPER_PRED_ADDR(a) CSR_TYPE_RSL32b
-#define basename_CAVM_MDAB_DSPX_WRAPPER_PRED_ADDR(a) "MDAB_DSPX_WRAPPER_PRED_ADDR"
-#define busnum_CAVM_MDAB_DSPX_WRAPPER_PRED_ADDR(a) (a)
-#define arguments_CAVM_MDAB_DSPX_WRAPPER_PRED_ADDR(a) (a),-1,-1,-1
+#define typedef_CAVM_CBPX_WRAPPER_PRED_ADDR(a) cavm_cbpx_wrapper_pred_addr_t
+#define bustype_CAVM_CBPX_WRAPPER_PRED_ADDR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_CBPX_WRAPPER_PRED_ADDR(a) "CBPX_WRAPPER_PRED_ADDR"
+#define busnum_CAVM_CBPX_WRAPPER_PRED_ADDR(a) (a)
+#define arguments_CAVM_CBPX_WRAPPER_PRED_ADDR(a) (a),-1,-1,-1
 
-#endif /* __CAVM_CSRS_MDAB_DSP_H__ */
+#endif /* __CAVM_CSRS_CBP_H__ */

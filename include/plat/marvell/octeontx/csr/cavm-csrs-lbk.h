@@ -481,16 +481,16 @@ union cavm_lbkx_const
         uint64_t chan                  : 16; /**< [ 47: 32](RO) Number of channels supported. */
         uint64_t dest                  : 4;  /**< [ 31: 28](RO) What block this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
                                                                  For LBK(0), indicates LBK_CONNECT_E::NIX(0).
-                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(0).
-                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(1).
+                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(1).
+                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(0).
                                                                  For LBK(3), indicates LBK_CONNECT_E::NIX(1).
 
                                                                  Internal:
                                                                  lbk.v takes this from input straps set by the instantiation. */
         uint64_t src                   : 4;  /**< [ 27: 24](RO) What block this LBK receives traffic from. Enumerated by LBK_CONNECT_E.
                                                                  For LBK(0), indicates LBK_CONNECT_E::NIX(0).
-                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(1).
-                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(1).
                                                                  For LBK(3), indicates LBK_CONNECT_E::NIX(1).
 
                                                                  Internal:
@@ -504,16 +504,16 @@ union cavm_lbkx_const
                                                                  lbk.v takes this from input straps set by the instantiation. */
         uint64_t src                   : 4;  /**< [ 27: 24](RO) What block this LBK receives traffic from. Enumerated by LBK_CONNECT_E.
                                                                  For LBK(0), indicates LBK_CONNECT_E::NIX(0).
-                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(1).
-                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(1).
                                                                  For LBK(3), indicates LBK_CONNECT_E::NIX(1).
 
                                                                  Internal:
                                                                  lbk.v takes this from input straps set by the instantiation. */
         uint64_t dest                  : 4;  /**< [ 31: 28](RO) What block this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
                                                                  For LBK(0), indicates LBK_CONNECT_E::NIX(0).
-                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(0).
-                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(1).
+                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(1).
+                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(0).
                                                                  For LBK(3), indicates LBK_CONNECT_E::NIX(1).
 
                                                                  Internal:

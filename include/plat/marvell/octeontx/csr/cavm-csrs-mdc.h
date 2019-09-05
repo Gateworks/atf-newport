@@ -536,7 +536,30 @@ union cavm_mdc_bist_failx
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdc_bist_failx_s cn; */
+    /* struct cavm_mdc_bist_failx_s cn9; */
+    /* struct cavm_mdc_bist_failx_s cn96xxp1; */
+    struct cavm_mdc_bist_failx_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t chain_id              : 3;  /**< [ 31: 29](RO/H) Chain number. */
+        uint64_t hub_id                : 7;  /**< [ 28: 22](RO/H) MDH identifier. */
+        uint64_t node_id               : 10; /**< [ 21: 12](RO/H) MDN identifier. */
+        uint64_t info                  : 12; /**< [ 11:  0](RO/H) Contains MDN_BISR_REPAIR[REPAIR]. For repairable memories, this value is the
+                                                                 defect location in the RAM. */
+#else /* Word 0 - Little Endian */
+        uint64_t info                  : 12; /**< [ 11:  0](RO/H) Contains MDN_BISR_REPAIR[REPAIR]. For repairable memories, this value is the
+                                                                 defect location in the RAM. */
+        uint64_t node_id               : 10; /**< [ 21: 12](RO/H) MDN identifier. */
+        uint64_t hub_id                : 7;  /**< [ 28: 22](RO/H) MDH identifier. */
+        uint64_t chain_id              : 3;  /**< [ 31: 29](RO/H) Chain number. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_mdc_bist_failx_cn96xxp3 cn98xx; */
+    /* struct cavm_mdc_bist_failx_s cnf95xxp1; */
+    /* struct cavm_mdc_bist_failx_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_mdc_bist_failx_cn96xxp3 loki; */
 };
 typedef union cavm_mdc_bist_failx cavm_mdc_bist_failx_t;
 
@@ -1216,7 +1239,13 @@ typedef union cavm_mdc_ras_romx cavm_mdc_ras_romx_t;
 static inline uint64_t CAVM_MDC_RAS_ROMX(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_MDC_RAS_ROMX(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=8191))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=8191))
+        return 0x87e010010000ll + 8ll * ((a) & 0x1fff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=16383))
+        return 0x87e010010000ll + 8ll * ((a) & 0x3fff);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=8191))
+        return 0x87e010010000ll + 8ll * ((a) & 0x1fff);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=8191))
         return 0x87e010010000ll + 8ll * ((a) & 0x1fff);
     __cavm_csr_fatal("MDC_RAS_ROMX", 1, a, 0, 0, 0, 0, 0);
 }

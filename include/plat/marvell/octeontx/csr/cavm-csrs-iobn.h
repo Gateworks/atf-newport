@@ -1018,7 +1018,7 @@ union cavm_iobnx_arbidx_ctl
                                                                  transactions to the same memory cacheline.
 
                                                                  For designs with bug35584 resolved (SOW virtual channel separation),
-                                                                 [SOW_DIS]\<MAX_ARBID\> may be able to improve WR-FLID retire latency by returning
+                                                                 [SOW_DIS]\<max_arbid\> may be able to improve WR-FLID retire latency by returning
                                                                  a WR-FLID over the relwrflid interface sooner.  This mode has risks as it has
                                                                  not been rigorously tested. */
         uint64_t crppr_ena             : 2;  /**< [  7:  6](R/W) For Inbound ordering controls the ability of CRs to pass PRs for PEMs.
@@ -1117,7 +1117,7 @@ union cavm_iobnx_arbidx_ctl
                                                                  transactions to the same memory cacheline.
 
                                                                  For designs with bug35584 resolved (SOW virtual channel separation),
-                                                                 [SOW_DIS]\<MAX_ARBID\> may be able to improve WR-FLID retire latency by returning
+                                                                 [SOW_DIS]\<max_arbid\> may be able to improve WR-FLID retire latency by returning
                                                                  a WR-FLID over the relwrflid interface sooner.  This mode has risks as it has
                                                                  not been rigorously tested. */
         uint64_t fast_ord              : 1;  /**< [  9:  9](R/W) Fast order mode. Should only be set for non-PEM ARBIDs.

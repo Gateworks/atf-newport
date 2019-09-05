@@ -3557,9 +3557,9 @@ union cavm_satax_uctl_ecc
         uint64_t ecc_err_address       : 8;  /**< [ 39: 32](RO/H) RAM address of the ECC error. */
         uint64_t reserved_21_31        : 11;
         uint64_t uctl_xm_r_ecc_flip_synd : 2;/**< [ 20: 19](R/W) Insert ECC error for testing purposes. */
-        uint64_t uctl_xm_r_ecc_cor_dis : 1;  /**< [ 18: 18](R/W) Enables ECC correction on UCTL AxiMaster read-data FIFO. */
+        uint64_t uctl_xm_r_ecc_cor_dis : 1;  /**< [ 18: 18](R/W) Disables ECC correction on UCTL AxiMaster read-data FIFO. */
         uint64_t uctl_xm_w_ecc_flip_synd : 2;/**< [ 17: 16](R/W) Insert ECC error for testing purposes. */
-        uint64_t uctl_xm_w_ecc_cor_dis : 1;  /**< [ 15: 15](R/W) Enables ECC correction on UCTL AxiMaster write-data FIFO. */
+        uint64_t uctl_xm_w_ecc_cor_dis : 1;  /**< [ 15: 15](R/W) Disables ECC correction on UCTL AxiMaster write-data FIFO. */
         uint64_t reserved_9_14         : 6;
         uint64_t uahc_rx_ecc_flip_synd : 2;  /**< [  8:  7](R/W) Insert ECC error for testing purposes. */
         uint64_t uahc_rx_ecc_cor_dis   : 1;  /**< [  6:  6](R/W) Enables ECC correction on UAHC RxFIFO RAMs. */
@@ -3575,9 +3575,9 @@ union cavm_satax_uctl_ecc
         uint64_t uahc_rx_ecc_cor_dis   : 1;  /**< [  6:  6](R/W) Enables ECC correction on UAHC RxFIFO RAMs. */
         uint64_t uahc_rx_ecc_flip_synd : 2;  /**< [  8:  7](R/W) Insert ECC error for testing purposes. */
         uint64_t reserved_9_14         : 6;
-        uint64_t uctl_xm_w_ecc_cor_dis : 1;  /**< [ 15: 15](R/W) Enables ECC correction on UCTL AxiMaster write-data FIFO. */
+        uint64_t uctl_xm_w_ecc_cor_dis : 1;  /**< [ 15: 15](R/W) Disables ECC correction on UCTL AxiMaster write-data FIFO. */
         uint64_t uctl_xm_w_ecc_flip_synd : 2;/**< [ 17: 16](R/W) Insert ECC error for testing purposes. */
-        uint64_t uctl_xm_r_ecc_cor_dis : 1;  /**< [ 18: 18](R/W) Enables ECC correction on UCTL AxiMaster read-data FIFO. */
+        uint64_t uctl_xm_r_ecc_cor_dis : 1;  /**< [ 18: 18](R/W) Disables ECC correction on UCTL AxiMaster read-data FIFO. */
         uint64_t uctl_xm_r_ecc_flip_synd : 2;/**< [ 20: 19](R/W) Insert ECC error for testing purposes. */
         uint64_t reserved_21_31        : 11;
         uint64_t ecc_err_address       : 8;  /**< [ 39: 32](RO/H) RAM address of the ECC error. */

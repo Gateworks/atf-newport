@@ -13638,6 +13638,41 @@ static inline uint64_t CAVM_NIXX_AF_MDQ_CONST(unsigned long a)
 #define arguments_CAVM_NIXX_AF_MDQ_CONST(a) (a),-1,-1,-1
 
 /**
+ * Register (RVU_PF_BAR0) nix#_af_mdq_md_count
+ *
+ * NIX AF MDQ MD COUNT Registers
+ */
+union cavm_nixx_af_mdq_md_count
+{
+    uint64_t u;
+    struct cavm_nixx_af_mdq_md_count_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Count. The running count of input packets from the output of Fill FIFO. Note that this count wraps. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Count. The running count of input packets from the output of Fill FIFO. Note that this count wraps. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_mdq_md_count_s cn; */
+};
+typedef union cavm_nixx_af_mdq_md_count cavm_nixx_af_mdq_md_count_t;
+
+static inline uint64_t CAVM_NIXX_AF_MDQ_MD_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NIXX_AF_MDQ_MD_COUNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840040000da0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("NIXX_AF_MDQ_MD_COUNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NIXX_AF_MDQ_MD_COUNT(a) cavm_nixx_af_mdq_md_count_t
+#define bustype_CAVM_NIXX_AF_MDQ_MD_COUNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NIXX_AF_MDQ_MD_COUNT(a) "NIXX_AF_MDQ_MD_COUNT"
+#define device_bar_CAVM_NIXX_AF_MDQ_MD_COUNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NIXX_AF_MDQ_MD_COUNT(a) (a)
+#define arguments_CAVM_NIXX_AF_MDQ_MD_COUNT(a) (a),-1,-1,-1
+
+/**
  * Register (RVU_PF_BAR0) nix#_af_ndc_cfg
  *
  * NIX AF General Configuration Register
@@ -14623,66 +14658,7 @@ union cavm_nixx_af_pse_bp_test0
                                                                  not return FIFO credits and recived packets are not poped from FIFO. */
 #endif /* Word 0 - End */
     } cnf95xxp2;
-    struct cavm_nixx_af_pse_bp_test0_loki
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
-                                                                 Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                  at PQ and Misc level. Note between bits[63:60], bit[60] if set is going to
-                                                                  backpressure other grants as well and so on.
-                                                                  \<63\> = When set, backpressure ADD request gnt from TW, BP, TL1 other PE.
-                                                                  \<62\> = When set, backpressure ADD request grant to TL1 one of the PE's.
-                                                                  \<61\> = When set, backpressure GET request grant to PQ_ARB
-                                                                  \<60\> = When set, backpressure PE to PE gnt at PQ level.
-                                                                  \<59\> = When set, backpressure Normal Output FIFO.
-                                                                  \<58\> = When set, backpressure SDP Output FIFO. */
-        uint64_t reserved_56_57        : 2;
-        uint64_t reserved_32_55        : 24;
-        uint64_t bp_cfg                : 12; /**< [ 31: 20](R/W) Backpressure weight. For diagnostic use only.
-                                                                 Internal:
-                                                                 There are 2 backpressure configuration bits per enable, with the two bits
-                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
-                                                                 0x3=25% of the time.
-                                                                 \<31:30\> = Config for Enable bit [63].
-                                                                 \<29:28\> = Config for Enable bit [62].
-                                                                 \<27:26\> = Config for Enable bit [61].
-                                                                 \<25:24\> = Config for Enable bit [60].
-                                                                 \<23:22\> = Config for Enable bit [59].
-                                                                 \<21:20\> = Config for Enable bit [58]. */
-        uint64_t reserved_16_19        : 4;
-        uint64_t reserved_12_15        : 4;
-        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
-#else /* Word 0 - Little Endian */
-        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
-        uint64_t reserved_12_15        : 4;
-        uint64_t reserved_16_19        : 4;
-        uint64_t bp_cfg                : 12; /**< [ 31: 20](R/W) Backpressure weight. For diagnostic use only.
-                                                                 Internal:
-                                                                 There are 2 backpressure configuration bits per enable, with the two bits
-                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
-                                                                 0x3=25% of the time.
-                                                                 \<31:30\> = Config for Enable bit [63].
-                                                                 \<29:28\> = Config for Enable bit [62].
-                                                                 \<27:26\> = Config for Enable bit [61].
-                                                                 \<25:24\> = Config for Enable bit [60].
-                                                                 \<23:22\> = Config for Enable bit [59].
-                                                                 \<21:20\> = Config for Enable bit [58]. */
-        uint64_t reserved_32_55        : 24;
-        uint64_t reserved_56_57        : 2;
-        uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
-                                                                 Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                  at PQ and Misc level. Note between bits[63:60], bit[60] if set is going to
-                                                                  backpressure other grants as well and so on.
-                                                                  \<63\> = When set, backpressure ADD request gnt from TW, BP, TL1 other PE.
-                                                                  \<62\> = When set, backpressure ADD request grant to TL1 one of the PE's.
-                                                                  \<61\> = When set, backpressure GET request grant to PQ_ARB
-                                                                  \<60\> = When set, backpressure PE to PE gnt at PQ level.
-                                                                  \<59\> = When set, backpressure Normal Output FIFO.
-                                                                  \<58\> = When set, backpressure SDP Output FIFO. */
-#endif /* Word 0 - End */
-    } loki;
+    /* struct cavm_nixx_af_pse_bp_test0_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_pse_bp_test0 cavm_nixx_af_pse_bp_test0_t;
 
@@ -14902,62 +14878,7 @@ union cavm_nixx_af_pse_bp_test1
                                                                  \<60\> = When set, enables Normal packet backpressure from PSE to SQM, SQM credits are ignored. */
 #endif /* Word 0 - End */
     } cnf95xxp2;
-    struct cavm_nixx_af_pse_bp_test1_loki
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
-                                                                 Internal:
-                                                                 TL1 backpressure on commands: there is a priority order between bits[63:60],
-                                                                  bit[60] has the highest and if set is going to backpressure other grants as well
-                                                                  and so on.
-                                                                  \<63\> = When set, backpressure ADD request gnt from TW, BP, TL2 other PE.
-                                                                  \<62\> = When set, backpressure ADD request grant to TL2 one of the PE's.
-                                                                  \<61\> = When set, backpressure GET request grant to PQ
-                                                                  \<60\> = When set, backpressure PE to PE gnt at TL1 level.
-                                                                  \<59\> = Unused. */
-        uint64_t reserved_56_58        : 3;
-        uint64_t reserved_32_55        : 24;
-        uint64_t reserved_26_31        : 6;
-        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
-                                                                 Internal:
-                                                                 There are 2 backpressure configuration bits per enable, with the two bits
-                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
-                                                                 0x3=25% of the time.
-                                                                 \<25:24\> = Config for Enable bit [63].
-                                                                 \<23:22\> = Config for Enable bit [62].
-                                                                 \<21:20\> = Config for Enable bit [61].
-                                                                 \<19:18\> = Config for Enable bit [60].
-                                                                 \<17:16\> = Config for Enable bit [59]. */
-        uint64_t reserved_12_15        : 4;
-        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
-#else /* Word 0 - Little Endian */
-        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
-        uint64_t reserved_12_15        : 4;
-        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
-                                                                 Internal:
-                                                                 There are 2 backpressure configuration bits per enable, with the two bits
-                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
-                                                                 0x3=25% of the time.
-                                                                 \<25:24\> = Config for Enable bit [63].
-                                                                 \<23:22\> = Config for Enable bit [62].
-                                                                 \<21:20\> = Config for Enable bit [61].
-                                                                 \<19:18\> = Config for Enable bit [60].
-                                                                 \<17:16\> = Config for Enable bit [59]. */
-        uint64_t reserved_26_31        : 6;
-        uint64_t reserved_32_55        : 24;
-        uint64_t reserved_56_58        : 3;
-        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
-                                                                 Internal:
-                                                                 TL1 backpressure on commands: there is a priority order between bits[63:60],
-                                                                  bit[60] has the highest and if set is going to backpressure other grants as well
-                                                                  and so on.
-                                                                  \<63\> = When set, backpressure ADD request gnt from TW, BP, TL2 other PE.
-                                                                  \<62\> = When set, backpressure ADD request grant to TL2 one of the PE's.
-                                                                  \<61\> = When set, backpressure GET request grant to PQ
-                                                                  \<60\> = When set, backpressure PE to PE gnt at TL1 level.
-                                                                  \<59\> = Unused. */
-#endif /* Word 0 - End */
-    } loki;
+    /* struct cavm_nixx_af_pse_bp_test1_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_pse_bp_test1 cavm_nixx_af_pse_bp_test1_t;
 
@@ -15397,62 +15318,7 @@ union cavm_nixx_af_pse_bp_test3
                                                                  \<60\> = When set, enables PQ TW request backpressure, TW does not requests PKT_ADD to PEx. */
 #endif /* Word 0 - End */
     } cnf95xxp2;
-    struct cavm_nixx_af_pse_bp_test3_loki
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
-                                                                 Internal:
-                                                                 TL3 Backpressure on commands: there is a priority order between bits[63:60],
-                                                                   bit[60] has the highest and if set is going to backpressure other grants as well
-                                                                   and so on.
-                                                                   \<63\> = When set, backpressure ADD request gnt from TW, BP, TL3 other PE.
-                                                                   \<62\> = When set, backpressure ADD request grant to TL3 one of the PE's.
-                                                                   \<61\> = When set, backpressure GET request grant to TL1
-                                                                   \<60\> = When set, backpressure PE to PE gnt at TL2level.
-                                                                   \<59\> = Unused. */
-        uint64_t reserved_56_58        : 3;
-        uint64_t reserved_32_55        : 24;
-        uint64_t reserved_26_31        : 6;
-        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
-                                                                 Internal:
-                                                                 There are 2 backpressure configuration bits per enable, with the two bits
-                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
-                                                                 0x3=25% of the time.
-                                                                 \<25:24\> = Config for Enable bit [63].
-                                                                 \<23:22\> = Config for Enable bit [62].
-                                                                 \<21:20\> = Config for Enable bit [61].
-                                                                 \<19:18\> = Config for Enable bit [60].
-                                                                 \<17:16\> = Config for Enable bit [59]. */
-        uint64_t reserved_12_15        : 4;
-        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
-#else /* Word 0 - Little Endian */
-        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
-        uint64_t reserved_12_15        : 4;
-        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
-                                                                 Internal:
-                                                                 There are 2 backpressure configuration bits per enable, with the two bits
-                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
-                                                                 0x3=25% of the time.
-                                                                 \<25:24\> = Config for Enable bit [63].
-                                                                 \<23:22\> = Config for Enable bit [62].
-                                                                 \<21:20\> = Config for Enable bit [61].
-                                                                 \<19:18\> = Config for Enable bit [60].
-                                                                 \<17:16\> = Config for Enable bit [59]. */
-        uint64_t reserved_26_31        : 6;
-        uint64_t reserved_32_55        : 24;
-        uint64_t reserved_56_58        : 3;
-        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
-                                                                 Internal:
-                                                                 TL3 Backpressure on commands: there is a priority order between bits[63:60],
-                                                                   bit[60] has the highest and if set is going to backpressure other grants as well
-                                                                   and so on.
-                                                                   \<63\> = When set, backpressure ADD request gnt from TW, BP, TL3 other PE.
-                                                                   \<62\> = When set, backpressure ADD request grant to TL3 one of the PE's.
-                                                                   \<61\> = When set, backpressure GET request grant to TL1
-                                                                   \<60\> = When set, backpressure PE to PE gnt at TL2level.
-                                                                   \<59\> = Unused. */
-#endif /* Word 0 - End */
-    } loki;
+    /* struct cavm_nixx_af_pse_bp_test3_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_pse_bp_test3 cavm_nixx_af_pse_bp_test3_t;
 

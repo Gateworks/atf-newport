@@ -1437,6 +1437,87 @@ union cavm_gpio_io_ctl
     struct cavm_gpio_io_ctl_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t drive3                : 2;  /**< [ 15: 14](R/W) GPIO\<95:72\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t reserved_13           : 1;
+        uint64_t slew3                 : 1;  /**< [ 12: 12](R/W) GPIO\<95:72\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t drive2                : 2;  /**< [ 11: 10](R/W) GPIO\<63:48\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t reserved_9            : 1;
+        uint64_t slew2                 : 1;  /**< [  8:  8](R/W) GPIO\<63:48\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t drive1                : 2;  /**< [  7:  6](R/W) GPIO\<47:24\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t reserved_5            : 1;
+        uint64_t slew1                 : 1;  /**< [  4:  4](R/W) GPIO\<47:24\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t drive0                : 2;  /**< [  3:  2](R/W) GPIO\<23:0\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t reserved_1            : 1;
+        uint64_t slew0                 : 1;  /**< [  0:  0](R/W) GPIO\<23:0\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+#else /* Word 0 - Little Endian */
+        uint64_t slew0                 : 1;  /**< [  0:  0](R/W) GPIO\<23:0\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t reserved_1            : 1;
+        uint64_t drive0                : 2;  /**< [  3:  2](R/W) GPIO\<23:0\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t slew1                 : 1;  /**< [  4:  4](R/W) GPIO\<47:24\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t reserved_5            : 1;
+        uint64_t drive1                : 2;  /**< [  7:  6](R/W) GPIO\<47:24\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t slew2                 : 1;  /**< [  8:  8](R/W) GPIO\<63:48\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t reserved_9            : 1;
+        uint64_t drive2                : 2;  /**< [ 11: 10](R/W) GPIO\<63:48\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t slew3                 : 1;  /**< [ 12: 12](R/W) GPIO\<95:72\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t reserved_13           : 1;
+        uint64_t drive3                : 2;  /**< [ 15: 14](R/W) GPIO\<95:72\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_gpio_io_ctl_s cn9; */
+    struct cavm_gpio_io_ctl_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
         uint64_t drive2                : 2;  /**< [ 11: 10](R/W) GPIO\<63:48\> pin output drive strength.
                                                                  0x0 = 2 mA.
@@ -1495,8 +1576,89 @@ union cavm_gpio_io_ctl
                                                                  0x3 = 16 mA. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_gpio_io_ctl_s cn; */
+    } cn96xx;
+    struct cavm_gpio_io_ctl_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t drive3                : 2;  /**< [ 15: 14](R/W) GPIO\<95:72\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t reserved_13           : 1;
+        uint64_t slew3                 : 1;  /**< [ 12: 12](R/W) GPIO\<95:72\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t drive2                : 2;  /**< [ 11: 10](R/W) GPIO\<71:48\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t reserved_9            : 1;
+        uint64_t slew2                 : 1;  /**< [  8:  8](R/W) GPIO\<71:48\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t drive1                : 2;  /**< [  7:  6](R/W) GPIO\<47:24\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t reserved_5            : 1;
+        uint64_t slew1                 : 1;  /**< [  4:  4](R/W) GPIO\<47:24\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t drive0                : 2;  /**< [  3:  2](R/W) GPIO\<23:0\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t reserved_1            : 1;
+        uint64_t slew0                 : 1;  /**< [  0:  0](R/W) GPIO\<23:0\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+#else /* Word 0 - Little Endian */
+        uint64_t slew0                 : 1;  /**< [  0:  0](R/W) GPIO\<23:0\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t reserved_1            : 1;
+        uint64_t drive0                : 2;  /**< [  3:  2](R/W) GPIO\<23:0\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t slew1                 : 1;  /**< [  4:  4](R/W) GPIO\<47:24\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t reserved_5            : 1;
+        uint64_t drive1                : 2;  /**< [  7:  6](R/W) GPIO\<47:24\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t slew2                 : 1;  /**< [  8:  8](R/W) GPIO\<71:48\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t reserved_9            : 1;
+        uint64_t drive2                : 2;  /**< [ 11: 10](R/W) GPIO\<71:48\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t slew3                 : 1;  /**< [ 12: 12](R/W) GPIO\<95:72\> pin output slew rate control.
+                                                                 0 = Low slew rate.
+                                                                 1 = High slew rate. */
+        uint64_t reserved_13           : 1;
+        uint64_t drive3                : 2;  /**< [ 15: 14](R/W) GPIO\<95:72\> pin output drive strength.
+                                                                 0x0 = 2 mA.
+                                                                 0x1 = 4 mA.
+                                                                 0x2 = 8 mA.
+                                                                 0x3 = 16 mA. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } cn98xx;
+    /* struct cavm_gpio_io_ctl_cn96xx cnf95xx; */
+    /* struct cavm_gpio_io_ctl_cn96xx loki; */
 };
 typedef union cavm_gpio_io_ctl cavm_gpio_io_ctl_t;
 

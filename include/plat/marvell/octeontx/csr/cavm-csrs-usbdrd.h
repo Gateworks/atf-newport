@@ -12849,7 +12849,516 @@ union cavm_usbdrdx_uctl_ctl
         uint64_t reserved_60_63        : 4;
 #endif /* Word 0 - End */
     } cn96xxp3;
-    /* struct cavm_usbdrdx_uctl_ctl_cn96xxp3 cn98xx; */
+    struct cavm_usbdrdx_uctl_ctl_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_60_63        : 4;
+        uint64_t ssc_en                : 1;  /**< [ 59: 59](R/W) Spread-spectrum clock enable. Enables spread-spectrum clock production in the SuperSpeed
+                                                                 function. If the input reference clock for the SuperSpeed PLL is already spread-spectrum,
+                                                                 then do not enable this feature. The clocks sourced to the SuperSpeed function must have
+                                                                 spread-spectrum to be compliant with the USB specification.
+
+                                                                 This value may only be changed during [UPHY_RST]. */
+        uint64_t ssc_range             : 3;  /**< [ 58: 56](R/W) Spread-spectrum clock range. Selects the range of spread-spectrum modulation when SSC_EN
+                                                                 is asserted and the PHY is spreading the SuperSpeed transmit clocks.
+                                                                 Applies a fixed offset to the phase accumulator.
+                                                                 0x0 = -4980 ppm downspread of clock.
+                                                                 0x1 = -4492 ppm.
+                                                                 0x2 = -4003 ppm.
+                                                                 0x3-0x7 = reserved.
+
+                                                                 All of these settings are within the USB 3.0 specification. The amount of EMI emission
+                                                                 reduction might decrease as the [SSC_RANGE] increases; therefore, the [SSC_RANGE] settings
+                                                                 can
+                                                                 be registered to enable the amount of spreading to be adjusted on a per-application basis.
+                                                                 This value can be changed only during UPHY_RST. */
+        uint64_t ssc_ref_clk_sel       : 9;  /**< [ 55: 47](R/W) Enables non-standard oscillator frequencies to generate targeted MPLL output rates. Input
+                                                                 corresponds to the frequency-synthesis coefficient.
+
+                                                                 [55:53]: modulus - 1,
+                                                                 [52:47]: 2's complement push amount.
+
+                                                                 A value of 0x0 means this feature is disabled.
+
+                                                                 The legal values are 0x0.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2, then:
+                                                                 *  0x0 is the only legal value.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6, then:
+                                                                 *  0x108: if DLMC_REF_CLK* is 19.2MHz, 24MHz, 26MHz, 38.4MHz, 48MHz,
+                                                                              52MHz, 76.8MHz, 96MHz, 104MHz.
+                                                                 *  0x0:   if DLMC_REF_CLK* is another supported frequency (see list in
+                                                                              [MPLL_MULTIPLIER] description). */
+        uint64_t mpll_multiplier       : 7;  /**< [ 46: 40](R/W) Multiplies the reference clock to a frequency suitable for intended operating speed.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal values are:
+
+                                                                   0x00 = 100  MHz on DLMC_REF_CLK*.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 0x00 =  19.2 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  20 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  24 MHz on DLMC_REF_CLK*.
+                                                                 0x64 =  25 MHz on DLMC_REF_CLK*.
+                                                                 0x60 =  26 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  38.4 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  40 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  48 MHz on DLMC_REF_CLK*.
+                                                                 0x64 =  50 MHz on DLMC_REF_CLK*.
+                                                                 0x60 =  52 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  100 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  200 MHz on DLMC_REF_CLK*. */
+        uint64_t ref_ssp_en            : 1;  /**< [ 39: 39](R/W) Enables reference clock to the prescaler for SuperSpeed function. This should always be
+                                                                 enabled since this output clock is used to drive the UAHC suspend-mode clock during
+                                                                 low-power states.
+
+                                                                 This value can be changed only during UPHY_RST or during low-power states.
+                                                                 The reference clock must be running and stable before [UPHY_RST] is deasserted and before
+                                                                 [REF_SSP_EN] is asserted. */
+        uint64_t ref_clk_div2          : 1;  /**< [ 38: 38](R/W) Divides the reference clock by two before feeding it into the REF_CLK_FSEL divider.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal value is 0x0.
+
+                                                                 This value can be changed only during UPHY_RST.
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2 then:
+                                                                   all DLMC_REF_CLK* frequencies: 0x0 is the only legal value.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6, then:
+                                                                   0x1: if DLMC_REF_CLK* is 125MHz.
+                                                                   0x1: if DLMC_REF_CLK* is 40MHz, 76.8MHz, or 200MHz.
+                                                                   0x0, 0x1 if DLMC_REF_CLK* is 104MHz (depending on [MPLL_MULTIPLIER]).
+                                                                   0x0: if DLMC_REF_CLK* is another supported frequency (see list in
+                                                                   [MPLL_MULTIPLIER] description). */
+        uint64_t ref_clk_fsel          : 6;  /**< [ 37: 32](R/W) Selects the reference clock frequency for the SuperSpeed and high-speed PLL blocks.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal values are:
+
+                                                                   0x27 = 100  MHz on DLMC_REF_CLK*.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2 then:
+                                                                   0x27 = 100  MHz on DLMC_REF_CLK*.
+                                                                   0x2A =  24  MHz on DLMC_REF_CLK*.
+                                                                   0x31 =  20  MHz on DLMC_REF_CLK*.
+                                                                   0x38 =  19.2MHz on DLMC_REF_CLK*.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6 then:
+                                                                   0x07 is the only legal value. */
+        uint64_t cmd_flr_en            : 1;  /**< [ 31: 31](R/W) The host controller will stop accepting commands if this bit is set. This bit is
+                                                                 for host_mode only.
+
+                                                                 In normal FLR, this bit should be set to 0. If software wants the command to
+                                                                 finish before FLR, write this bit to 1 and poll USBDRD()_UAHC_USBSTS[HCH] to
+                                                                 make sure the command is finished before disabling USBDRD's PCCPF_XXX_CMD[ME]. */
+        uint64_t h_clk_en              : 1;  /**< [ 30: 30](R/W) Controller-clock enable. When set to 1, the controller clock is generated. This also
+                                                                 enables access to UCTL registers 0x30-0xF8. */
+        uint64_t h_clk_byp_sel         : 1;  /**< [ 29: 29](R/W) Select the bypass input to the controller-clock divider.
+                                                                 0 = Use the divided coprocessor clock from the H_CLKDIV divider.
+                                                                 1 = Use the bypass clock from the GPIO pins.
+
+                                                                 This signal is just a multiplexer-select signal; it does not enable the controller clock.
+                                                                 You must still set H_CLKDIV_EN separately. [H_CLK_BYP_SEL] select should not be changed
+                                                                 unless H_CLKDIV_EN is disabled.
+
+                                                                 The bypass clock can be selected and running even if the controller-clock dividers are not
+                                                                 running.
+
+                                                                 Internal:
+                                                                 Generally bypass is only used for scan purposes. */
+        uint64_t h_clkdiv_rst          : 1;  /**< [ 28: 28](R/W) Controller clock divider reset. Divided clocks are not generated while the divider is
+                                                                 being reset.
+                                                                 This also resets the suspend-clock divider. */
+        uint64_t reserved_27           : 1;
+        uint64_t h_clkdiv_sel          : 3;  /**< [ 26: 24](R/W) Controller clock-frequency-divider select. The controller-clock frequency is the
+                                                                 coprocessor-clock frequency divided by [H_CLKDIV_SEL] and must be at or below 300 MHz.
+                                                                 The divider values are the following:
+                                                                 0x0 = divide by 1.
+                                                                 0x1 = divide by 2.
+                                                                 0x2 = divide by 4.
+                                                                 0x3 = divide by 6.
+                                                                 0x4 = divide by 8.
+                                                                 0x5 = divide by 16.
+                                                                 0x6 = divide by 24.
+                                                                 0x7 = divide by 32.
+
+                                                                 The HCLK frequency must be at or below 300 MHz.
+                                                                 The HCLK frequency must be at or above 150 MHz for full-rate USB3
+                                                                 operation.
+                                                                 The HCLK frequency must be at or above 125 MHz for any USB3
+                                                                 functionality.
+
+                                                                 If [DRD_MODE] = DEVICE, the HCLK frequency must be at or above 125 MHz for
+                                                                 correct USB2 functionality.
+
+                                                                 If [DRD_MODE] = HOST, the HCLK frequency must be at or above 90 MHz
+                                                                 for full-rate USB2 operation.
+
+                                                                 If [DRD_MODE] = HOST, the HCLK frequency must be at or above 62.5 MHz
+                                                                 for any USB2 operation.
+
+                                                                 This field can be changed only when [H_CLKDIV_RST] = 1.
+
+                                                                 Internal:
+                                                                 150MHz is from the maximum of:
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-16, row 1, col 12.
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-17, row 7, col 9.
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-16, row 7, col 9.
+                                                                           DEVICE\>125MHz is from Synopsys DWC_usb3 Databook v2.80a, section A.12.4.
+                                                                           HOST2\>62.5MHz in HOST mode is from Synopsys DWC_usb3 Databook v2.80a,
+                                                                             section A.12.5, 3rd bullet in Note on page 894.
+                                                                           HOST2\>90MHz was arrived at from some math: 62.5MHz +
+                                                                             (diff between row 1 and 2, col 12 of table A-16). */
+        uint64_t reserved_22_23        : 2;
+        uint64_t usb3_port_perm_attach : 1;  /**< [ 21: 21](R/W) Indicates this port is permanently attached. This is a strap signal; it should be modified
+                                                                 only when [UPHY_RST] is asserted. */
+        uint64_t usb2_port_perm_attach : 1;  /**< [ 20: 20](R/W) Indicates this port is permanently attached. This is a strap signal; it should be modified
+                                                                 only when [UPHY_RST] is asserted. */
+        uint64_t reserved_19           : 1;
+        uint64_t usb3_port_disable     : 1;  /**< [ 18: 18](R/W) Disables the USB3 (SuperSpeed) portion of this PHY. When set to 1, this signal stops
+                                                                 reporting connect/disconnect events on the port and keeps the port in disabled state. This
+                                                                 could be used for security reasons where hardware can disable a port regardless of whether
+                                                                 xHCI driver enables a port or not.
+                                                                 USBDRD()_UAHC_HCSPARAMS1[MAXPORTS] is not affected by this signal.
+
+                                                                 This is a strap signal; it should be modified only when [UPHY_RST] is asserted. */
+        uint64_t reserved_17           : 1;
+        uint64_t usb2_port_disable     : 1;  /**< [ 16: 16](R/W) Disables USB2 (high-speed/full-speed/low-speed) portion of this PHY. When set to 1, this
+                                                                 signal stops reporting connect/disconnect events on the port and keeps the port in
+                                                                 disabled state. This could be used for security reasons where hardware can disable a port
+                                                                 regardless of whether xHCI driver enables a port or not.
+                                                                 USBDRD()_UAHC_HCSPARAMS1[MAXPORTS] is not affected by this signal.
+
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted.
+                                                                 If Port0 is required to be disabled, ensure that the utmi_clk[0] is running at the normal
+                                                                 speed. Also, all the enabled USB2.0 ports should have the same clock frequency as Port0. */
+        uint64_t reserved_15           : 1;
+        uint64_t ss_power_en           : 1;  /**< [ 14: 14](R/W) PHY SuperSpeed block power enable.
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted. */
+        uint64_t reserved_13           : 1;
+        uint64_t hs_power_en           : 1;  /**< [ 12: 12](R/W) PHY high-speed block power enable.
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted. */
+        uint64_t ref_clk_sel           : 3;  /**< [ 11:  9](R/W) Reference clock select. Choose reference-clock source for the SuperSpeed and high-speed
+                                                                 PLL blocks.
+                                                                 0x0 = Reference clock sources for both PLLs come from GSERC_REF_CLK0_P/N.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+                                                                 0x4 = Reserved.
+                                                                 0x5 = Reserved.
+                                                                 0x6 = Reserved.
+                                                                 0x7 = Reserved.
+
+                                                                 This value can be changed only during UPHY_RST.
+
+                                                                 The reference clock selected cannot be spread-spectrum.
+
+                                                                 Internal:
+                                                                 For the 0x6 selection, reference clock source for SuperSpeed PLL is from the USB
+                                                                 pads, reference clock source for high-speed PLL is PLL_REF_CLK. But in CNXXXX,
+                                                                 PLL_REF_CLK cannot be routed to USB without violating jitter requirements
+
+                                                                 0x1 was for clock sources for both PLLs come from USBDRD PADs; not connected in
+                                                                 CNXXXX. */
+        uint64_t reserved_6_8          : 3;
+        uint64_t dma_psn_ign           : 1;  /**< [  5:  5](R/W) Handling of poison indication on DMA read responses.
+                                                                 0 = Treat poison data the same way as fault, sending an AXI error to the USB
+                                                                 controller.
+                                                                 1 = Ignore poison and proceed with the transaction as if no problems. */
+        uint64_t csclk_force           : 1;  /**< [  4:  4](R/W) Force conditional clock and NCBI conditional clock to be running. For diagnostic
+                                                                 use only.
+                                                                 0 = No override.
+                                                                 1 = Override the enable of conditional clock to force it running.
+
+                                                                 Internal:
+                                                                 Clock gating should not be used for usbdrd's NCB interface in CN98XX. */
+        uint64_t drd_mode              : 1;  /**< [  3:  3](R/W) Switches between host or device mode for USBDRD.
+                                                                  0 = Host.
+                                                                  1 = Device. */
+        uint64_t uphy_rst              : 1;  /**< [  2:  2](R/W) PHY reset; resets UPHY; active-high. */
+        uint64_t uahc_rst              : 1;  /**< [  1:  1](R/W) Software reset; resets UAHC; active-high.
+                                                                 Internal:
+                                                                 Note that soft-resetting the UAHC while it is active may cause violations of RSL
+                                                                 or NCB protocols. */
+        uint64_t uctl_rst              : 1;  /**< [  0:  0](R/W) Software reset; resets UCTL; active-high.
+                                                                 Resets UAHC DMA and register shims. Resets UCTL registers 0x30-0xF8.
+                                                                 Does not reset UCTL registers 0x0-0x28.
+                                                                 UCTL registers starting from 0x30 can be accessed only after the controller clock is
+                                                                 active and [UCTL_RST] is deasserted.
+
+                                                                 Internal:
+                                                                 Note that soft-resetting the UCTL while it is active may cause violations of
+                                                                 RSL, NCB, and CIB protocols. */
+#else /* Word 0 - Little Endian */
+        uint64_t uctl_rst              : 1;  /**< [  0:  0](R/W) Software reset; resets UCTL; active-high.
+                                                                 Resets UAHC DMA and register shims. Resets UCTL registers 0x30-0xF8.
+                                                                 Does not reset UCTL registers 0x0-0x28.
+                                                                 UCTL registers starting from 0x30 can be accessed only after the controller clock is
+                                                                 active and [UCTL_RST] is deasserted.
+
+                                                                 Internal:
+                                                                 Note that soft-resetting the UCTL while it is active may cause violations of
+                                                                 RSL, NCB, and CIB protocols. */
+        uint64_t uahc_rst              : 1;  /**< [  1:  1](R/W) Software reset; resets UAHC; active-high.
+                                                                 Internal:
+                                                                 Note that soft-resetting the UAHC while it is active may cause violations of RSL
+                                                                 or NCB protocols. */
+        uint64_t uphy_rst              : 1;  /**< [  2:  2](R/W) PHY reset; resets UPHY; active-high. */
+        uint64_t drd_mode              : 1;  /**< [  3:  3](R/W) Switches between host or device mode for USBDRD.
+                                                                  0 = Host.
+                                                                  1 = Device. */
+        uint64_t csclk_force           : 1;  /**< [  4:  4](R/W) Force conditional clock and NCBI conditional clock to be running. For diagnostic
+                                                                 use only.
+                                                                 0 = No override.
+                                                                 1 = Override the enable of conditional clock to force it running.
+
+                                                                 Internal:
+                                                                 Clock gating should not be used for usbdrd's NCB interface in CN98XX. */
+        uint64_t dma_psn_ign           : 1;  /**< [  5:  5](R/W) Handling of poison indication on DMA read responses.
+                                                                 0 = Treat poison data the same way as fault, sending an AXI error to the USB
+                                                                 controller.
+                                                                 1 = Ignore poison and proceed with the transaction as if no problems. */
+        uint64_t reserved_6_8          : 3;
+        uint64_t ref_clk_sel           : 3;  /**< [ 11:  9](R/W) Reference clock select. Choose reference-clock source for the SuperSpeed and high-speed
+                                                                 PLL blocks.
+                                                                 0x0 = Reference clock sources for both PLLs come from GSERC_REF_CLK0_P/N.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+                                                                 0x4 = Reserved.
+                                                                 0x5 = Reserved.
+                                                                 0x6 = Reserved.
+                                                                 0x7 = Reserved.
+
+                                                                 This value can be changed only during UPHY_RST.
+
+                                                                 The reference clock selected cannot be spread-spectrum.
+
+                                                                 Internal:
+                                                                 For the 0x6 selection, reference clock source for SuperSpeed PLL is from the USB
+                                                                 pads, reference clock source for high-speed PLL is PLL_REF_CLK. But in CNXXXX,
+                                                                 PLL_REF_CLK cannot be routed to USB without violating jitter requirements
+
+                                                                 0x1 was for clock sources for both PLLs come from USBDRD PADs; not connected in
+                                                                 CNXXXX. */
+        uint64_t hs_power_en           : 1;  /**< [ 12: 12](R/W) PHY high-speed block power enable.
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted. */
+        uint64_t reserved_13           : 1;
+        uint64_t ss_power_en           : 1;  /**< [ 14: 14](R/W) PHY SuperSpeed block power enable.
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted. */
+        uint64_t reserved_15           : 1;
+        uint64_t usb2_port_disable     : 1;  /**< [ 16: 16](R/W) Disables USB2 (high-speed/full-speed/low-speed) portion of this PHY. When set to 1, this
+                                                                 signal stops reporting connect/disconnect events on the port and keeps the port in
+                                                                 disabled state. This could be used for security reasons where hardware can disable a port
+                                                                 regardless of whether xHCI driver enables a port or not.
+                                                                 USBDRD()_UAHC_HCSPARAMS1[MAXPORTS] is not affected by this signal.
+
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted.
+                                                                 If Port0 is required to be disabled, ensure that the utmi_clk[0] is running at the normal
+                                                                 speed. Also, all the enabled USB2.0 ports should have the same clock frequency as Port0. */
+        uint64_t reserved_17           : 1;
+        uint64_t usb3_port_disable     : 1;  /**< [ 18: 18](R/W) Disables the USB3 (SuperSpeed) portion of this PHY. When set to 1, this signal stops
+                                                                 reporting connect/disconnect events on the port and keeps the port in disabled state. This
+                                                                 could be used for security reasons where hardware can disable a port regardless of whether
+                                                                 xHCI driver enables a port or not.
+                                                                 USBDRD()_UAHC_HCSPARAMS1[MAXPORTS] is not affected by this signal.
+
+                                                                 This is a strap signal; it should be modified only when [UPHY_RST] is asserted. */
+        uint64_t reserved_19           : 1;
+        uint64_t usb2_port_perm_attach : 1;  /**< [ 20: 20](R/W) Indicates this port is permanently attached. This is a strap signal; it should be modified
+                                                                 only when [UPHY_RST] is asserted. */
+        uint64_t usb3_port_perm_attach : 1;  /**< [ 21: 21](R/W) Indicates this port is permanently attached. This is a strap signal; it should be modified
+                                                                 only when [UPHY_RST] is asserted. */
+        uint64_t reserved_22_23        : 2;
+        uint64_t h_clkdiv_sel          : 3;  /**< [ 26: 24](R/W) Controller clock-frequency-divider select. The controller-clock frequency is the
+                                                                 coprocessor-clock frequency divided by [H_CLKDIV_SEL] and must be at or below 300 MHz.
+                                                                 The divider values are the following:
+                                                                 0x0 = divide by 1.
+                                                                 0x1 = divide by 2.
+                                                                 0x2 = divide by 4.
+                                                                 0x3 = divide by 6.
+                                                                 0x4 = divide by 8.
+                                                                 0x5 = divide by 16.
+                                                                 0x6 = divide by 24.
+                                                                 0x7 = divide by 32.
+
+                                                                 The HCLK frequency must be at or below 300 MHz.
+                                                                 The HCLK frequency must be at or above 150 MHz for full-rate USB3
+                                                                 operation.
+                                                                 The HCLK frequency must be at or above 125 MHz for any USB3
+                                                                 functionality.
+
+                                                                 If [DRD_MODE] = DEVICE, the HCLK frequency must be at or above 125 MHz for
+                                                                 correct USB2 functionality.
+
+                                                                 If [DRD_MODE] = HOST, the HCLK frequency must be at or above 90 MHz
+                                                                 for full-rate USB2 operation.
+
+                                                                 If [DRD_MODE] = HOST, the HCLK frequency must be at or above 62.5 MHz
+                                                                 for any USB2 operation.
+
+                                                                 This field can be changed only when [H_CLKDIV_RST] = 1.
+
+                                                                 Internal:
+                                                                 150MHz is from the maximum of:
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-16, row 1, col 12.
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-17, row 7, col 9.
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-16, row 7, col 9.
+                                                                           DEVICE\>125MHz is from Synopsys DWC_usb3 Databook v2.80a, section A.12.4.
+                                                                           HOST2\>62.5MHz in HOST mode is from Synopsys DWC_usb3 Databook v2.80a,
+                                                                             section A.12.5, 3rd bullet in Note on page 894.
+                                                                           HOST2\>90MHz was arrived at from some math: 62.5MHz +
+                                                                             (diff between row 1 and 2, col 12 of table A-16). */
+        uint64_t reserved_27           : 1;
+        uint64_t h_clkdiv_rst          : 1;  /**< [ 28: 28](R/W) Controller clock divider reset. Divided clocks are not generated while the divider is
+                                                                 being reset.
+                                                                 This also resets the suspend-clock divider. */
+        uint64_t h_clk_byp_sel         : 1;  /**< [ 29: 29](R/W) Select the bypass input to the controller-clock divider.
+                                                                 0 = Use the divided coprocessor clock from the H_CLKDIV divider.
+                                                                 1 = Use the bypass clock from the GPIO pins.
+
+                                                                 This signal is just a multiplexer-select signal; it does not enable the controller clock.
+                                                                 You must still set H_CLKDIV_EN separately. [H_CLK_BYP_SEL] select should not be changed
+                                                                 unless H_CLKDIV_EN is disabled.
+
+                                                                 The bypass clock can be selected and running even if the controller-clock dividers are not
+                                                                 running.
+
+                                                                 Internal:
+                                                                 Generally bypass is only used for scan purposes. */
+        uint64_t h_clk_en              : 1;  /**< [ 30: 30](R/W) Controller-clock enable. When set to 1, the controller clock is generated. This also
+                                                                 enables access to UCTL registers 0x30-0xF8. */
+        uint64_t cmd_flr_en            : 1;  /**< [ 31: 31](R/W) The host controller will stop accepting commands if this bit is set. This bit is
+                                                                 for host_mode only.
+
+                                                                 In normal FLR, this bit should be set to 0. If software wants the command to
+                                                                 finish before FLR, write this bit to 1 and poll USBDRD()_UAHC_USBSTS[HCH] to
+                                                                 make sure the command is finished before disabling USBDRD's PCCPF_XXX_CMD[ME]. */
+        uint64_t ref_clk_fsel          : 6;  /**< [ 37: 32](R/W) Selects the reference clock frequency for the SuperSpeed and high-speed PLL blocks.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal values are:
+
+                                                                   0x27 = 100  MHz on DLMC_REF_CLK*.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2 then:
+                                                                   0x27 = 100  MHz on DLMC_REF_CLK*.
+                                                                   0x2A =  24  MHz on DLMC_REF_CLK*.
+                                                                   0x31 =  20  MHz on DLMC_REF_CLK*.
+                                                                   0x38 =  19.2MHz on DLMC_REF_CLK*.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6 then:
+                                                                   0x07 is the only legal value. */
+        uint64_t ref_clk_div2          : 1;  /**< [ 38: 38](R/W) Divides the reference clock by two before feeding it into the REF_CLK_FSEL divider.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal value is 0x0.
+
+                                                                 This value can be changed only during UPHY_RST.
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2 then:
+                                                                   all DLMC_REF_CLK* frequencies: 0x0 is the only legal value.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6, then:
+                                                                   0x1: if DLMC_REF_CLK* is 125MHz.
+                                                                   0x1: if DLMC_REF_CLK* is 40MHz, 76.8MHz, or 200MHz.
+                                                                   0x0, 0x1 if DLMC_REF_CLK* is 104MHz (depending on [MPLL_MULTIPLIER]).
+                                                                   0x0: if DLMC_REF_CLK* is another supported frequency (see list in
+                                                                   [MPLL_MULTIPLIER] description). */
+        uint64_t ref_ssp_en            : 1;  /**< [ 39: 39](R/W) Enables reference clock to the prescaler for SuperSpeed function. This should always be
+                                                                 enabled since this output clock is used to drive the UAHC suspend-mode clock during
+                                                                 low-power states.
+
+                                                                 This value can be changed only during UPHY_RST or during low-power states.
+                                                                 The reference clock must be running and stable before [UPHY_RST] is deasserted and before
+                                                                 [REF_SSP_EN] is asserted. */
+        uint64_t mpll_multiplier       : 7;  /**< [ 46: 40](R/W) Multiplies the reference clock to a frequency suitable for intended operating speed.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal values are:
+
+                                                                   0x00 = 100  MHz on DLMC_REF_CLK*.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 0x00 =  19.2 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  20 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  24 MHz on DLMC_REF_CLK*.
+                                                                 0x64 =  25 MHz on DLMC_REF_CLK*.
+                                                                 0x60 =  26 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  38.4 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  40 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  48 MHz on DLMC_REF_CLK*.
+                                                                 0x64 =  50 MHz on DLMC_REF_CLK*.
+                                                                 0x60 =  52 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  100 MHz on DLMC_REF_CLK*.
+                                                                 0x00 =  200 MHz on DLMC_REF_CLK*. */
+        uint64_t ssc_ref_clk_sel       : 9;  /**< [ 55: 47](R/W) Enables non-standard oscillator frequencies to generate targeted MPLL output rates. Input
+                                                                 corresponds to the frequency-synthesis coefficient.
+
+                                                                 [55:53]: modulus - 1,
+                                                                 [52:47]: 2's complement push amount.
+
+                                                                 A value of 0x0 means this feature is disabled.
+
+                                                                 The legal values are 0x0.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2, then:
+                                                                 *  0x0 is the only legal value.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6, then:
+                                                                 *  0x108: if DLMC_REF_CLK* is 19.2MHz, 24MHz, 26MHz, 38.4MHz, 48MHz,
+                                                                              52MHz, 76.8MHz, 96MHz, 104MHz.
+                                                                 *  0x0:   if DLMC_REF_CLK* is another supported frequency (see list in
+                                                                              [MPLL_MULTIPLIER] description). */
+        uint64_t ssc_range             : 3;  /**< [ 58: 56](R/W) Spread-spectrum clock range. Selects the range of spread-spectrum modulation when SSC_EN
+                                                                 is asserted and the PHY is spreading the SuperSpeed transmit clocks.
+                                                                 Applies a fixed offset to the phase accumulator.
+                                                                 0x0 = -4980 ppm downspread of clock.
+                                                                 0x1 = -4492 ppm.
+                                                                 0x2 = -4003 ppm.
+                                                                 0x3-0x7 = reserved.
+
+                                                                 All of these settings are within the USB 3.0 specification. The amount of EMI emission
+                                                                 reduction might decrease as the [SSC_RANGE] increases; therefore, the [SSC_RANGE] settings
+                                                                 can
+                                                                 be registered to enable the amount of spreading to be adjusted on a per-application basis.
+                                                                 This value can be changed only during UPHY_RST. */
+        uint64_t ssc_en                : 1;  /**< [ 59: 59](R/W) Spread-spectrum clock enable. Enables spread-spectrum clock production in the SuperSpeed
+                                                                 function. If the input reference clock for the SuperSpeed PLL is already spread-spectrum,
+                                                                 then do not enable this feature. The clocks sourced to the SuperSpeed function must have
+                                                                 spread-spectrum to be compliant with the USB specification.
+
+                                                                 This value may only be changed during [UPHY_RST]. */
+        uint64_t reserved_60_63        : 4;
+#endif /* Word 0 - End */
+    } cn98xx;
 };
 typedef union cavm_usbdrdx_uctl_ctl cavm_usbdrdx_uctl_ctl_t;
 
@@ -12910,27 +13419,27 @@ union cavm_usbdrdx_uctl_ecc
         uint64_t ecc_err_address       : 16; /**< [ 47: 32](RO/H) RAM address of the ECC error. */
         uint64_t reserved_21_31        : 11;
         uint64_t uctl_xm_r_ecc_flip_synd : 2;/**< [ 20: 19](R/W) Insert ECC error for testing purposes. */
-        uint64_t uctl_xm_r_ecc_cor_dis : 1;  /**< [ 18: 18](R/W) Enables ECC correction on UCTL AxiMaster read-data FIFO. */
+        uint64_t uctl_xm_r_ecc_cor_dis : 1;  /**< [ 18: 18](R/W) Disables ECC correction on UCTL AxiMaster read-data FIFO. */
         uint64_t uctl_xm_w_ecc_flip_synd : 2;/**< [ 17: 16](R/W) Insert ECC error for testing purposes. */
-        uint64_t uctl_xm_w_ecc_cor_dis : 1;  /**< [ 15: 15](R/W) Enables ECC correction on UCTL AxiMaster write-data FIFO. */
+        uint64_t uctl_xm_w_ecc_cor_dis : 1;  /**< [ 15: 15](R/W) Disables ECC correction on UCTL AxiMaster write-data FIFO. */
         uint64_t reserved_9_14         : 6;
         uint64_t uahc_ram2_ecc_flip_synd : 2;/**< [  8:  7](R/W) Insert ECC error for testing purposes. */
-        uint64_t uahc_ram2_ecc_cor_dis : 1;  /**< [  6:  6](R/W) Enables ECC correction on UAHC RxFIFO RAMs (RAM2). */
+        uint64_t uahc_ram2_ecc_cor_dis : 1;  /**< [  6:  6](R/W) Disables ECC correction on UAHC RxFIFO RAMs (RAM2). */
         uint64_t uahc_ram1_ecc_flip_synd : 2;/**< [  5:  4](R/W) Insert ECC error for testing purposes. */
-        uint64_t uahc_ram1_ecc_cor_dis : 1;  /**< [  3:  3](R/W) Enables ECC correction on UAHC TxFIFO RAMs (RAM1). */
+        uint64_t uahc_ram1_ecc_cor_dis : 1;  /**< [  3:  3](R/W) Disables ECC correction on UAHC TxFIFO RAMs (RAM1). */
         uint64_t uahc_ram0_ecc_flip_synd : 2;/**< [  2:  1](R/W) Insert ECC error for testing purposes. */
-        uint64_t uahc_ram0_ecc_cor_dis : 1;  /**< [  0:  0](R/W) Enables ECC correction on UAHC Desc/Reg cache (RAM0). */
+        uint64_t uahc_ram0_ecc_cor_dis : 1;  /**< [  0:  0](R/W) Disables ECC correction on UAHC Desc/Reg cache (RAM0). */
 #else /* Word 0 - Little Endian */
-        uint64_t uahc_ram0_ecc_cor_dis : 1;  /**< [  0:  0](R/W) Enables ECC correction on UAHC Desc/Reg cache (RAM0). */
+        uint64_t uahc_ram0_ecc_cor_dis : 1;  /**< [  0:  0](R/W) Disables ECC correction on UAHC Desc/Reg cache (RAM0). */
         uint64_t uahc_ram0_ecc_flip_synd : 2;/**< [  2:  1](R/W) Insert ECC error for testing purposes. */
-        uint64_t uahc_ram1_ecc_cor_dis : 1;  /**< [  3:  3](R/W) Enables ECC correction on UAHC TxFIFO RAMs (RAM1). */
+        uint64_t uahc_ram1_ecc_cor_dis : 1;  /**< [  3:  3](R/W) Disables ECC correction on UAHC TxFIFO RAMs (RAM1). */
         uint64_t uahc_ram1_ecc_flip_synd : 2;/**< [  5:  4](R/W) Insert ECC error for testing purposes. */
-        uint64_t uahc_ram2_ecc_cor_dis : 1;  /**< [  6:  6](R/W) Enables ECC correction on UAHC RxFIFO RAMs (RAM2). */
+        uint64_t uahc_ram2_ecc_cor_dis : 1;  /**< [  6:  6](R/W) Disables ECC correction on UAHC RxFIFO RAMs (RAM2). */
         uint64_t uahc_ram2_ecc_flip_synd : 2;/**< [  8:  7](R/W) Insert ECC error for testing purposes. */
         uint64_t reserved_9_14         : 6;
-        uint64_t uctl_xm_w_ecc_cor_dis : 1;  /**< [ 15: 15](R/W) Enables ECC correction on UCTL AxiMaster write-data FIFO. */
+        uint64_t uctl_xm_w_ecc_cor_dis : 1;  /**< [ 15: 15](R/W) Disables ECC correction on UCTL AxiMaster write-data FIFO. */
         uint64_t uctl_xm_w_ecc_flip_synd : 2;/**< [ 17: 16](R/W) Insert ECC error for testing purposes. */
-        uint64_t uctl_xm_r_ecc_cor_dis : 1;  /**< [ 18: 18](R/W) Enables ECC correction on UCTL AxiMaster read-data FIFO. */
+        uint64_t uctl_xm_r_ecc_cor_dis : 1;  /**< [ 18: 18](R/W) Disables ECC correction on UCTL AxiMaster read-data FIFO. */
         uint64_t uctl_xm_r_ecc_flip_synd : 2;/**< [ 20: 19](R/W) Insert ECC error for testing purposes. */
         uint64_t reserved_21_31        : 11;
         uint64_t ecc_err_address       : 16; /**< [ 47: 32](RO/H) RAM address of the ECC error. */

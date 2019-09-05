@@ -18475,6 +18475,105 @@ union cavm_cgxx_spux_control1
     struct cavm_cgxx_spux_control1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_23_63        : 41;
+        uint64_t disable_am            : 1;  /**< [ 22: 22](R/W) Disable alignment markers for USXGMII-S 2.5/5/10G. */
+        uint64_t usxgmii_rate          : 3;  /**< [ 21: 19](R/W/H) USXGMII port rate. Ignored if CGX()_CMR()_CONFIG[LMAC_TYPE] is not
+                                                                 USXGMII. Enumerated by CGX_USXGMII_RATE_E. */
+        uint64_t usxgmii_type          : 3;  /**< [ 18: 16](RO/H) USXGMII port sub-type. Read-only field from
+                                                                 CGX()_SPU_USXGMII_CONTROL[USXGMII_TYPE]. Ignored if
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is not USXGMII. Enumerated by CGX_USXGMII_TYPE_E. */
+        uint64_t reset                 : 1;  /**< [ 15: 15](R/W1S/H) Reset. Setting this bit or CGX()_SPU()_AN_CONTROL[AN_RESET] or
+                                                                 CGX()_SPU()_USX_AN_CONTROL[AN_RESET] to 1 causes the following events to occur:
+                                                                 * Resets the logical PCS (LPCS).
+                                                                 * Sets the IEEE 802.3 PCS, FEC and AN registers for the LPCS to their default states.
+                                                                 * Resets the associated SerDes lanes.
+
+                                                                 It takes up to 32 coprocessor-clock cycles to reset the LPCS, after which RESET is
+                                                                 automatically cleared. */
+        uint64_t loopbck               : 1;  /**< [ 14: 14](R/W) TX-to-RX loopback enable. When set, transmit data for each SerDes lane is looped back as
+                                                                 receive data. */
+        uint64_t spdsel1               : 1;  /**< [ 13: 13](RO/H) Speed select 1: always 1. */
+        uint64_t reserved_12           : 1;
+        uint64_t lo_pwr                : 1;  /**< [ 11: 11](R/W) Low power enable. When set, the LPCS is disabled (overriding the associated
+                                                                 CGX()_CMR()_CONFIG[ENABLE]), and the SerDes lanes associated with the LPCS are
+                                                                 reset. */
+        uint64_t reserved_7_10         : 4;
+        uint64_t spdsel0               : 1;  /**< [  6:  6](RO/H) Speed select 0: always 1. */
+        uint64_t spd                   : 4;  /**< [  5:  2](RO/H) Speed selection.
+                                                                 Note that this is a read-only field rather than read/write as
+                                                                 specified in 802.3.
+                                                                 The LPCS speed is instead configured by the associated
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE]. The read values returned by this field are as
+                                                                 follows:
+
+                                                                 \<pre\>
+                                                                   LMAC_TYPE   Speed       SPD Read Value    Comment
+                                                                   ------------------------------------------------------
+                                                                   XAUI        10G/20G     0x0               20G if DXAUI
+                                                                   RXAUI       10G         0x0
+                                                                   10G_R       10G         0x0               802.3by Table 45-120 / 45.2.3.1
+                                                                   40G_R       40G         0x3               802.3by Table 45-120 / 45.2.3.1
+                                                                   100G_R      100G        0x4               802.3by Table 45-120 / 45.2.3.1
+                                                                   25G_R       25G         0x5               802.3by Table 45-120 / 45.2.3.1
+                                                                   50G_R       50G         0x6               802.3cd Table 45-120 / 45.2.3.1
+                                                                   USXGMII     various     0xD               802.3cd Table 45-120 / 45.2.3.1
+                                                                                                             (0xB-0xF reserved, assigning 0xD)
+                                                                   Other       -           X
+                                                                 \</pre\> */
+        uint64_t reserved_0_1          : 2;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_1          : 2;
+        uint64_t spd                   : 4;  /**< [  5:  2](RO/H) Speed selection.
+                                                                 Note that this is a read-only field rather than read/write as
+                                                                 specified in 802.3.
+                                                                 The LPCS speed is instead configured by the associated
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE]. The read values returned by this field are as
+                                                                 follows:
+
+                                                                 \<pre\>
+                                                                   LMAC_TYPE   Speed       SPD Read Value    Comment
+                                                                   ------------------------------------------------------
+                                                                   XAUI        10G/20G     0x0               20G if DXAUI
+                                                                   RXAUI       10G         0x0
+                                                                   10G_R       10G         0x0               802.3by Table 45-120 / 45.2.3.1
+                                                                   40G_R       40G         0x3               802.3by Table 45-120 / 45.2.3.1
+                                                                   100G_R      100G        0x4               802.3by Table 45-120 / 45.2.3.1
+                                                                   25G_R       25G         0x5               802.3by Table 45-120 / 45.2.3.1
+                                                                   50G_R       50G         0x6               802.3cd Table 45-120 / 45.2.3.1
+                                                                   USXGMII     various     0xD               802.3cd Table 45-120 / 45.2.3.1
+                                                                                                             (0xB-0xF reserved, assigning 0xD)
+                                                                   Other       -           X
+                                                                 \</pre\> */
+        uint64_t spdsel0               : 1;  /**< [  6:  6](RO/H) Speed select 0: always 1. */
+        uint64_t reserved_7_10         : 4;
+        uint64_t lo_pwr                : 1;  /**< [ 11: 11](R/W) Low power enable. When set, the LPCS is disabled (overriding the associated
+                                                                 CGX()_CMR()_CONFIG[ENABLE]), and the SerDes lanes associated with the LPCS are
+                                                                 reset. */
+        uint64_t reserved_12           : 1;
+        uint64_t spdsel1               : 1;  /**< [ 13: 13](RO/H) Speed select 1: always 1. */
+        uint64_t loopbck               : 1;  /**< [ 14: 14](R/W) TX-to-RX loopback enable. When set, transmit data for each SerDes lane is looped back as
+                                                                 receive data. */
+        uint64_t reset                 : 1;  /**< [ 15: 15](R/W1S/H) Reset. Setting this bit or CGX()_SPU()_AN_CONTROL[AN_RESET] or
+                                                                 CGX()_SPU()_USX_AN_CONTROL[AN_RESET] to 1 causes the following events to occur:
+                                                                 * Resets the logical PCS (LPCS).
+                                                                 * Sets the IEEE 802.3 PCS, FEC and AN registers for the LPCS to their default states.
+                                                                 * Resets the associated SerDes lanes.
+
+                                                                 It takes up to 32 coprocessor-clock cycles to reset the LPCS, after which RESET is
+                                                                 automatically cleared. */
+        uint64_t usxgmii_type          : 3;  /**< [ 18: 16](RO/H) USXGMII port sub-type. Read-only field from
+                                                                 CGX()_SPU_USXGMII_CONTROL[USXGMII_TYPE]. Ignored if
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is not USXGMII. Enumerated by CGX_USXGMII_TYPE_E. */
+        uint64_t usxgmii_rate          : 3;  /**< [ 21: 19](R/W/H) USXGMII port rate. Ignored if CGX()_CMR()_CONFIG[LMAC_TYPE] is not
+                                                                 USXGMII. Enumerated by CGX_USXGMII_RATE_E. */
+        uint64_t disable_am            : 1;  /**< [ 22: 22](R/W) Disable alignment markers for USXGMII-S 2.5/5/10G. */
+        uint64_t reserved_23_63        : 41;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_spux_control1_s cn9; */
+    struct cavm_cgxx_spux_control1_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_22_63        : 42;
         uint64_t usxgmii_rate          : 3;  /**< [ 21: 19](R/W/H) USXGMII port rate. Ignored if CGX()_CMR()_CONFIG[LMAC_TYPE] is not
                                                                  USXGMII. Enumerated by CGX_USXGMII_RATE_E. */
@@ -18567,10 +18666,124 @@ union cavm_cgxx_spux_control1
                                                                  USXGMII. Enumerated by CGX_USXGMII_RATE_E. */
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cgxx_spux_control1_s cn9; */
-    /* struct cavm_cgxx_spux_control1_s cn96xxp1; */
+    } cn96xxp1;
     struct cavm_cgxx_spux_control1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_23_63        : 41;
+        uint64_t disable_am            : 1;  /**< [ 22: 22](R/W) Disable alignment markers for USXGMII-S 2.5/5/10G. */
+        uint64_t usxgmii_rate          : 3;  /**< [ 21: 19](R/W/H) USXGMII port rate. Ignored if CGX()_CMR()_CONFIG[LMAC_TYPE] is not
+                                                                 USXGMII. Enumerated by CGX_USXGMII_RATE_E. */
+        uint64_t usxgmii_type          : 3;  /**< [ 18: 16](RO/H) USXGMII port sub-type. Read-only field from
+                                                                 CGX()_SPU_USXGMII_CONTROL[USXGMII_TYPE]. Ignored if
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is not USXGMII. Enumerated by CGX_USXGMII_TYPE_E. */
+        uint64_t reset                 : 1;  /**< [ 15: 15](R/W1S/H) Reset. Setting this bit or CGX()_SPU()_AN_CONTROL[AN_RESET] or
+                                                                 CGX()_SPU()_USX_AN_CONTROL[AN_RESET] to 1 causes the following events to occur:
+                                                                 * Resets the logical PCS (LPCS).
+                                                                 * Sets the IEEE 802.3 PCS, FEC and AN registers for the LPCS to their default states.
+                                                                 * Resets the associated SerDes lanes.
+
+                                                                 It takes up to 32 coprocessor-clock cycles to reset the LPCS, after which RESET is
+                                                                 automatically cleared. */
+        uint64_t loopbck               : 1;  /**< [ 14: 14](R/W) TX-to-RX loopback enable. When set, transmit data for each SerDes lane is looped back as
+                                                                 receive data. */
+        uint64_t spdsel1               : 1;  /**< [ 13: 13](RO/H) Speed select 1: always 1. */
+        uint64_t reserved_12           : 1;
+        uint64_t lo_pwr                : 1;  /**< [ 11: 11](R/W) Low power enable. When set, the LPCS is disabled (overriding the associated
+                                                                 CGX()_CMR()_CONFIG[ENABLE]), and the SerDes lanes associated with the LPCS are
+                                                                 reset. */
+        uint64_t reserved_7_10         : 4;
+        uint64_t spdsel0               : 1;  /**< [  6:  6](RO/H) Speed select 0: always 1. */
+        uint64_t spd                   : 4;  /**< [  5:  2](RO/H) Speed selection.
+                                                                 Note that this is a read-only field rather than read/write as
+                                                                 specified in 802.3.
+                                                                 The LPCS speed is instead configured by the associated
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE]. The read values returned by this field are as
+                                                                 follows:
+
+                                                                 \<pre\>
+                                                                   LMAC_TYPE  Speed    SPD    Comment
+                                                                                       Read
+                                                                                       Value
+                                                                   ---------  -------  -----  ----------------------
+                                                                   XAUI       10G/20G  0x0    20G if DXAUI
+                                                                   RXAUI      10G      0x0
+                                                                   10G_R      10G      0x0    802.3by Table 45-120 /
+                                                                                              45.2.3.1
+                                                                   40G_R      40G      0x3    802.3by Table 45-120 /
+                                                                                              45.2.3.1
+                                                                   100G_R     100G     0x4    802.3by Table 45-120 /
+                                                                                              45.2.3.1
+                                                                   25G_R      25G      0x5    802.3by Table 45-120 /
+                                                                                              45.2.3.1
+                                                                   50G_R      50G      0x6    802.3cd Table 45-120 /
+                                                                                              45.2.3.1
+                                                                   USXGMII    various  0xD    802.3cd Table 45-120 /
+                                                                                              45.2.3.1
+                                                                                              (0xB-0xF reserved,
+                                                                                              assigning 0xD)
+                                                                   Other      -        X
+                                                                 \</pre\> */
+        uint64_t reserved_0_1          : 2;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_1          : 2;
+        uint64_t spd                   : 4;  /**< [  5:  2](RO/H) Speed selection.
+                                                                 Note that this is a read-only field rather than read/write as
+                                                                 specified in 802.3.
+                                                                 The LPCS speed is instead configured by the associated
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE]. The read values returned by this field are as
+                                                                 follows:
+
+                                                                 \<pre\>
+                                                                   LMAC_TYPE  Speed    SPD    Comment
+                                                                                       Read
+                                                                                       Value
+                                                                   ---------  -------  -----  ----------------------
+                                                                   XAUI       10G/20G  0x0    20G if DXAUI
+                                                                   RXAUI      10G      0x0
+                                                                   10G_R      10G      0x0    802.3by Table 45-120 /
+                                                                                              45.2.3.1
+                                                                   40G_R      40G      0x3    802.3by Table 45-120 /
+                                                                                              45.2.3.1
+                                                                   100G_R     100G     0x4    802.3by Table 45-120 /
+                                                                                              45.2.3.1
+                                                                   25G_R      25G      0x5    802.3by Table 45-120 /
+                                                                                              45.2.3.1
+                                                                   50G_R      50G      0x6    802.3cd Table 45-120 /
+                                                                                              45.2.3.1
+                                                                   USXGMII    various  0xD    802.3cd Table 45-120 /
+                                                                                              45.2.3.1
+                                                                                              (0xB-0xF reserved,
+                                                                                              assigning 0xD)
+                                                                   Other      -        X
+                                                                 \</pre\> */
+        uint64_t spdsel0               : 1;  /**< [  6:  6](RO/H) Speed select 0: always 1. */
+        uint64_t reserved_7_10         : 4;
+        uint64_t lo_pwr                : 1;  /**< [ 11: 11](R/W) Low power enable. When set, the LPCS is disabled (overriding the associated
+                                                                 CGX()_CMR()_CONFIG[ENABLE]), and the SerDes lanes associated with the LPCS are
+                                                                 reset. */
+        uint64_t reserved_12           : 1;
+        uint64_t spdsel1               : 1;  /**< [ 13: 13](RO/H) Speed select 1: always 1. */
+        uint64_t loopbck               : 1;  /**< [ 14: 14](R/W) TX-to-RX loopback enable. When set, transmit data for each SerDes lane is looped back as
+                                                                 receive data. */
+        uint64_t reset                 : 1;  /**< [ 15: 15](R/W1S/H) Reset. Setting this bit or CGX()_SPU()_AN_CONTROL[AN_RESET] or
+                                                                 CGX()_SPU()_USX_AN_CONTROL[AN_RESET] to 1 causes the following events to occur:
+                                                                 * Resets the logical PCS (LPCS).
+                                                                 * Sets the IEEE 802.3 PCS, FEC and AN registers for the LPCS to their default states.
+                                                                 * Resets the associated SerDes lanes.
+
+                                                                 It takes up to 32 coprocessor-clock cycles to reset the LPCS, after which RESET is
+                                                                 automatically cleared. */
+        uint64_t usxgmii_type          : 3;  /**< [ 18: 16](RO/H) USXGMII port sub-type. Read-only field from
+                                                                 CGX()_SPU_USXGMII_CONTROL[USXGMII_TYPE]. Ignored if
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is not USXGMII. Enumerated by CGX_USXGMII_TYPE_E. */
+        uint64_t usxgmii_rate          : 3;  /**< [ 21: 19](R/W/H) USXGMII port rate. Ignored if CGX()_CMR()_CONFIG[LMAC_TYPE] is not
+                                                                 USXGMII. Enumerated by CGX_USXGMII_RATE_E. */
+        uint64_t disable_am            : 1;  /**< [ 22: 22](R/W) Disable alignment markers for USXGMII-S 2.5/5/10G. */
+        uint64_t reserved_23_63        : 41;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    struct cavm_cgxx_spux_control1_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_22_63        : 42;
@@ -18683,10 +18896,9 @@ union cavm_cgxx_spux_control1
                                                                  USXGMII. Enumerated by CGX_USXGMII_RATE_E. */
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_cgxx_spux_control1_cn96xxp3 cn98xx; */
-    /* struct cavm_cgxx_spux_control1_cn96xxp3 cnf95xx; */
-    /* struct cavm_cgxx_spux_control1_cn96xxp3 loki; */
+    } cn98xx;
+    /* struct cavm_cgxx_spux_control1_cn98xx cnf95xx; */
+    /* struct cavm_cgxx_spux_control1_cn98xx loki; */
 };
 typedef union cavm_cgxx_spux_control1 cavm_cgxx_spux_control1_t;
 

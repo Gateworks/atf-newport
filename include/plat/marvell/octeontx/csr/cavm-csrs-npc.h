@@ -3272,6 +3272,162 @@ static inline uint64_t CAVM_NPC_AF_MCAMEX_BANKX_TAG_ACT(unsigned long a, unsigne
 #define arguments_CAVM_NPC_AF_MCAMEX_BANKX_TAG_ACT(a,b) (a),(b),-1,-1
 
 /**
+ * Register (RVU_PF_BAR0) npc_af_nife_bp_test
+ *
+ * INTERNAL: NPC AF NIFE Backpressure Test Register
+ */
+union cavm_npc_af_nife_bp_test
+{
+    uint64_t u;
+    struct cavm_npc_af_nife_bp_test_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure at the below points.
+                                                                 \<63\> = NIX1 TX interface.
+                                                                 \<62\> = NIX1 RX interface.
+                                                                 \<61\> = NIX0 TX interface.
+                                                                 \<60\> = NIX0 RX interface.
+
+                                                                 NOTE: Setting multiple [ENABLE]s could slow down the corresponding engine. */
+        uint64_t reserved_24_59        : 36;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config for NIX1 TX interface.
+                                                                   \<21:20\> = Config for NIX1 RX interface.
+                                                                   \<19:18\> = Config for NIX0 TX interface.
+                                                                   \<17:16\> = Config for NIX0 RX interface. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config for NIX1 TX interface.
+                                                                   \<21:20\> = Config for NIX1 RX interface.
+                                                                   \<19:18\> = Config for NIX0 TX interface.
+                                                                   \<17:16\> = Config for NIX0 RX interface. */
+        uint64_t reserved_24_59        : 36;
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure at the below points.
+                                                                 \<63\> = NIX1 TX interface.
+                                                                 \<62\> = NIX1 RX interface.
+                                                                 \<61\> = NIX0 TX interface.
+                                                                 \<60\> = NIX0 RX interface.
+
+                                                                 NOTE: Setting multiple [ENABLE]s could slow down the corresponding engine. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_npc_af_nife_bp_test_s cn; */
+};
+typedef union cavm_npc_af_nife_bp_test cavm_npc_af_nife_bp_test_t;
+
+#define CAVM_NPC_AF_NIFE_BP_TEST CAVM_NPC_AF_NIFE_BP_TEST_FUNC()
+static inline uint64_t CAVM_NPC_AF_NIFE_BP_TEST_FUNC(void) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NPC_AF_NIFE_BP_TEST_FUNC(void)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX))
+        return 0x840063003008ll;
+    __cavm_csr_fatal("NPC_AF_NIFE_BP_TEST", 0, 0, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NPC_AF_NIFE_BP_TEST cavm_npc_af_nife_bp_test_t
+#define bustype_CAVM_NPC_AF_NIFE_BP_TEST CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NPC_AF_NIFE_BP_TEST "NPC_AF_NIFE_BP_TEST"
+#define device_bar_CAVM_NPC_AF_NIFE_BP_TEST 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NPC_AF_NIFE_BP_TEST 0
+#define arguments_CAVM_NPC_AF_NIFE_BP_TEST -1,-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) npc_af_nifi_bp_test
+ *
+ * INTERNAL: NPC AF NIFI Backpressure Test Register
+ */
+union cavm_npc_af_nifi_bp_test
+{
+    uint64_t u;
+    struct cavm_npc_af_nifi_bp_test_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure at the below points.
+                                                                 \<63\> = NIX1 TX interface.
+                                                                 \<62\> = NIX1 RX interface.
+                                                                 \<61\> = NIX0 TX interface.
+                                                                 \<60\> = NIX0 RX interface.
+
+                                                                 NOTE: Setting multiple [ENABLE]s could slow down the corresponding engine. */
+        uint64_t reserved_24_59        : 36;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config for NIX1 TX interface.
+                                                                   \<21:20\> = Config for NIX1 RX interface.
+                                                                   \<19:18\> = Config for NIX0 TX interface.
+                                                                   \<17:16\> = Config for NIX0 RX interface. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config for NIX1 TX interface.
+                                                                   \<21:20\> = Config for NIX1 RX interface.
+                                                                   \<19:18\> = Config for NIX0 TX interface.
+                                                                   \<17:16\> = Config for NIX0 RX interface. */
+        uint64_t reserved_24_59        : 36;
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure at the below points.
+                                                                 \<63\> = NIX1 TX interface.
+                                                                 \<62\> = NIX1 RX interface.
+                                                                 \<61\> = NIX0 TX interface.
+                                                                 \<60\> = NIX0 RX interface.
+
+                                                                 NOTE: Setting multiple [ENABLE]s could slow down the corresponding engine. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_npc_af_nifi_bp_test_s cn; */
+};
+typedef union cavm_npc_af_nifi_bp_test cavm_npc_af_nifi_bp_test_t;
+
+#define CAVM_NPC_AF_NIFI_BP_TEST CAVM_NPC_AF_NIFI_BP_TEST_FUNC()
+static inline uint64_t CAVM_NPC_AF_NIFI_BP_TEST_FUNC(void) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NPC_AF_NIFI_BP_TEST_FUNC(void)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX))
+        return 0x840063003000ll;
+    __cavm_csr_fatal("NPC_AF_NIFI_BP_TEST", 0, 0, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NPC_AF_NIFI_BP_TEST cavm_npc_af_nifi_bp_test_t
+#define bustype_CAVM_NPC_AF_NIFI_BP_TEST CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NPC_AF_NIFI_BP_TEST "NPC_AF_NIFI_BP_TEST"
+#define device_bar_CAVM_NPC_AF_NIFI_BP_TEST 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NPC_AF_NIFI_BP_TEST 0
+#define arguments_CAVM_NPC_AF_NIFI_BP_TEST -1,-1,-1,-1
+
+/**
  * Register (RVU_PF_BAR0) npc_af_pck_cfg
  *
  * NPC AF Protocol Check Configuration Register

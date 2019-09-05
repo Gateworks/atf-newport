@@ -1526,7 +1526,7 @@ union cavm_bts_pll_ctl
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_bts_pll_ctl_s cn9; */
-    struct cavm_bts_pll_ctl_cn96xx
+    struct cavm_bts_pll_ctl_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_37_63        : 27;
@@ -1607,10 +1607,8 @@ union cavm_bts_pll_ctl
         uint64_t alt_ref_clk_sel       : 2;  /**< [ 36: 35](RAZ) Reserved. */
         uint64_t reserved_37_63        : 27;
 #endif /* Word 0 - End */
-    } cn96xx;
-    /* struct cavm_bts_pll_ctl_cn96xx cn98xx; */
-    /* struct cavm_bts_pll_ctl_cn96xx cnf95xxp1; */
-    struct cavm_bts_pll_ctl_cnf95xxp2
+    } cn96xxp1;
+    struct cavm_bts_pll_ctl_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_37_63        : 27;
@@ -1685,8 +1683,11 @@ union cavm_bts_pll_ctl
         uint64_t alt_ref_clk_sel       : 2;  /**< [ 36: 35](RAZ) Reserved. */
         uint64_t reserved_37_63        : 27;
 #endif /* Word 0 - End */
-    } cnf95xxp2;
-    /* struct cavm_bts_pll_ctl_cnf95xxp2 loki; */
+    } cn96xxp3;
+    /* struct cavm_bts_pll_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_bts_pll_ctl_cn96xxp1 cnf95xxp1; */
+    /* struct cavm_bts_pll_ctl_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_bts_pll_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_bts_pll_ctl cavm_bts_pll_ctl_t;
 

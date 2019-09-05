@@ -33,6 +33,8 @@
 #define MB          __asm__ volatile ("dmb sy"      : : :"memory") /* Full memory barrier, like MIPS SYNC */
 #define WMB         __asm__ volatile ("dmb st"      : : :"memory") /* Write memory barrier, like MIPS SYNCW */
 #define RMB         __asm__ volatile ("dmb ld"      : : :"memory") /* Read memory barrier, only necessary on OcteonTX2 */
+#define DSB         __asm__ volatile ("dsb sy"      : : :"memory") /* Core data synchonization barrier */
+#define ISB         __asm__ volatile ("isb"         : : :"memory") /* Instruction synchronization barrier */
 
 /* other useful stuff */
 #define WFE         __asm__ volatile ("wfe"         : : :"memory") /* Wait for event */

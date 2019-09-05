@@ -3164,42 +3164,7 @@ union cavm_pemx_clk_en
     } cn96xxp3;
     /* struct cavm_pemx_clk_en_cn96xxp3 cn98xx; */
     /* struct cavm_pemx_clk_en_cn9 cnf95xx; */
-    struct cavm_pemx_clk_en_loki
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_5_63         : 59;
-        uint64_t pem_mdh_dis           : 1;  /**< [  4:  4](R/W) When set, the memory and diagnostic hubs inside PEM are disabled and
-                                                                 will not respond commands from the MDC. If this PEM is not in use, this
-                                                                 bit should be set to save power. */
-        uint64_t pemc_macclk_force     : 1;  /**< [  3:  3](R/W) Force MAC clock. For diagnostic use only.
-                                                                 0 = Aux_clk & radm_clk can be gated by the PEM core MAC.
-                                                                 1 = Aux_clk & radm_clk are forced on at all times to the PEM core MAC. */
-        uint64_t pceclk_gate           : 1;  /**< [  2:  2](R/W) When set, PCE_CLK is gated off in PEM core.
-                                                                 When clear, PCE_CLK is enabled in PEM core. */
-        uint64_t pemc_csclk_gate       : 1;  /**< [  1:  1](R/W) Conditional SCLK gate.
-                                                                 0 = SCLK is enabled in PEM core.
-                                                                 1 = SCLK is gated off in PEM core. */
-        uint64_t pemm_csclk_force      : 1;  /**< [  0:  0](R/W) Conditional SCLK force. For diagnostic use only.
-                                                                 0 = CSCLK gating in PEM main is controlled by hardware.
-                                                                 1 = CSCLK is forced on at all times in PEM main. */
-#else /* Word 0 - Little Endian */
-        uint64_t pemm_csclk_force      : 1;  /**< [  0:  0](R/W) Conditional SCLK force. For diagnostic use only.
-                                                                 0 = CSCLK gating in PEM main is controlled by hardware.
-                                                                 1 = CSCLK is forced on at all times in PEM main. */
-        uint64_t pemc_csclk_gate       : 1;  /**< [  1:  1](R/W) Conditional SCLK gate.
-                                                                 0 = SCLK is enabled in PEM core.
-                                                                 1 = SCLK is gated off in PEM core. */
-        uint64_t pceclk_gate           : 1;  /**< [  2:  2](R/W) When set, PCE_CLK is gated off in PEM core.
-                                                                 When clear, PCE_CLK is enabled in PEM core. */
-        uint64_t pemc_macclk_force     : 1;  /**< [  3:  3](R/W) Force MAC clock. For diagnostic use only.
-                                                                 0 = Aux_clk & radm_clk can be gated by the PEM core MAC.
-                                                                 1 = Aux_clk & radm_clk are forced on at all times to the PEM core MAC. */
-        uint64_t pem_mdh_dis           : 1;  /**< [  4:  4](R/W) When set, the memory and diagnostic hubs inside PEM are disabled and
-                                                                 will not respond commands from the MDC. If this PEM is not in use, this
-                                                                 bit should be set to save power. */
-        uint64_t reserved_5_63         : 59;
-#endif /* Word 0 - End */
-    } loki;
+    /* struct cavm_pemx_clk_en_cn96xxp3 loki; */
 };
 typedef union cavm_pemx_clk_en cavm_pemx_clk_en_t;
 

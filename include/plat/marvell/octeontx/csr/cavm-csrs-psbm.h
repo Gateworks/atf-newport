@@ -44,8 +44,8 @@
  * PSBM AP Chain Enumeration
  * Enumerates the PSB SYS chains.
  */
-#define CAVM_PSBM_SYS_CHAIN_E_CPT_CN96XX (0xb)
-#define CAVM_PSBM_SYS_CHAIN_E_CPT_CN98XX (0xf)
+#define CAVM_PSBM_SYS_CHAIN_E_CPT (0xb)
+#define CAVM_PSBM_SYS_CHAIN_E_CPTX(a) (0xd + (a))
 #define CAVM_PSBM_SYS_CHAIN_E_DCPX_CN96XX(a) (4 + (a))
 #define CAVM_PSBM_SYS_CHAIN_E_DCPX_CN98XX(a) (6 + (a))
 #define CAVM_PSBM_SYS_CHAIN_E_DCPX_CNF95XX(a) (1 + (a))
@@ -65,12 +65,13 @@
  * Enumerates the PSB system slave identifiers.
  */
 #define CAVM_PSBM_SYS_MAP_E_CPTX_CN96XX(a) (0xd + (a))
-#define CAVM_PSBM_SYS_MAP_E_CPTX_CN98XX(a) (0x16 + (a))
+#define CAVM_PSBM_SYS_MAP_E_CPTX_CN98XX(a) (0x17 + (a))
 #define CAVM_PSBM_SYS_MAP_E_GSERX_CN96XX(a) (5 + (a))
 #define CAVM_PSBM_SYS_MAP_E_GSERX_CN98XX(a) (9 + (a))
 #define CAVM_PSBM_SYS_MAP_E_GSERX_CNF95XX(a) (3 + (a))
 #define CAVM_PSBM_SYS_MAP_E_GSERX_LOKI(a) (3 + (a))
-#define CAVM_PSBM_SYS_MAP_E_GSERRX(a) (0xa + (a))
+#define CAVM_PSBM_SYS_MAP_E_GSERRX_CN96XX(a) (0xa + (a))
+#define CAVM_PSBM_SYS_MAP_E_GSERRX_CN98XX(a) (0x12 + (a))
 #define CAVM_PSBM_SYS_MAP_E_IOBX_CN96XX(a) (3 + (a))
 #define CAVM_PSBM_SYS_MAP_E_IOBX_CN98XX(a) (6 + (a))
 #define CAVM_PSBM_SYS_MAP_E_IOBX_CNF95XX(a) (2 + (a))
@@ -218,17 +219,17 @@ union cavm_psbm_chain_dbg
     struct cavm_psbm_chain_dbg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_16_31        : 16;
-        uint32_t chain_dis             : 16; /**< [ 15:  0](R/W) Setting these bits causes PSBM state machine to ignore corresponding chain
+        uint32_t reserved_15_31        : 17;
+        uint32_t chain_dis             : 15; /**< [ 14:  0](R/W) Setting these bits causes PSBM state machine to ignore corresponding chain
                                                                  response when waiting for polling done. Bit 0 corresponds to value 0x0 enumerated in
                                                                  PSBM_AP_CHAIN_E (e.g. AP(0)), followed by all remaining AP chains, then each value
                                                                  enumerated in PSBM_SYS_CHAIN_E. */
 #else /* Word 0 - Little Endian */
-        uint32_t chain_dis             : 16; /**< [ 15:  0](R/W) Setting these bits causes PSBM state machine to ignore corresponding chain
+        uint32_t chain_dis             : 15; /**< [ 14:  0](R/W) Setting these bits causes PSBM state machine to ignore corresponding chain
                                                                  response when waiting for polling done. Bit 0 corresponds to value 0x0 enumerated in
                                                                  PSBM_AP_CHAIN_E (e.g. AP(0)), followed by all remaining AP chains, then each value
                                                                  enumerated in PSBM_SYS_CHAIN_E. */
-        uint32_t reserved_16_31        : 16;
+        uint32_t reserved_15_31        : 17;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_psbm_chain_dbg_s cn9; */
@@ -628,7 +629,7 @@ static inline uint64_t CAVM_PSBM_SYSX_DATAX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=13) && (b<=5)))
         return 0x87e0de020000ll + 0x100ll * ((a) & 0xf) + 0x10ll * ((b) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=23) && (b<=5)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=24) && (b<=5)))
         return 0x87e0de020000ll + 0x100ll * ((a) & 0x1f) + 0x10ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=4) && (b<=5)))
         return 0x87e0de020000ll + 0x100ll * ((a) & 0x7) + 0x10ll * ((b) & 0x7);
@@ -677,7 +678,7 @@ static inline uint64_t CAVM_PSBM_SYSX_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=13))
         return 0x87e0de028000ll + 0x10ll * ((a) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=23))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=24))
         return 0x87e0de028000ll + 0x10ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=4))
         return 0x87e0de028000ll + 0x10ll * ((a) & 0x7);

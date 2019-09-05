@@ -2701,7 +2701,126 @@ union cavm_npa_af_bp_test
                                                                  by [BP_CFG]\<1:0\>. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_npa_af_bp_test_s cn; */
+    /* struct cavm_npa_af_bp_test_s cn9; */
+    /* struct cavm_npa_af_bp_test_s cn96xxp1; */
+    struct cavm_npa_af_bp_test_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 16; /**< [ 63: 48](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = Reserved.
+                                                                 \<62\> = Reserved.
+                                                                 \<61\> = Reserved.
+                                                                 \<60\> = Reserved.
+                                                                 \<59\> = Apply backpressure to the npa_aq_master ndci accesses. Backpressure weight controlled
+                                                                 by [BP_CFG]\<23:22\>.
+                                                                 \<58\> = Apply backpressure to the npa_qint_pipeline ndci accesses. Backpressure weight controlled
+                                                                 by [BP_CFG]\<21:20\>.
+                                                                 \<57:56\> = Apply backpressure to the 2 stack ndci ports. Backpressure weight controlled
+                                                                 by [BP_CFG]\<19:18\> and [BP_CFG]\<17:16\>.
+                                                                 \<55:54\> = Apply backpressure to the 2 pool ndci ports. Backpressure weight controlled
+                                                                 by [BP_CFG]\<15:14\> and [BP_CFG]\<13:12\>.
+                                                                 \<53:52\> = Apply backpressure to the 2 aura ndci ports (note that OOB and AQM
+                                                                 also access NDCI through these ports as they get muxed in). Backpressure weight
+                                                                 controlled
+                                                                 by [BP_CFG]\<11:10\> and [BP_CFG]\<9:8\>.
+                                                                 \<51\> = Apply backpressure to npa_buffer_alloc (back-pressures the buffer_id
+                                                                 allocation. Includes noncsr/oob accesses). Backpressure weight controlled
+                                                                 by [BP_CFG]\<7:6\>.
+                                                                 \<50\> = Apply backpressure to npa_alloc arb (5 input interfaces share this common
+                                                                 control at the point where NPA picks one of them). Backpressure weight
+                                                                 controlled
+                                                                 by [BP_CFG]\<5:4\>.
+                                                                 \<49\> = Apply backpressure to npa_lf_to_pipe traffic. Backpressure weight controlled
+                                                                 by [BP_CFG]\<3:2\>.
+                                                                 \<48\> = Apply backpressure to npa_atomic_blk (i.e. s/w ops) traffic. Backpressure weight controlled
+                                                                 by [BP_CFG]\<1:0\>. */
+        uint64_t bp_cfg                : 32; /**< [ 47: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=25% of the time, 0x2=50% of the time,
+                                                                 0x3=75% of the time.
+                                                                   \<47:46\> = Config 15.
+                                                                   \<45:44\> = Config 14.
+                                                                   \<43:42\> = Config 13.
+                                                                   \<41:40\> = Config 12.
+                                                                   \<39:38\> = Config 11.
+                                                                   \<37:36\> = Config 10.
+                                                                   \<35:34\> = Config 9.
+                                                                   \<33:32\> = Config 8.
+                                                                   \<31:30\> = Config 7.
+                                                                   \<29:28\> = Config 6.
+                                                                   \<27:26\> = Config 5.
+                                                                   \<25:24\> = Config 4.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 32; /**< [ 47: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=25% of the time, 0x2=50% of the time,
+                                                                 0x3=75% of the time.
+                                                                   \<47:46\> = Config 15.
+                                                                   \<45:44\> = Config 14.
+                                                                   \<43:42\> = Config 13.
+                                                                   \<41:40\> = Config 12.
+                                                                   \<39:38\> = Config 11.
+                                                                   \<37:36\> = Config 10.
+                                                                   \<35:34\> = Config 9.
+                                                                   \<33:32\> = Config 8.
+                                                                   \<31:30\> = Config 7.
+                                                                   \<29:28\> = Config 6.
+                                                                   \<27:26\> = Config 5.
+                                                                   \<25:24\> = Config 4.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t enable                : 16; /**< [ 63: 48](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = Reserved.
+                                                                 \<62\> = Reserved.
+                                                                 \<61\> = Reserved.
+                                                                 \<60\> = Reserved.
+                                                                 \<59\> = Apply backpressure to the npa_aq_master ndci accesses. Backpressure weight controlled
+                                                                 by [BP_CFG]\<23:22\>.
+                                                                 \<58\> = Apply backpressure to the npa_qint_pipeline ndci accesses. Backpressure weight controlled
+                                                                 by [BP_CFG]\<21:20\>.
+                                                                 \<57:56\> = Apply backpressure to the 2 stack ndci ports. Backpressure weight controlled
+                                                                 by [BP_CFG]\<19:18\> and [BP_CFG]\<17:16\>.
+                                                                 \<55:54\> = Apply backpressure to the 2 pool ndci ports. Backpressure weight controlled
+                                                                 by [BP_CFG]\<15:14\> and [BP_CFG]\<13:12\>.
+                                                                 \<53:52\> = Apply backpressure to the 2 aura ndci ports (note that OOB and AQM
+                                                                 also access NDCI through these ports as they get muxed in). Backpressure weight
+                                                                 controlled
+                                                                 by [BP_CFG]\<11:10\> and [BP_CFG]\<9:8\>.
+                                                                 \<51\> = Apply backpressure to npa_buffer_alloc (back-pressures the buffer_id
+                                                                 allocation. Includes noncsr/oob accesses). Backpressure weight controlled
+                                                                 by [BP_CFG]\<7:6\>.
+                                                                 \<50\> = Apply backpressure to npa_alloc arb (5 input interfaces share this common
+                                                                 control at the point where NPA picks one of them). Backpressure weight
+                                                                 controlled
+                                                                 by [BP_CFG]\<5:4\>.
+                                                                 \<49\> = Apply backpressure to npa_lf_to_pipe traffic. Backpressure weight controlled
+                                                                 by [BP_CFG]\<3:2\>.
+                                                                 \<48\> = Apply backpressure to npa_atomic_blk (i.e. s/w ops) traffic. Backpressure weight controlled
+                                                                 by [BP_CFG]\<1:0\>. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_npa_af_bp_test_cn96xxp3 cn98xx; */
+    /* struct cavm_npa_af_bp_test_s cnf95xxp1; */
+    /* struct cavm_npa_af_bp_test_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_npa_af_bp_test_cn96xxp3 loki; */
 };
 typedef union cavm_npa_af_bp_test cavm_npa_af_bp_test_t;
 

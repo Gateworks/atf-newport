@@ -18843,7 +18843,137 @@ union cavm_pcieepx_phy_gen3_ctl
         uint32_t reserved_26_31        : 6;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_pcieepx_phy_gen3_ctl_s cn; */
+    /* struct cavm_pcieepx_phy_gen3_ctl_s cn9; */
+    /* struct cavm_pcieepx_phy_gen3_ctl_s cn96xxp1; */
+    struct cavm_pcieepx_phy_gen3_ctl_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_26_31        : 6;
+        uint32_t rss                   : 2;  /**< [ 25: 24](R/W) Rate Shadow Select. This register value decide the Data Rate of shadow register.
+                                                                 0x0 = Gen3 Data Rate is selected for shadow register.
+                                                                 0x1 = Gen4 Data Rate is selected for shadow register.
+                                                                 0x2 or 0x3 = Reserved.
+
+                                                                 The following shadow registers are controlled by this field.
+                                                                 _ PCIEEP_PHY_GEN3_CTL[EP2P3D].
+                                                                 _ PCIEEP_PHY_GEN3_CTL[RXEQ_PH01_EN].
+                                                                 _ PCIEEP_PHY_GEN3_CTL[AED].
+                                                                 _ PCIEEP_PHY_GEN3_CTL[US8ETD].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[FM].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[BT].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[P23TD].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[PRV].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[IIF].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[EQ_PSET_REQ].
+                                                                 _ PCIEEP_GEN3_FB_MODE_DIR_CHG[MIN_PHASE23].
+                                                                 _ PCIEEP_GEN3_FB_MODE_DIR_CHG[N_EVALS].
+                                                                 _ PCIEEP_GEN3_FB_MODE_DIR_CHG[MAX_PRE_CUR_DELTA].
+                                                                 _ PCIEEP_GEN3_FB_MODE_DIR_CHG[MAX_POST_CUR_DELTA]. */
+        uint32_t eiedd                 : 1;  /**< [ 23: 23](R/W) Eq InvalidRequest and RxEqEval different time assertion disable.  Disable the assertion of
+                                                                 Eq InvalidRequest and RxEqEval at different time. */
+        uint32_t us8etd                : 1;  /**< [ 22: 22](R/W/H) Upstream port send 8GT/s EQ TS2 disable. The base spec defines that USP can
+                                                                 optionally send 8GT EQ TS2 and it means USP can set DSP TxPreset value in Gen4
+                                                                 Data Rate. If this register set to 0, USP sends 8GT EQ TS2. If this register
+                                                                 set to 1, USP does not send 8GT EQ TS2. This applies to upstream ports only.
+                                                                 No Function for downstream ports.
+                                                                 Note: When CX_GEN4_SPEED, this register is shadow register for Gen3 and Gen4 data
+                                                                 rate. If PCIERC_PHY_GEN3_CTL[RSS]=0x0, this register is RSVD and cannot be written.
+                                                                 If PCIERC_PHY_GEN3_CTL[RSS]=0x1, this register is for Gen4 data rate and can be written. */
+        uint32_t aed                   : 1;  /**< [ 21: 21](R/W/H) Autonomous equalization disable. When the controller is in L0 state at Gen3
+                                                                 data rate and equalization was completed successfully in Autonomous EQ Mechanism,
+                                                                 setting this bit in DSP will not direct the controller to Recovery state to
+                                                                 perform Gen4 equalization. Link stays in Gen3 rate and DSP sends DLLPs to USP.
+                                                                 If the bit is 0, DSP will block DLLPs and direct the link to perform Gen4 EQ
+                                                                 in Autonomous Mechanism.
+                                                                 Note: When CX_GEN4_SPEED, this register is shadow register for Gen3 and Gen4 data
+                                                                 rate. If PCIERC_PHY_GEN3_CTL[RSS]=0x0, this register is RSVD and cannot be written.
+                                                                 If PCIERC_PHY_GEN3_CTL[RSS]=0x1, this register is for Gen4 data rate and can be written. */
+        uint32_t reserved_19_20        : 2;
+        uint32_t dcbd                  : 1;  /**< [ 18: 18](R/W) Disable balance disable. Disable DC balance feature. */
+        uint32_t dtdd                  : 1;  /**< [ 17: 17](R/W) DLLP transmission delay disable. Disable delay transmission of DLLPs before equalization. */
+        uint32_t ed                    : 1;  /**< [ 16: 16](R/W) Equalization disable. Disable equalization feature. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t rxeq_rgrdless_rsts    : 1;  /**< [ 13: 13](R/W) The controller as Gen3 EQ master asserts RxEqEval to instruct the
+                                                                 PHY to do Rx adaptation and evaluation.
+                                                                 0x0 = Asserts after 1 us and 2 TS1 received from remote partner.
+                                                                 0x1 = Asserts after 500 ns regardless of TS's received or not. */
+        uint32_t rxeq_ph01_en          : 1;  /**< [ 12: 12](R/W) Rx equalization phase 0/phase 1 hold enable. */
+        uint32_t erd                   : 1;  /**< [ 11: 11](R/W) Equalization redo disable. Disable autonomous mechanism for requesting to
+                                                                 redo the equalization process. */
+        uint32_t ecrd                  : 1;  /**< [ 10: 10](R/W) Equalization EIEOS count reset disable. Disable requesting reset of EIEOS count during
+                                                                 equalization. */
+        uint32_t ep2p3d                : 1;  /**< [  9:  9](R/W) Equalization phase 2 and phase 3 disable. This applies to downstream ports only. */
+        uint32_t dsg3                  : 1;  /**< [  8:  8](R/W) Disable scrambler for Gen3 data rate. The Gen3 scrambler/descrambler within the core needs
+                                                                 to be disabled when the scrambling function is implemented outside of the core (within the
+                                                                 PHY). */
+        uint32_t reserved_1_7          : 7;
+        uint32_t grizdnc               : 1;  /**< [  0:  0](R/W) Gen3 receiver impedance ZRX-DC not compliant. */
+#else /* Word 0 - Little Endian */
+        uint32_t grizdnc               : 1;  /**< [  0:  0](R/W) Gen3 receiver impedance ZRX-DC not compliant. */
+        uint32_t reserved_1_7          : 7;
+        uint32_t dsg3                  : 1;  /**< [  8:  8](R/W) Disable scrambler for Gen3 data rate. The Gen3 scrambler/descrambler within the core needs
+                                                                 to be disabled when the scrambling function is implemented outside of the core (within the
+                                                                 PHY). */
+        uint32_t ep2p3d                : 1;  /**< [  9:  9](R/W) Equalization phase 2 and phase 3 disable. This applies to downstream ports only. */
+        uint32_t ecrd                  : 1;  /**< [ 10: 10](R/W) Equalization EIEOS count reset disable. Disable requesting reset of EIEOS count during
+                                                                 equalization. */
+        uint32_t erd                   : 1;  /**< [ 11: 11](R/W) Equalization redo disable. Disable autonomous mechanism for requesting to
+                                                                 redo the equalization process. */
+        uint32_t rxeq_ph01_en          : 1;  /**< [ 12: 12](R/W) Rx equalization phase 0/phase 1 hold enable. */
+        uint32_t rxeq_rgrdless_rsts    : 1;  /**< [ 13: 13](R/W) The controller as Gen3 EQ master asserts RxEqEval to instruct the
+                                                                 PHY to do Rx adaptation and evaluation.
+                                                                 0x0 = Asserts after 1 us and 2 TS1 received from remote partner.
+                                                                 0x1 = Asserts after 500 ns regardless of TS's received or not. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t ed                    : 1;  /**< [ 16: 16](R/W) Equalization disable. Disable equalization feature. */
+        uint32_t dtdd                  : 1;  /**< [ 17: 17](R/W) DLLP transmission delay disable. Disable delay transmission of DLLPs before equalization. */
+        uint32_t dcbd                  : 1;  /**< [ 18: 18](R/W) Disable balance disable. Disable DC balance feature. */
+        uint32_t reserved_19_20        : 2;
+        uint32_t aed                   : 1;  /**< [ 21: 21](R/W/H) Autonomous equalization disable. When the controller is in L0 state at Gen3
+                                                                 data rate and equalization was completed successfully in Autonomous EQ Mechanism,
+                                                                 setting this bit in DSP will not direct the controller to Recovery state to
+                                                                 perform Gen4 equalization. Link stays in Gen3 rate and DSP sends DLLPs to USP.
+                                                                 If the bit is 0, DSP will block DLLPs and direct the link to perform Gen4 EQ
+                                                                 in Autonomous Mechanism.
+                                                                 Note: When CX_GEN4_SPEED, this register is shadow register for Gen3 and Gen4 data
+                                                                 rate. If PCIERC_PHY_GEN3_CTL[RSS]=0x0, this register is RSVD and cannot be written.
+                                                                 If PCIERC_PHY_GEN3_CTL[RSS]=0x1, this register is for Gen4 data rate and can be written. */
+        uint32_t us8etd                : 1;  /**< [ 22: 22](R/W/H) Upstream port send 8GT/s EQ TS2 disable. The base spec defines that USP can
+                                                                 optionally send 8GT EQ TS2 and it means USP can set DSP TxPreset value in Gen4
+                                                                 Data Rate. If this register set to 0, USP sends 8GT EQ TS2. If this register
+                                                                 set to 1, USP does not send 8GT EQ TS2. This applies to upstream ports only.
+                                                                 No Function for downstream ports.
+                                                                 Note: When CX_GEN4_SPEED, this register is shadow register for Gen3 and Gen4 data
+                                                                 rate. If PCIERC_PHY_GEN3_CTL[RSS]=0x0, this register is RSVD and cannot be written.
+                                                                 If PCIERC_PHY_GEN3_CTL[RSS]=0x1, this register is for Gen4 data rate and can be written. */
+        uint32_t eiedd                 : 1;  /**< [ 23: 23](R/W) Eq InvalidRequest and RxEqEval different time assertion disable.  Disable the assertion of
+                                                                 Eq InvalidRequest and RxEqEval at different time. */
+        uint32_t rss                   : 2;  /**< [ 25: 24](R/W) Rate Shadow Select. This register value decide the Data Rate of shadow register.
+                                                                 0x0 = Gen3 Data Rate is selected for shadow register.
+                                                                 0x1 = Gen4 Data Rate is selected for shadow register.
+                                                                 0x2 or 0x3 = Reserved.
+
+                                                                 The following shadow registers are controlled by this field.
+                                                                 _ PCIEEP_PHY_GEN3_CTL[EP2P3D].
+                                                                 _ PCIEEP_PHY_GEN3_CTL[RXEQ_PH01_EN].
+                                                                 _ PCIEEP_PHY_GEN3_CTL[AED].
+                                                                 _ PCIEEP_PHY_GEN3_CTL[US8ETD].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[FM].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[BT].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[P23TD].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[PRV].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[IIF].
+                                                                 _ PCIEEP_GEN3_EQ_CTL[EQ_PSET_REQ].
+                                                                 _ PCIEEP_GEN3_FB_MODE_DIR_CHG[MIN_PHASE23].
+                                                                 _ PCIEEP_GEN3_FB_MODE_DIR_CHG[N_EVALS].
+                                                                 _ PCIEEP_GEN3_FB_MODE_DIR_CHG[MAX_PRE_CUR_DELTA].
+                                                                 _ PCIEEP_GEN3_FB_MODE_DIR_CHG[MAX_POST_CUR_DELTA]. */
+        uint32_t reserved_26_31        : 6;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_pcieepx_phy_gen3_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_pcieepx_phy_gen3_ctl_s cnf95xx; */
+    /* struct cavm_pcieepx_phy_gen3_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_pcieepx_phy_gen3_ctl cavm_pcieepx_phy_gen3_ctl_t;
 
@@ -20252,7 +20382,45 @@ union cavm_pcieepx_ptm_cap_hdr
                                                                  _ PF1 - PF15:   0x0. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_pcieepx_ptm_cap_hdr_s cn; */
+    /* struct cavm_pcieepx_ptm_cap_hdr_s cn9; */
+    /* struct cavm_pcieepx_ptm_cap_hdr_s cn96xxp1; */
+    struct cavm_pcieepx_ptm_cap_hdr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t nco                   : 12; /**< [ 31: 20](RO/WRSL/H) Next capability offset.
+                                                                 Writable through PEM()_CFG_TBL(). */
+        uint32_t cv                    : 4;  /**< [ 19: 16](RO/WRSL/H) Capability version.
+                                                                 Writable through PEM()_CFG_TBL().
+
+                                                                 Reset values:
+                                                                 _ PF0:          0x1.
+                                                                 _ PF1 - PF15:   0x0. */
+        uint32_t pcieec                : 16; /**< [ 15:  0](RO/WRSL/H) PCI Express extended capability.
+                                                                 Writable through PEM()_CFG_TBL().
+
+                                                                 Reset values:
+                                                                 _ PF0:          0x1f.
+                                                                 _ PF1 - PF15:   0x0. */
+#else /* Word 0 - Little Endian */
+        uint32_t pcieec                : 16; /**< [ 15:  0](RO/WRSL/H) PCI Express extended capability.
+                                                                 Writable through PEM()_CFG_TBL().
+
+                                                                 Reset values:
+                                                                 _ PF0:          0x1f.
+                                                                 _ PF1 - PF15:   0x0. */
+        uint32_t cv                    : 4;  /**< [ 19: 16](RO/WRSL/H) Capability version.
+                                                                 Writable through PEM()_CFG_TBL().
+
+                                                                 Reset values:
+                                                                 _ PF0:          0x1.
+                                                                 _ PF1 - PF15:   0x0. */
+        uint32_t nco                   : 12; /**< [ 31: 20](RO/WRSL/H) Next capability offset.
+                                                                 Writable through PEM()_CFG_TBL(). */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_pcieepx_ptm_cap_hdr_cn96xxp3 cn98xx; */
+    /* struct cavm_pcieepx_ptm_cap_hdr_s cnf95xx; */
+    /* struct cavm_pcieepx_ptm_cap_hdr_cn96xxp3 loki; */
 };
 typedef union cavm_pcieepx_ptm_cap_hdr cavm_pcieepx_ptm_cap_hdr_t;
 

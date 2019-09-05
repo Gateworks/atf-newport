@@ -34,9 +34,9 @@
  * Enumeration ree_desc_mode_e
  *
  * REE Descriptor Mode Flag Enumeration
- * Enumerates REE_INST_S[REE_JOB_CTRL.MODE] and REE_RES_S[REE_RES_STATUS.MODE]
+ * Enumerates REE_INST_S[REE_JOB_CTRL.MODE] and REE_RES_S[REE_RES_STATUS.MODE].
  * Internal:
- * These encodings must be kept updated with Titan REE IP
+ * These encodings must be kept updated with Titan REE IP.
  */
 #define CAVM_REE_DESC_MODE_E_HPM (1)
 #define CAVM_REE_DESC_MODE_E_NORMAL (0)
@@ -46,9 +46,9 @@
  * Enumeration ree_desc_type_e
  *
  * REE Descriptor Type Flag Enumeration
- * Enumerates REE_INST_S[REE_JOB_CTRL.TYPE] and REE_RES_S[REE_RES_STATUS.TYPE]
+ * Enumerates REE_INST_S[REE_JOB_CTRL.TYPE] and REE_RES_S[REE_RES_STATUS.TYPE].
  * Internal:
- * These encodings must be kept updated with Titan REE IP
+ * These encodings must be kept updated with Titan REE IP.
  */
 #define CAVM_REE_DESC_TYPE_E_TYPE_JOB_DESC (0)
 #define CAVM_REE_DESC_TYPE_E_TYPE_RESULT_DESC (1)
@@ -57,7 +57,7 @@
  * Enumeration ree_l2ld_cmd_e
  *
  * REE Load Type Enumeration
- * Enumerates the type of NCB cmd to use for loads. See REE_AF_QUE()_GCFG[IL2LD_CMD],
+ * Enumerates the type of NCB command to use for loads. See REE_AF_QUE()_GCFG[IL2LD_CMD],
  * REE_AF_QUE()_GCFG[PL2LD_CMD], and REE_AF_CTL_CFG[RL2LD_CMD].
  *
  * Internal:
@@ -98,9 +98,9 @@
  * Enumeration ree_rtru_init_mode_e
  *
  * Memory Initialization Mode Enumeration
- * Enumerates REE_AF_REEXR_CTRL.INIT_MODE
+ * Enumerates REE_AF_REEXR_CTRL.INIT_MODE.
  * Internal:
- * These encodings must be kept updated with Titan REE IP
+ * These encodings must be kept updated with Titan REE IP.
  */
 #define CAVM_REE_RTRU_INIT_MODE_E_INIT_MODE_1 (1)
 #define CAVM_REE_RTRU_INIT_MODE_E_INIT_MODE_2 (2)
@@ -111,7 +111,7 @@
  * Enumeration ree_stype_e
  *
  * REE Store Type Enumeration
- * Enumerates the type of NCB cmd to use for stores. See REE_AF_QUE()_GCFG[MATCH_STYPE]
+ * Enumerates the type of NCB command to use for stores. See REE_AF_QUE()_GCFG[MATCH_STYPE]
  * and REE_AF_QUE()_GCFG[DESCR_STYPE].
  */
 #define CAVM_REE_STYPE_E_STF (0)
@@ -123,7 +123,7 @@
  * Structure ree_af_aq_inst_s
  *
  * REE Administrative Queue Structure
- * This structure describes an adminstrative instruction.
+ * This structure describes an administrative instruction.
  */
 union cavm_ree_af_aq_inst_s
 {
@@ -180,7 +180,7 @@ union cavm_ree_af_aq_inst_s
  * Structure ree_gptr_s
  *
  * REE Generic Pointer Structure
- * This structure is the generic format of pointers in REE_INST_S amd in data gather lists.
+ * This structure is the generic format of pointers in REE_INST_S and in data gather lists.
  */
 union cavm_ree_gptr_s
 {
@@ -195,11 +195,11 @@ union cavm_ree_gptr_s
                                                                  When a REE_GPTR_S is in a data gather list, [ADDR] is:
                                                                  * (c) An IOVA direct byte pointer into the attached memory.
 
-                                                                 In case (b) above [ADDR]\<3:0\> must be zero. (gather list pointers must be 16 byte aligned).
+                                                                 In case (b) above, [ADDR]\<3:0\> must be zero. (Gather list pointers must be 16 byte aligned).
 
                                                                  In cases (a) or (c) above, for input data pointers, [ADDR] may have any byte alignment.
 
-                                                                 In all cases bits \<63:53\> are ignored by hardware; software should use a
+                                                                 In all cases, bits \<63:53\> are ignored by hardware; software should use a
                                                                  sign-extended bit \<52\> for forward compatibility. */
 #else /* Word 0 - Little Endian */
         uint64_t addr                  : 64; /**< [ 63:  0] When a REE_GPTR_S is in an instruction word, [ADDR] is either:
@@ -209,11 +209,11 @@ union cavm_ree_gptr_s
                                                                  When a REE_GPTR_S is in a data gather list, [ADDR] is:
                                                                  * (c) An IOVA direct byte pointer into the attached memory.
 
-                                                                 In case (b) above [ADDR]\<3:0\> must be zero. (gather list pointers must be 16 byte aligned).
+                                                                 In case (b) above, [ADDR]\<3:0\> must be zero. (Gather list pointers must be 16 byte aligned).
 
                                                                  In cases (a) or (c) above, for input data pointers, [ADDR] may have any byte alignment.
 
-                                                                 In all cases bits \<63:53\> are ignored by hardware; software should use a
+                                                                 In all cases, bits \<63:53\> are ignored by hardware; software should use a
                                                                  sign-extended bit \<52\> for forward compatibility. */
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
@@ -264,7 +264,7 @@ union cavm_ree_inst_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
-        uint64_t ooj                   : 1;  /**< [  8:  8] Out-of-order Job:
+        uint64_t ooj                   : 1;  /**< [  8:  8] Out-of-order job:
                                                                    All jobs that submit work to SSO MUST set this field to zero.
                                                                  0 = This job must retire after previously issued in-order jobs to this queue.
                                                                      Ordering is maintained within queues only.
@@ -274,7 +274,7 @@ union cavm_ree_inst_s
                                                                  0 = [INP_PTR_ADDR] points directly to the actual job input data and can be at any byte offset.
                                                                  1 = [INP_PTR_ADDR] points to a gather list of pointers that are read
                                                                  by the REE coprocessor to locate the actual job input data.
-                                                                 The [INP_PTR_ADDR] must be 128 byte aligned, and the [INP_PTR_CTL]'s LENGTH field,
+                                                                 The [INP_PTR_ADDR] must be 128-byte aligned, and the [INP_PTR_CTL]'s LENGTH field,
                                                                  indicating the number of pointers in the gather list, must be between 1-8. */
         uint64_t reserved_1_3          : 3;
         uint64_t doneint               : 1;  /**< [  0:  0] Done interrupt.
@@ -305,10 +305,10 @@ union cavm_ree_inst_s
                                                                  0 = [INP_PTR_ADDR] points directly to the actual job input data and can be at any byte offset.
                                                                  1 = [INP_PTR_ADDR] points to a gather list of pointers that are read
                                                                  by the REE coprocessor to locate the actual job input data.
-                                                                 The [INP_PTR_ADDR] must be 128 byte aligned, and the [INP_PTR_CTL]'s LENGTH field,
+                                                                 The [INP_PTR_ADDR] must be 128-byte aligned, and the [INP_PTR_CTL]'s LENGTH field,
                                                                  indicating the number of pointers in the gather list, must be between 1-8. */
         uint64_t reserved_5_7          : 3;
-        uint64_t ooj                   : 1;  /**< [  8:  8] Out-of-order Job:
+        uint64_t ooj                   : 1;  /**< [  8:  8] Out-of-order job:
                                                                    All jobs that submit work to SSO MUST set this field to zero.
                                                                  0 = This job must retire after previously issued in-order jobs to this queue.
                                                                      Ordering is maintained within queues only.
@@ -340,18 +340,18 @@ union cavm_ree_inst_s
                                                                  The REE coprocessor will write up to 254 job match structures (REE_MATCH_S)
                                                                  starting at address [RES_PTR_ADDR] + 0x80.
 
-                                                                 REE cannot write the REE_RES_S until after it gurantees that all LLC/DRAM writes have completed
+                                                                 REE cannot write the REE_RES_S until after it guarantees that all LLC/DRAM writes have completed
                                                                  related to REE_MATCH_S.
 
                                                                  If REE_AF_QUE()_GCFG[STRICT_DESCR_WR]=1 and [OOJ]=0 then REE will not write the
                                                                  next REE_RES_S from a
-                                                                 given LF queue until it can gurantee that the previous REE_RES_S was written to
-                                                                 LLC/DRAM. This mode gurantees
+                                                                 given LF queue until it can guarantee that the previous REE_RES_S was written to
+                                                                 LLC/DRAM. This mode guarantees
                                                                  that REE_RES_S are written in order to LLC/DRAM.
 
                                                                  If REE_AF_QUE()_GCFG[STRICT_DESCR_WR]=0 and [OOJ]=0 then REE will perform writes of
                                                                  REE_RES_S in order from a given LF queue
-                                                                 but does not gurantee that they are written to LLC/DRAM in order.
+                                                                 but does not guarantee that they are written to LLC/DRAM in order.
 
                                                                  When [OOJ]=1 REE writes REE_RES_S to LLC/DRAM out of order with respect to how
                                                                  the instructions were enqueued.
@@ -359,8 +359,8 @@ union cavm_ree_inst_s
                                                                  REE writes the REE_RES_S before any submit to SSO (see [WQ_PTR]),
                                                                  and before any REE_LF_DONE[DONE] increment ((see [DONEINT]).
 
-                                                                 [OOJ] must be zero for REE to submitt work to SSO in LF queue order and
-                                                                 gurantees that all descriptors have been written to LLC/DRAM. */
+                                                                 [OOJ] must be zero for REE to submit work to SSO in LF queue order and
+                                                                 guarantees that all descriptors have been written to LLC/DRAM. */
 #else /* Word 3 - Little Endian */
         uint64_t res_ptr_addr          : 64; /**< [255:192] Job result start pointer 128-byte aligned IOVA.
                                                                  Pointer to start of the location where the job result data (REE_RES_S) and
@@ -372,18 +372,18 @@ union cavm_ree_inst_s
                                                                  The REE coprocessor will write up to 254 job match structures (REE_MATCH_S)
                                                                  starting at address [RES_PTR_ADDR] + 0x80.
 
-                                                                 REE cannot write the REE_RES_S until after it gurantees that all LLC/DRAM writes have completed
+                                                                 REE cannot write the REE_RES_S until after it guarantees that all LLC/DRAM writes have completed
                                                                  related to REE_MATCH_S.
 
                                                                  If REE_AF_QUE()_GCFG[STRICT_DESCR_WR]=1 and [OOJ]=0 then REE will not write the
                                                                  next REE_RES_S from a
-                                                                 given LF queue until it can gurantee that the previous REE_RES_S was written to
-                                                                 LLC/DRAM. This mode gurantees
+                                                                 given LF queue until it can guarantee that the previous REE_RES_S was written to
+                                                                 LLC/DRAM. This mode guarantees
                                                                  that REE_RES_S are written in order to LLC/DRAM.
 
                                                                  If REE_AF_QUE()_GCFG[STRICT_DESCR_WR]=0 and [OOJ]=0 then REE will perform writes of
                                                                  REE_RES_S in order from a given LF queue
-                                                                 but does not gurantee that they are written to LLC/DRAM in order.
+                                                                 but does not guarantee that they are written to LLC/DRAM in order.
 
                                                                  When [OOJ]=1 REE writes REE_RES_S to LLC/DRAM out of order with respect to how
                                                                  the instructions were enqueued.
@@ -391,8 +391,8 @@ union cavm_ree_inst_s
                                                                  REE writes the REE_RES_S before any submit to SSO (see [WQ_PTR]),
                                                                  and before any REE_LF_DONE[DONE] increment ((see [DONEINT]).
 
-                                                                 [OOJ] must be zero for REE to submitt work to SSO in LF queue order and
-                                                                 gurantees that all descriptors have been written to LLC/DRAM. */
+                                                                 [OOJ] must be zero for REE to submit work to SSO in LF queue order and
+                                                                 guarantees that all descriptors have been written to LLC/DRAM. */
 #endif /* Word 3 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 4 - Big Endian */
         uint64_t wq_ptr                : 64; /**< [319:256] If [WQ_PTR] is nonzero, it is a pointer to a work-queue entry that the REE coprocessor
@@ -484,7 +484,7 @@ union cavm_ree_inst_s
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t reserved_9_15         : 7;
-        uint64_t ooj                   : 1;  /**< [  8:  8] Out-of-order Job:
+        uint64_t ooj                   : 1;  /**< [  8:  8] Out-of-order job:
                                                                    All jobs that submit work to SSO MUST set this field to zero.
                                                                  0 = This job must retire after previously issued in-order jobs to this queue.
                                                                      Ordering is maintained within queues only.
@@ -494,7 +494,7 @@ union cavm_ree_inst_s
                                                                  0 = [INP_PTR_ADDR] points directly to the actual job input data and can be at any byte offset.
                                                                  1 = [INP_PTR_ADDR] points to a gather list of pointers that are read
                                                                  by the REE coprocessor to locate the actual job input data.
-                                                                 The [INP_PTR_ADDR] must be 128 byte aligned, and the [INP_PTR_CTL]'s LENGTH field,
+                                                                 The [INP_PTR_ADDR] must be 128-byte aligned, and the [INP_PTR_CTL]'s LENGTH field,
                                                                  indicating the number of pointers in the gather list, must be between 1-8. */
         uint64_t reserved_1_3          : 3;
         uint64_t doneint               : 1;  /**< [  0:  0] Done interrupt.
@@ -525,10 +525,10 @@ union cavm_ree_inst_s
                                                                  0 = [INP_PTR_ADDR] points directly to the actual job input data and can be at any byte offset.
                                                                  1 = [INP_PTR_ADDR] points to a gather list of pointers that are read
                                                                  by the REE coprocessor to locate the actual job input data.
-                                                                 The [INP_PTR_ADDR] must be 128 byte aligned, and the [INP_PTR_CTL]'s LENGTH field,
+                                                                 The [INP_PTR_ADDR] must be 128-byte aligned, and the [INP_PTR_CTL]'s LENGTH field,
                                                                  indicating the number of pointers in the gather list, must be between 1-8. */
         uint64_t reserved_5_7          : 3;
-        uint64_t ooj                   : 1;  /**< [  8:  8] Out-of-order Job:
+        uint64_t ooj                   : 1;  /**< [  8:  8] Out-of-order job:
                                                                    All jobs that submit work to SSO MUST set this field to zero.
                                                                  0 = This job must retire after previously issued in-order jobs to this queue.
                                                                      Ordering is maintained within queues only.
@@ -561,18 +561,18 @@ union cavm_ree_inst_s
                                                                  The REE coprocessor will write up to 254 job match structures (REE_MATCH_S)
                                                                  starting at address [RES_PTR_ADDR] + 0x80.
 
-                                                                 REE cannot write the REE_RES_S until after it gurantees that all LLC/DRAM writes have completed
+                                                                 REE cannot write the REE_RES_S until after it guarantees that all LLC/DRAM writes have completed
                                                                  related to REE_MATCH_S.
 
                                                                  If REE_AF_QUE()_GCFG[STRICT_DESCR_WR]=1 and [OOJ]=0 then REE will not write the
                                                                  next REE_RES_S from a
-                                                                 given LF queue until it can gurantee that the previous REE_RES_S was written to
-                                                                 LLC/DRAM. This mode gurantees
+                                                                 given LF queue until it can guarantee that the previous REE_RES_S was written to
+                                                                 LLC/DRAM. This mode guarantees
                                                                  that REE_RES_S are written in order to LLC/DRAM.
 
                                                                  If REE_AF_QUE()_GCFG[STRICT_DESCR_WR]=0 and [OOJ]=0 then REE will perform writes of
                                                                  REE_RES_S in order from a given LF queue
-                                                                 but does not gurantee that they are written to LLC/DRAM in order.
+                                                                 but does not guarantee that they are written to LLC/DRAM in order.
 
                                                                  When [OOJ]=1 REE writes REE_RES_S to LLC/DRAM out of order with respect to how
                                                                  the instructions were enqueued.
@@ -580,8 +580,8 @@ union cavm_ree_inst_s
                                                                  REE writes the REE_RES_S before any submit to SSO (see [WQ_PTR]),
                                                                  and before any REE_LF_DONE[DONE] increment ((see [DONEINT]).
 
-                                                                 [OOJ] must be zero for REE to submitt work to SSO in LF queue order and
-                                                                 gurantees that all descriptors have been written to LLC/DRAM. */
+                                                                 [OOJ] must be zero for REE to submit work to SSO in LF queue order and
+                                                                 guarantees that all descriptors have been written to LLC/DRAM. */
 #else /* Word 3 - Little Endian */
         uint64_t res_ptr_addr          : 64; /**< [255:192] Job result start pointer 128-byte aligned IOVA.
                                                                  Pointer to start of the location where the job result data (REE_RES_S) and
@@ -593,18 +593,18 @@ union cavm_ree_inst_s
                                                                  The REE coprocessor will write up to 254 job match structures (REE_MATCH_S)
                                                                  starting at address [RES_PTR_ADDR] + 0x80.
 
-                                                                 REE cannot write the REE_RES_S until after it gurantees that all LLC/DRAM writes have completed
+                                                                 REE cannot write the REE_RES_S until after it guarantees that all LLC/DRAM writes have completed
                                                                  related to REE_MATCH_S.
 
                                                                  If REE_AF_QUE()_GCFG[STRICT_DESCR_WR]=1 and [OOJ]=0 then REE will not write the
                                                                  next REE_RES_S from a
-                                                                 given LF queue until it can gurantee that the previous REE_RES_S was written to
-                                                                 LLC/DRAM. This mode gurantees
+                                                                 given LF queue until it can guarantee that the previous REE_RES_S was written to
+                                                                 LLC/DRAM. This mode guarantees
                                                                  that REE_RES_S are written in order to LLC/DRAM.
 
                                                                  If REE_AF_QUE()_GCFG[STRICT_DESCR_WR]=0 and [OOJ]=0 then REE will perform writes of
                                                                  REE_RES_S in order from a given LF queue
-                                                                 but does not gurantee that they are written to LLC/DRAM in order.
+                                                                 but does not guarantee that they are written to LLC/DRAM in order.
 
                                                                  When [OOJ]=1 REE writes REE_RES_S to LLC/DRAM out of order with respect to how
                                                                  the instructions were enqueued.
@@ -612,8 +612,8 @@ union cavm_ree_inst_s
                                                                  REE writes the REE_RES_S before any submit to SSO (see [WQ_PTR]),
                                                                  and before any REE_LF_DONE[DONE] increment ((see [DONEINT]).
 
-                                                                 [OOJ] must be zero for REE to submitt work to SSO in LF queue order and
-                                                                 gurantees that all descriptors have been written to LLC/DRAM. */
+                                                                 [OOJ] must be zero for REE to submit work to SSO in LF queue order and
+                                                                 guarantees that all descriptors have been written to LLC/DRAM. */
 #endif /* Word 3 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 4 - Big Endian */
         uint64_t wq_ptr                : 64; /**< [319:256] If [WQ_PTR] is nonzero, it is a pointer to a work-queue entry that the REE coprocessor
@@ -706,7 +706,7 @@ union cavm_ree_inst_s
  * Structure ree_job_ctrl_s
  *
  * REE Job Control field Structure
- * This structure is the format of JOB_DESCRIPTOR_TUPLE.CTRL, as described by REEX requirements.
+ * This structure is the format of JOB_DESCRIPTOR_TUPLE.CTRL.
  */
 union cavm_ree_job_ctrl_s
 {
@@ -715,13 +715,13 @@ union cavm_ree_job_ctrl_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_10_31        : 22;
-        uint32_t mode                  : 2;  /**< [  9:  8] REE Mode flag */
+        uint32_t mode                  : 2;  /**< [  9:  8] REE mode flag. */
         uint32_t reserved_3_7          : 5;
         uint32_t job_type              : 3;  /**< [  2:  0] REE Type flag. Set to 0x0. */
 #else /* Word 0 - Little Endian */
         uint32_t job_type              : 3;  /**< [  2:  0] REE Type flag. Set to 0x0. */
         uint32_t reserved_3_7          : 5;
-        uint32_t mode                  : 2;  /**< [  9:  8] REE Mode flag */
+        uint32_t mode                  : 2;  /**< [  9:  8] REE mode flag. */
         uint32_t reserved_10_31        : 22;
 #endif /* Word 0 - End */
     } s;
@@ -730,13 +730,13 @@ union cavm_ree_job_ctrl_s
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
         uint32_t reserved_10_15        : 6;
-        uint32_t mode                  : 2;  /**< [  9:  8] REE Mode flag */
+        uint32_t mode                  : 2;  /**< [  9:  8] REE mode flag. */
         uint32_t reserved_3_7          : 5;
         uint32_t job_type              : 3;  /**< [  2:  0] REE Type flag. Set to 0x0. */
 #else /* Word 0 - Little Endian */
         uint32_t job_type              : 3;  /**< [  2:  0] REE Type flag. Set to 0x0. */
         uint32_t reserved_3_7          : 5;
-        uint32_t mode                  : 2;  /**< [  9:  8] REE Mode flag */
+        uint32_t mode                  : 2;  /**< [  9:  8] REE mode flag. */
         uint32_t reserved_10_15        : 6;
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
@@ -788,21 +788,21 @@ union cavm_ree_res_s
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t ree_res_mcnt          : 8;  /**< [ 63: 56] MATCH_COUNT.
                                                                  The total number of matches returned by the REE engine for this job.
-                                                                 If the job was submitted with the control flag REE_JOB_CTRL.MODE==HPM,
+                                                                 If the job was submitted with the control flag REE_JOB_CTRL_S[MODE]==HPM,
                                                                  the number of matches returned will be in the range [0:1].
                                                                  Otherwise, the number of matches returned will be in the range [0:max_match].
-                                                                 See REE Register REE_AF_REEXM_MAX_MATCH\<31:0\> for the legal values of max_match. */
+                                                                 See REE_AF_REEXM_MAX_MATCH\<31:0\> for the legal values of max_match. */
         uint64_t ree_res_dmcnt         : 8;  /**< [ 55: 48] DETECTED_MATCH_COUNT.
                                                                  Number of matches detected in job.
                                                                  This value saturates at 255. */
         uint64_t ree_res_status        : 16; /**< [ 47: 32] REE job result status field (RESPONSE_DESCRIPTOR_TUPLE.STATUS); by
                                                                  REE_RES_STATUS_S format definition. */
         uint64_t ree_res_job_id        : 24; /**< [ 31:  8] Matches in the input job ID supplied in REE_INST_S[REE_JOB_ID] */
-        uint64_t hwjid                 : 7;  /**< [  7:  1] Matches the HW-inflight job ID used during execution. */
+        uint64_t hwjid                 : 7;  /**< [  7:  1] Matches the hardware-inflight job ID used during execution. */
         uint64_t done                  : 1;  /**< [  0:  0] Will be written to one when on job completion. */
 #else /* Word 0 - Little Endian */
         uint64_t done                  : 1;  /**< [  0:  0] Will be written to one when on job completion. */
-        uint64_t hwjid                 : 7;  /**< [  7:  1] Matches the HW-inflight job ID used during execution. */
+        uint64_t hwjid                 : 7;  /**< [  7:  1] Matches the hardware-inflight job ID used during execution. */
         uint64_t ree_res_job_id        : 24; /**< [ 31:  8] Matches in the input job ID supplied in REE_INST_S[REE_JOB_ID] */
         uint64_t ree_res_status        : 16; /**< [ 47: 32] REE job result status field (RESPONSE_DESCRIPTOR_TUPLE.STATUS); by
                                                                  REE_RES_STATUS_S format definition. */
@@ -811,10 +811,10 @@ union cavm_ree_res_s
                                                                  This value saturates at 255. */
         uint64_t ree_res_mcnt          : 8;  /**< [ 63: 56] MATCH_COUNT.
                                                                  The total number of matches returned by the REE engine for this job.
-                                                                 If the job was submitted with the control flag REE_JOB_CTRL.MODE==HPM,
+                                                                 If the job was submitted with the control flag REE_JOB_CTRL_S[MODE]==HPM,
                                                                  the number of matches returned will be in the range [0:1].
                                                                  Otherwise, the number of matches returned will be in the range [0:max_match].
-                                                                 See REE Register REE_AF_REEXM_MAX_MATCH\<31:0\> for the legal values of max_match. */
+                                                                 See REE_AF_REEXM_MAX_MATCH\<31:0\> for the legal values of max_match. */
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
         uint64_t pmi_min_byte_ptr      : 16; /**< [127:112] Minimum BYTE_PTR for threads still active at the end of job. */
@@ -887,8 +887,7 @@ union cavm_ree_res_s
  * Structure ree_res_status_s
  *
  * REE Response Status field Structure
- * This structure is the format of RESPONSE_DESCRIPTOR_TUPLE.STATUS, as described by
- * REEX requirements.
+ * This structure is the format of RESPONSE_DESCRIPTOR_TUPLE.STATUS.
  */
 union cavm_ree_res_status_s
 {
@@ -897,27 +896,27 @@ union cavm_ree_res_status_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_15_31        : 17;
-        uint32_t pmi_eoj               : 1;  /**< [ 14: 14] Partial Match Indicator, End of Job */
-        uint32_t pmi_soj               : 1;  /**< [ 13: 13] Partial Match Indicator, Start of Job */
+        uint32_t pmi_eoj               : 1;  /**< [ 14: 14] partial match indicator, end of job. */
+        uint32_t pmi_soj               : 1;  /**< [ 13: 13] Partial match indicator, start of job. */
         uint32_t reserved_10_12        : 3;
-        uint32_t mode                  : 2;  /**< [  9:  8] REE Mode flag */
+        uint32_t mode                  : 2;  /**< [  9:  8] REE mode flag */
         uint32_t mp_cnt_det            : 1;  /**< [  7:  7] MAX_PREFIX_COUNT_DETECTED */
         uint32_t mm_cnt_det            : 1;  /**< [  6:  6] MAX_MATCH_COUNT_DETECTED */
         uint32_t ml_cnt_det            : 1;  /**< [  5:  5] MAX_LATENCY_COUNT_DETECTED */
         uint32_t mst_cnt_det           : 1;  /**< [  4:  4] MAX_SECONDARY_THREAD_COUNT_DETECTED */
         uint32_t mpt_cnt_det           : 1;  /**< [  3:  3] MAX_PRIMARY_THREAD_COUNT_DETECTED */
-        uint32_t job_type              : 3;  /**< [  2:  0] REE Type flag. Set to 0x1. */
+        uint32_t job_type              : 3;  /**< [  2:  0] REE type flag. Set to 0x1. */
 #else /* Word 0 - Little Endian */
-        uint32_t job_type              : 3;  /**< [  2:  0] REE Type flag. Set to 0x1. */
+        uint32_t job_type              : 3;  /**< [  2:  0] REE type flag. Set to 0x1. */
         uint32_t mpt_cnt_det           : 1;  /**< [  3:  3] MAX_PRIMARY_THREAD_COUNT_DETECTED */
         uint32_t mst_cnt_det           : 1;  /**< [  4:  4] MAX_SECONDARY_THREAD_COUNT_DETECTED */
         uint32_t ml_cnt_det            : 1;  /**< [  5:  5] MAX_LATENCY_COUNT_DETECTED */
         uint32_t mm_cnt_det            : 1;  /**< [  6:  6] MAX_MATCH_COUNT_DETECTED */
         uint32_t mp_cnt_det            : 1;  /**< [  7:  7] MAX_PREFIX_COUNT_DETECTED */
-        uint32_t mode                  : 2;  /**< [  9:  8] REE Mode flag */
+        uint32_t mode                  : 2;  /**< [  9:  8] REE mode flag */
         uint32_t reserved_10_12        : 3;
-        uint32_t pmi_soj               : 1;  /**< [ 13: 13] Partial Match Indicator, Start of Job */
-        uint32_t pmi_eoj               : 1;  /**< [ 14: 14] Partial Match Indicator, End of Job */
+        uint32_t pmi_soj               : 1;  /**< [ 13: 13] Partial match indicator, start of job. */
+        uint32_t pmi_eoj               : 1;  /**< [ 14: 14] partial match indicator, end of job. */
         uint32_t reserved_15_31        : 17;
 #endif /* Word 0 - End */
     } s;
@@ -926,29 +925,29 @@ union cavm_ree_res_status_s
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
         uint32_t reserved_15           : 1;
-        uint32_t pmi_eoj               : 1;  /**< [ 14: 14] Partial Match Indicator, End of Job */
-        uint32_t pmi_soj               : 1;  /**< [ 13: 13] Partial Match Indicator, Start of Job */
+        uint32_t pmi_eoj               : 1;  /**< [ 14: 14] partial match indicator, end of job. */
+        uint32_t pmi_soj               : 1;  /**< [ 13: 13] Partial match indicator, start of job. */
         uint32_t reserved_12           : 1;
         uint32_t reserved_10_11        : 2;
-        uint32_t mode                  : 2;  /**< [  9:  8] REE Mode flag */
+        uint32_t mode                  : 2;  /**< [  9:  8] REE mode flag */
         uint32_t mp_cnt_det            : 1;  /**< [  7:  7] MAX_PREFIX_COUNT_DETECTED */
         uint32_t mm_cnt_det            : 1;  /**< [  6:  6] MAX_MATCH_COUNT_DETECTED */
         uint32_t ml_cnt_det            : 1;  /**< [  5:  5] MAX_LATENCY_COUNT_DETECTED */
         uint32_t mst_cnt_det           : 1;  /**< [  4:  4] MAX_SECONDARY_THREAD_COUNT_DETECTED */
         uint32_t mpt_cnt_det           : 1;  /**< [  3:  3] MAX_PRIMARY_THREAD_COUNT_DETECTED */
-        uint32_t job_type              : 3;  /**< [  2:  0] REE Type flag. Set to 0x1. */
+        uint32_t job_type              : 3;  /**< [  2:  0] REE type flag. Set to 0x1. */
 #else /* Word 0 - Little Endian */
-        uint32_t job_type              : 3;  /**< [  2:  0] REE Type flag. Set to 0x1. */
+        uint32_t job_type              : 3;  /**< [  2:  0] REE type flag. Set to 0x1. */
         uint32_t mpt_cnt_det           : 1;  /**< [  3:  3] MAX_PRIMARY_THREAD_COUNT_DETECTED */
         uint32_t mst_cnt_det           : 1;  /**< [  4:  4] MAX_SECONDARY_THREAD_COUNT_DETECTED */
         uint32_t ml_cnt_det            : 1;  /**< [  5:  5] MAX_LATENCY_COUNT_DETECTED */
         uint32_t mm_cnt_det            : 1;  /**< [  6:  6] MAX_MATCH_COUNT_DETECTED */
         uint32_t mp_cnt_det            : 1;  /**< [  7:  7] MAX_PREFIX_COUNT_DETECTED */
-        uint32_t mode                  : 2;  /**< [  9:  8] REE Mode flag */
+        uint32_t mode                  : 2;  /**< [  9:  8] REE mode flag */
         uint32_t reserved_10_11        : 2;
         uint32_t reserved_12           : 1;
-        uint32_t pmi_soj               : 1;  /**< [ 13: 13] Partial Match Indicator, Start of Job */
-        uint32_t pmi_eoj               : 1;  /**< [ 14: 14] Partial Match Indicator, End of Job */
+        uint32_t pmi_soj               : 1;  /**< [ 13: 13] Partial match indicator, start of job. */
+        uint32_t pmi_eoj               : 1;  /**< [ 14: 14] partial match indicator, end of job. */
         uint32_t reserved_15           : 1;
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
@@ -1049,7 +1048,7 @@ union cavm_reex_af_aq_ctl_cfg
                                                                  If REE_AF_AQ_INST_S[NC] is set then the LDT instruction will be used, otherwise
                                                                  this field will be used to select load instruction. Enumerated by REE_L2LD_CMD_E. */
         uint64_t il2_pc                : 1;  /**< [ 11: 11](R/W) This bit controls the NCB load command type for REE_AF_AQ_INST_S loads.
-                                                                 1 = If loading the first half of a cache line for an instruction use NCB cmd
+                                                                 1 = If loading the first half of a cache line for an instruction use NCB command
                                                                  from [IL2LD_CMD]. When loading the second half of cache line or the full
                                                                  cache line for an instruction use LDWB if [IL2_LDWB] is set otherwise use LDT.
 
@@ -1064,7 +1063,7 @@ union cavm_reex_af_aq_ctl_cfg
                                                                  See [IL2_PC] for more information.
                                                                  Enumerated by REE_L2LD_CMD_E. */
         uint64_t il2_pc                : 1;  /**< [ 11: 11](R/W) This bit controls the NCB load command type for REE_AF_AQ_INST_S loads.
-                                                                 1 = If loading the first half of a cache line for an instruction use NCB cmd
+                                                                 1 = If loading the first half of a cache line for an instruction use NCB command
                                                                  from [IL2LD_CMD]. When loading the second half of cache line or the full
                                                                  cache line for an instruction use LDWB if [IL2_LDWB] is set otherwise use LDT.
 
@@ -1116,7 +1115,7 @@ union cavm_reex_af_aq_done
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_20_63        : 44;
-        uint64_t done                  : 20; /**< [ 19:  0](R/W/H) Done count. When REE_AF_AQ_INST_S[DONEINT] set and that instruction completes,
+        uint64_t done                  : 20; /**< [ 19:  0](R/W/H) Done count. When REE_AF_AQ_INST_S[DONEINT] is set and that instruction completes,
                                                                  REE_AF_AQ_DONE[DONE] is incremented. Writes to this field are for diagnostic use only;
                                                                  instead software writes REE_AF_AQ_DONE_ACK[DONE_ACK] with the number of decrements for
                                                                  this field.
@@ -1135,7 +1134,7 @@ union cavm_reex_af_aq_done
                                                                  insuring there are not more than 2^20-1 instructions in flight that may request
                                                                  interrupts. */
 #else /* Word 0 - Little Endian */
-        uint64_t done                  : 20; /**< [ 19:  0](R/W/H) Done count. When REE_AF_AQ_INST_S[DONEINT] set and that instruction completes,
+        uint64_t done                  : 20; /**< [ 19:  0](R/W/H) Done count. When REE_AF_AQ_INST_S[DONEINT] is set and that instruction completes,
                                                                  REE_AF_AQ_DONE[DONE] is incremented. Writes to this field are for diagnostic use only;
                                                                  instead software writes REE_AF_AQ_DONE_ACK[DONE_ACK] with the number of decrements for
                                                                  this field.
@@ -1192,13 +1191,13 @@ union cavm_reex_af_aq_done_ack
 
                                                                  Written by software to acknowledge interrupts. If REE_AF_AQ_DONE[DONE] is still
                                                                  nonzero, the interrupt will be re-sent if the conditions described in
-                                                                 REE_AF_AQ_DONE[DONE] are satified. */
+                                                                 REE_AF_AQ_DONE[DONE] are satisfied. */
 #else /* Word 0 - Little Endian */
         uint64_t done_ack              : 20; /**< [ 19:  0](R/W/H) Number of decrements to REE_AF_AQ_DONE[DONE]. When read, returns REE_AF_AQ_DONE[DONE].
 
                                                                  Written by software to acknowledge interrupts. If REE_AF_AQ_DONE[DONE] is still
                                                                  nonzero, the interrupt will be re-sent if the conditions described in
-                                                                 REE_AF_AQ_DONE[DONE] are satified. */
+                                                                 REE_AF_AQ_DONE[DONE] are satisfied. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
     } s;
@@ -1462,7 +1461,7 @@ static inline uint64_t CAVM_REEX_AF_AQ_DOORBELL(unsigned long a)
 /**
  * Register (RVU_PF_BAR0) ree#_af_aq_ena
  *
- * REE Adminstrative Queue Enable Register
+ * REE Administrative Queue Enable Register
  * If a AQ is disabled, REE CTL stops fetching instructions from the AQ.
  */
 union cavm_reex_af_aq_ena
@@ -1480,7 +1479,7 @@ union cavm_reex_af_aq_ena
                                                                  Software must only transition [ENA] 0-\>1 when the queue is quiescent. See
                                                                  REE_AF_AQ_OUTSTAND_JOB[OJOB_CNT].
 
-                                                                 Transaition of [ENA] 0-\>1 will set REE_AF_AQ_DOORBELL[DBELL_CNT] to
+                                                                 Transition of [ENA] 0-\>1 will set REE_AF_AQ_DOORBELL[DBELL_CNT] to
                                                                  zero and REE_AF_AQ_SBUF_ADDR[PTR] and REE_AF_AQ_SBUF_ADDR[off] are set to starting
                                                                  IOVA.
 
@@ -1494,7 +1493,7 @@ union cavm_reex_af_aq_ena
                                                                  Software must only transition [ENA] 0-\>1 when the queue is quiescent. See
                                                                  REE_AF_AQ_OUTSTAND_JOB[OJOB_CNT].
 
-                                                                 Transaition of [ENA] 0-\>1 will set REE_AF_AQ_DOORBELL[DBELL_CNT] to
+                                                                 Transition of [ENA] 0-\>1 will set REE_AF_AQ_DOORBELL[DBELL_CNT] to
                                                                  zero and REE_AF_AQ_SBUF_ADDR[PTR] and REE_AF_AQ_SBUF_ADDR[off] are set to starting
                                                                  IOVA.
 
@@ -1739,8 +1738,8 @@ static inline uint64_t CAVM_REEX_AF_AQ_OUTSTAND_JOB(unsigned long a)
 /**
  * Register (RVU_PF_BAR0) ree#_af_aq_pp_wait
  *
- * REE Adminstrative Queue Programing Plane Wait Registers
- * Specifies how long to wait afer REEX programing plane has been written last
+ * REE Administrative Queue Programing Plane Wait Registers
+ * Specifies how long to wait after the REEX programming plane has written the last
  * instruction before we increment REE_AF_AQ_DONE[DONE].
  */
 union cavm_reex_af_aq_pp_wait
@@ -1750,21 +1749,21 @@ union cavm_reex_af_aq_pp_wait
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_17_63        : 47;
-        uint64_t enable                : 1;  /**< [ 16: 16](R/W) This is enable bit for the DLY_TIME feature. By default it is disabled (0).
+        uint64_t enable                : 1;  /**< [ 16: 16](R/W) This is enable bit for the DLY_TIME feature. By default, it is disabled (0).
                                                                  Set to 1 (enable) in order to count DLY_TIME microseconds in addition to
                                                                  the REEX indication, to determine that the programming is over (and interrupt can be asserted).
                                                                  For the REEX indication we use the pp_rtru_done, after the PP FIFO is empty (after DONE instruction
                                                                  had been enqueued to REEX PP FIFO). */
-        uint64_t dly_time              : 16; /**< [ 15:  0](R/W) When REE_AF_AQ_INST_S[DONEINT] is set in an instruction. REE will
+        uint64_t dly_time              : 16; /**< [ 15:  0](R/W) When REE_AF_AQ_INST_S[DONEINT] is set in an instruction, REE will
                                                                  wait [DLY_TIME] microseconds after the programing plane FIFO is empty before
                                                                  it increments REE_AF_AQ_DONE[DONE].
-                                                                 The implementation of timer is acurate. */
+                                                                 The implementation of timer is accurate. */
 #else /* Word 0 - Little Endian */
-        uint64_t dly_time              : 16; /**< [ 15:  0](R/W) When REE_AF_AQ_INST_S[DONEINT] is set in an instruction. REE will
+        uint64_t dly_time              : 16; /**< [ 15:  0](R/W) When REE_AF_AQ_INST_S[DONEINT] is set in an instruction, REE will
                                                                  wait [DLY_TIME] microseconds after the programing plane FIFO is empty before
                                                                  it increments REE_AF_AQ_DONE[DONE].
-                                                                 The implementation of timer is acurate. */
-        uint64_t enable                : 1;  /**< [ 16: 16](R/W) This is enable bit for the DLY_TIME feature. By default it is disabled (0).
+                                                                 The implementation of timer is accurate. */
+        uint64_t enable                : 1;  /**< [ 16: 16](R/W) This is enable bit for the DLY_TIME feature. By default, it is disabled (0).
                                                                  Set to 1 (enable) in order to count DLY_TIME microseconds in addition to
                                                                  the REEX indication, to determine that the programming is over (and interrupt can be asserted).
                                                                  For the REEX indication we use the pp_rtru_done, after the PP FIFO is empty (after DONE instruction
@@ -2277,7 +2276,7 @@ static inline uint64_t CAVM_REEX_AF_CORE_RESET(unsigned long a)
 /**
  * Register (RVU_PF_BAR0) ree#_af_crdt_halt_ncb_req_pc
  *
- * REE Data Fifo Credit Halt NCB Load Requests Counter Register
+ * REE Data FIFO Credit Halt NCB Load Requests Counter Register
  */
 union cavm_reex_af_crdt_halt_ncb_req_pc
 {
@@ -2285,11 +2284,11 @@ union cavm_reex_af_crdt_halt_ncb_req_pc
     struct cavm_reex_af_crdt_halt_ncb_req_pc_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter- Number of cycles REE can't issue NCB load-requests of jobs' data,
-                                                                 due lack of data-fifo credits, which located at SJD. */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter. Number of cycles REE can't issue NCB load-requests of jobs' data,
+                                                                 due lack of data-FIFO credits, which located at SJD. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter- Number of cycles REE can't issue NCB load-requests of jobs' data,
-                                                                 due lack of data-fifo credits, which located at SJD. */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter. Number of cycles REE can't issue NCB load-requests of jobs' data,
+                                                                 due lack of data-FIFO credits, which located at SJD. */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_reex_af_crdt_halt_ncb_req_pc_s cn; */
@@ -2468,8 +2467,8 @@ static inline uint64_t CAVM_REEX_AF_ECO(unsigned long a)
 /**
  * Register (RVU_PF_BAR0) ree#_af_em_base
  *
- * REE External Memory Base Register
- * This register contains the base address for REEX external memory.
+ * REE External Memory Virtual Base Register
+ * This register configures virtual addressing to DRAM reads from REEX.
  */
 union cavm_reex_af_em_base
 {
@@ -2545,6 +2544,145 @@ static inline uint64_t CAVM_REEX_AF_EM_PF_FUNC(unsigned long a)
 #define device_bar_CAVM_REEX_AF_EM_PF_FUNC(a) 0x0 /* RVU_BAR0 */
 #define busnum_CAVM_REEX_AF_EM_PF_FUNC(a) (a)
 #define arguments_CAVM_REEX_AF_EM_PF_FUNC(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_em_phys_en
+ *
+ * REE External Memory Physical Base Register
+ * This register configures physical addressing to DRAM reads from REEX.
+ */
+union cavm_reex_af_em_phys_en
+{
+    uint64_t u;
+    struct cavm_reex_af_em_phys_en_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t em_phys_addr_en       : 1;  /**< [ 63: 63](SR/W) When 0, use virtual base address from REE_AF_EM_BASE (default).
+                                                                 When 1, use physical base address EM_PHYS_ADDR, and set transactions to
+                                                                 non secure physical (ns=1, paddr=1).
+                                                                 Use physical base address mode to handle performance issues due to heavy load on SMMU. */
+        uint64_t reserved_53_62        : 10;
+        uint64_t em_phys_addr          : 53; /**< [ 52:  0](SR/W) Physical base address for DRAM loads, used only when [EM_PHYS_ADDR_EN]=1. */
+#else /* Word 0 - Little Endian */
+        uint64_t em_phys_addr          : 53; /**< [ 52:  0](SR/W) Physical base address for DRAM loads, used only when [EM_PHYS_ADDR_EN]=1. */
+        uint64_t reserved_53_62        : 10;
+        uint64_t em_phys_addr_en       : 1;  /**< [ 63: 63](SR/W) When 0, use virtual base address from REE_AF_EM_BASE (default).
+                                                                 When 1, use physical base address EM_PHYS_ADDR, and set transactions to
+                                                                 non secure physical (ns=1, paddr=1).
+                                                                 Use physical base address mode to handle performance issues due to heavy load on SMMU. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_em_phys_en_s cn; */
+};
+typedef union cavm_reex_af_em_phys_en cavm_reex_af_em_phys_en_t;
+
+static inline uint64_t CAVM_REEX_AF_EM_PHYS_EN(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_EM_PHYS_EN(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400002f8ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_EM_PHYS_EN", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_EM_PHYS_EN(a) cavm_reex_af_em_phys_en_t
+#define bustype_CAVM_REEX_AF_EM_PHYS_EN(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_EM_PHYS_EN(a) "REEX_AF_EM_PHYS_EN"
+#define device_bar_CAVM_REEX_AF_EM_PHYS_EN(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_EM_PHYS_EN(a) (a)
+#define arguments_CAVM_REEX_AF_EM_PHYS_EN(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_graceful_dis_ctl
+ *
+ * REE AF Queue Graceful Disable Control Register
+ * This register allows to gracefully disable a queue.
+ * When a queue is gracefully disabled:
+ * * REE CTL stops fetching new instructions from the queue.
+ * * Instructions already fetched are executed normally.
+ * * REE_LF_DOORBELL[DBELL_CNT] continues to be updated.
+ * When a queue is later re-enabled:
+ * * REE CTL resumes fetching instructions from the queue.
+ * * REE_LF_DOORBELL[DBELL_CNT] is not reset.
+ */
+union cavm_reex_af_graceful_dis_ctl
+{
+    uint64_t u;
+    struct cavm_reex_af_graceful_dis_ctl_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_36_63        : 28;
+        uint64_t dis_ctl               : 36; /**< [ 35:  0](R/W) Bit i=0..35 is for disabling queue[i].
+                                                                 0 = Logical instruction queue is enabled (if the corresponding REE_LF_ENA[ENA] is also enabled).
+                                                                 1 = Gracefully disables the logical instruction queue. */
+#else /* Word 0 - Little Endian */
+        uint64_t dis_ctl               : 36; /**< [ 35:  0](R/W) Bit i=0..35 is for disabling queue[i].
+                                                                 0 = Logical instruction queue is enabled (if the corresponding REE_LF_ENA[ENA] is also enabled).
+                                                                 1 = Gracefully disables the logical instruction queue. */
+        uint64_t reserved_36_63        : 28;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_graceful_dis_ctl_s cn; */
+};
+typedef union cavm_reex_af_graceful_dis_ctl cavm_reex_af_graceful_dis_ctl_t;
+
+static inline uint64_t CAVM_REEX_AF_GRACEFUL_DIS_CTL(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_GRACEFUL_DIS_CTL(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140046100ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_GRACEFUL_DIS_CTL", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_GRACEFUL_DIS_CTL(a) cavm_reex_af_graceful_dis_ctl_t
+#define bustype_CAVM_REEX_AF_GRACEFUL_DIS_CTL(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_GRACEFUL_DIS_CTL(a) "REEX_AF_GRACEFUL_DIS_CTL"
+#define device_bar_CAVM_REEX_AF_GRACEFUL_DIS_CTL(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_GRACEFUL_DIS_CTL(a) (a)
+#define arguments_CAVM_REEX_AF_GRACEFUL_DIS_CTL(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_graceful_dis_status
+ *
+ * REE AF Queue Graceful Disable Status Register
+ * This register contains status information for gracefully-disabled queues.
+ */
+union cavm_reex_af_graceful_dis_status
+{
+    uint64_t u;
+    struct cavm_reex_af_graceful_dis_status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_36_63        : 28;
+        uint64_t dis_status            : 36; /**< [ 35:  0](RO/H) Bit i=0..35 reflects status of queue[i].
+                                                                 0 = Queue is not gracefully-disabled.
+                                                                 1 = Queue was gracefully-disabled (i.e. REE_AF_LF_GRACEFUL_DIS_CTL[DISABLE] is
+                                                                 set and REE_LF_OUTSTAND_JOB[OJOB_CNT] is 0) */
+#else /* Word 0 - Little Endian */
+        uint64_t dis_status            : 36; /**< [ 35:  0](RO/H) Bit i=0..35 reflects status of queue[i].
+                                                                 0 = Queue is not gracefully-disabled.
+                                                                 1 = Queue was gracefully-disabled (i.e. REE_AF_LF_GRACEFUL_DIS_CTL[DISABLE] is
+                                                                 set and REE_LF_OUTSTAND_JOB[OJOB_CNT] is 0) */
+        uint64_t reserved_36_63        : 28;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_graceful_dis_status_s cn; */
+};
+typedef union cavm_reex_af_graceful_dis_status cavm_reex_af_graceful_dis_status_t;
+
+static inline uint64_t CAVM_REEX_AF_GRACEFUL_DIS_STATUS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_GRACEFUL_DIS_STATUS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140046110ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_GRACEFUL_DIS_STATUS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_GRACEFUL_DIS_STATUS(a) cavm_reex_af_graceful_dis_status_t
+#define bustype_CAVM_REEX_AF_GRACEFUL_DIS_STATUS(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_GRACEFUL_DIS_STATUS(a) "REEX_AF_GRACEFUL_DIS_STATUS"
+#define device_bar_CAVM_REEX_AF_GRACEFUL_DIS_STATUS(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_GRACEFUL_DIS_STATUS(a) (a)
+#define arguments_CAVM_REEX_AF_GRACEFUL_DIS_STATUS(a) (a),-1,-1,-1
 
 /**
  * Register (RVU_PF_BAR0) ree#_af_inst_latency_pc
@@ -2766,7 +2904,7 @@ union cavm_reex_af_quex_gcfg
                                                                  If the REE_INST_S[INP_PTR_CTL.NC] is set then the LDT instruction will be used, otherwise
                                                                  this field will be used to select load instruction. Enumerated by REE_L2LD_CMD_E. */
         uint64_t il2_pc                : 1;  /**< [ 11: 11](R/W) This bit controls the NCB load command type for REE_INST_S loads.
-                                                                 1 = If loading the first half of a cache line for an instruction use NCB cmd
+                                                                 1 = If loading the first half of a cache line for an instruction use NCB command
                                                                  from [IL2LD_CMD]. When loading the second half of cache line or the full
                                                                  cache line for an instruction use LDWB if [IL2_LDWB] is set otherwise use LDT.
 
@@ -2775,45 +2913,45 @@ union cavm_reex_af_quex_gcfg
                                                                  (REE_INST_S).
                                                                  See [IL2_PC] for more information.
                                                                  Enumerated by REE_L2LD_CMD_E. */
-        uint64_t match_stype           : 2;  /**< [  7:  6](R/W) Type of NCB store comand to use when writting REE_MATCH_S to LLC/DRAM.
+        uint64_t match_stype           : 2;  /**< [  7:  6](R/W) Type of NCB store command to use when writing REE_MATCH_S to LLC/DRAM.
                                                                  Enumerated by REE_STYPE_E. */
-        uint64_t descr_stype           : 2;  /**< [  5:  4](R/W) Type of NCB store comand to use when writting REE_RES_S to LLC/DRAM.
+        uint64_t descr_stype           : 2;  /**< [  5:  4](R/W) Type of NCB store command to use when writing REE_RES_S to LLC/DRAM.
                                                                  It is recommend to use STF or STY.
                                                                  Enumerated by REE_STYPE_E. */
         uint64_t reserved_1_3          : 3;
         uint64_t strict_descr_wr       : 1;  /**< [  0:  0](R/W) Strict descriptor write.
 
                                                                  0 = When REE_INST_S[OOJ]=0 then REE will perform a descriptor write in queue
-                                                                 order. REE doesn't gurantee that between descriptors from same queue that they
-                                                                 are written to LLC/DRAM in order.  However, when SSO is used, REE does gurantee
+                                                                 order. REE doesn't guarantee that between descriptors from same queue that they
+                                                                 are written to LLC/DRAM in order.  However, when SSO is used, REE does guarantee
                                                                  that all descriptors were written to LLC/DRAM in order before the job is
                                                                  submitted to SSO.
 
                                                                  1 = When REE_INST_S[OOJ]=0 then REE will not perform a descriptor write from the
-                                                                 same queue until it gurantees that the LLC/DRAM has been written. */
+                                                                 same queue until it guarantees that the LLC/DRAM has been written. */
 #else /* Word 0 - Little Endian */
         uint64_t strict_descr_wr       : 1;  /**< [  0:  0](R/W) Strict descriptor write.
 
                                                                  0 = When REE_INST_S[OOJ]=0 then REE will perform a descriptor write in queue
-                                                                 order. REE doesn't gurantee that between descriptors from same queue that they
-                                                                 are written to LLC/DRAM in order.  However, when SSO is used, REE does gurantee
+                                                                 order. REE doesn't guarantee that between descriptors from same queue that they
+                                                                 are written to LLC/DRAM in order.  However, when SSO is used, REE does guarantee
                                                                  that all descriptors were written to LLC/DRAM in order before the job is
                                                                  submitted to SSO.
 
                                                                  1 = When REE_INST_S[OOJ]=0 then REE will not perform a descriptor write from the
-                                                                 same queue until it gurantees that the LLC/DRAM has been written. */
+                                                                 same queue until it guarantees that the LLC/DRAM has been written. */
         uint64_t reserved_1_3          : 3;
-        uint64_t descr_stype           : 2;  /**< [  5:  4](R/W) Type of NCB store comand to use when writting REE_RES_S to LLC/DRAM.
+        uint64_t descr_stype           : 2;  /**< [  5:  4](R/W) Type of NCB store command to use when writing REE_RES_S to LLC/DRAM.
                                                                  It is recommend to use STF or STY.
                                                                  Enumerated by REE_STYPE_E. */
-        uint64_t match_stype           : 2;  /**< [  7:  6](R/W) Type of NCB store comand to use when writting REE_MATCH_S to LLC/DRAM.
+        uint64_t match_stype           : 2;  /**< [  7:  6](R/W) Type of NCB store command to use when writing REE_MATCH_S to LLC/DRAM.
                                                                  Enumerated by REE_STYPE_E. */
         uint64_t il2ld_cmd             : 3;  /**< [ 10:  8](R/W) Indicates the NCB load command to use for fetching instructions
                                                                  (REE_INST_S).
                                                                  See [IL2_PC] for more information.
                                                                  Enumerated by REE_L2LD_CMD_E. */
         uint64_t il2_pc                : 1;  /**< [ 11: 11](R/W) This bit controls the NCB load command type for REE_INST_S loads.
-                                                                 1 = If loading the first half of a cache line for an instruction use NCB cmd
+                                                                 1 = If loading the first half of a cache line for an instruction use NCB command
                                                                  from [IL2LD_CMD]. When loading the second half of cache line or the full
                                                                  cache line for an instruction use LDWB if [IL2_LDWB] is set otherwise use LDT.
 
@@ -2958,13 +3096,13 @@ union cavm_reex_af_ras
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_3_63         : 61;
         uint64_t ld_reex_psn           : 1;  /**< [  2:  2](R/W1C/H) Poison received on a REEX response. */
-        uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1C/H) Poison received on a NCB instruction response, which include AQ instructions ,LF
-                                                                 instructions and Gather pointer loads. */
+        uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1C/H) Poison received on a NCB instruction response, which include AQ instructions, LF
+                                                                 instructions and gather pointer loads. */
         uint64_t ld_dat_psn            : 1;  /**< [  0:  0](R/W1C/H) Poison received on a NCB data response. */
 #else /* Word 0 - Little Endian */
         uint64_t ld_dat_psn            : 1;  /**< [  0:  0](R/W1C/H) Poison received on a NCB data response. */
-        uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1C/H) Poison received on a NCB instruction response, which include AQ instructions ,LF
-                                                                 instructions and Gather pointer loads. */
+        uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1C/H) Poison received on a NCB instruction response, which include AQ instructions, LF
+                                                                 instructions and gather pointer loads. */
         uint64_t ld_reex_psn           : 1;  /**< [  2:  2](R/W1C/H) Poison received on a REEX response. */
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
@@ -3199,9 +3337,9 @@ union cavm_reex_af_reex_active_jobs_pc
     struct cavm_reex_af_reex_active_jobs_pc_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter- Number of active jobs existing in REEX */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter. Number of active jobs existing in REEX. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter- Number of active jobs existing in REEX */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter. Number of active jobs existing in REEX. */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_reex_af_reex_active_jobs_pc_s cn; */
@@ -3301,7 +3439,7 @@ static inline uint64_t CAVM_REEX_AF_REEX_RD_REQ_PC(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexm_capability_1
  *
  * REE AF REEX Main Capability 1 Register
- * This register contains capablity information about REEX.
+ * This register contains capability information about REEX.
  */
 union cavm_reex_af_reexm_capability_1
 {
@@ -3345,7 +3483,7 @@ static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_1(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexm_capability_2
  *
  * REE AF REEX Main Capability 2 Register
- * This register contains capablity information about REEX.
+ * This register contains capability information about REEX.
  */
 union cavm_reex_af_reexm_capability_2
 {
@@ -3391,7 +3529,7 @@ static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_2(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexm_capability_3
  *
  * REE AF REEX Main Capability 3 Register
- * This register contains capablity information about REEX.
+ * This register contains capability information about REEX.
  */
 union cavm_reex_af_reexm_capability_3
 {
@@ -3443,7 +3581,7 @@ static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_3(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexm_capability_4
  *
  * REE AF REEX Main Capability 4 Register
- * This register contains capablity information about REEX.
+ * This register contains capability information about REEX.
  */
 union cavm_reex_af_reexm_capability_4
 {
@@ -3495,7 +3633,7 @@ static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_4(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexm_capability_5
  *
  * REE AF REEX Main Capability 5 Register
- * This register contains capablity information about REEX.
+ * This register contains capability information about REEX.
  */
 union cavm_reex_af_reexm_capability_5
 {
@@ -3504,11 +3642,11 @@ union cavm_reex_af_reexm_capability_5
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t max_num_match_per_job : 16; /**< [ 31: 16](RO) Maximum Number of Matches returned per job. */
-        uint64_t max_num_pf_per_job    : 16; /**< [ 15:  0](RO) Maximum Number of Prefixes per job. */
+        uint64_t max_num_match_per_job : 16; /**< [ 31: 16](RO) Maximum number of matches returned per job. */
+        uint64_t max_num_pf_per_job    : 16; /**< [ 15:  0](RO) Maximum number of prefixes per job. */
 #else /* Word 0 - Little Endian */
-        uint64_t max_num_pf_per_job    : 16; /**< [ 15:  0](RO) Maximum Number of Prefixes per job. */
-        uint64_t max_num_match_per_job : 16; /**< [ 31: 16](RO) Maximum Number of Matches returned per job. */
+        uint64_t max_num_pf_per_job    : 16; /**< [ 15:  0](RO) Maximum number of prefixes per job. */
+        uint64_t max_num_match_per_job : 16; /**< [ 31: 16](RO) Maximum number of matches returned per job. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -3535,7 +3673,7 @@ static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_5(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexm_capability_6
  *
  * REE AF REEX Main Capability 6 Register
- * This register contains capablity information about REEX.
+ * This register contains capability information about REEX.
  */
 union cavm_reex_af_reexm_capability_6
 {
@@ -3544,13 +3682,13 @@ union cavm_reex_af_reexm_capability_6
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t l2_cache_size_kb      : 16; /**< [ 31: 16](RO) L2 Cache size (KB). */
-        uint64_t l1_cache_size_kb      : 8;  /**< [ 15:  8](RO) L1 Cache size (KB). */
-        uint64_t tcm_size_kb           : 8;  /**< [  7:  0](RO) Tightly Coupled Memory size (KB). */
+        uint64_t l2_cache_size_kb      : 16; /**< [ 31: 16](RO) L2 cache size (KB). */
+        uint64_t l1_cache_size_kb      : 8;  /**< [ 15:  8](RO) L1 cache size (KB). */
+        uint64_t tcm_size_kb           : 8;  /**< [  7:  0](RO) Tightly coupled memory size (KB). */
 #else /* Word 0 - Little Endian */
-        uint64_t tcm_size_kb           : 8;  /**< [  7:  0](RO) Tightly Coupled Memory size (KB). */
-        uint64_t l1_cache_size_kb      : 8;  /**< [ 15:  8](RO) L1 Cache size (KB). */
-        uint64_t l2_cache_size_kb      : 16; /**< [ 31: 16](RO) L2 Cache size (KB). */
+        uint64_t tcm_size_kb           : 8;  /**< [  7:  0](RO) Tightly coupled memory size (KB). */
+        uint64_t l1_cache_size_kb      : 8;  /**< [ 15:  8](RO) L1 cache size (KB). */
+        uint64_t l2_cache_size_kb      : 16; /**< [ 31: 16](RO) L2 cache size (KB). */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -3577,7 +3715,7 @@ static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_6(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexm_capability_7
  *
  * REE AF REEX Main Capability 7 Register
- * This register contains capablity information about REEX.
+ * This register contains capability information about REEX.
  */
 union cavm_reex_af_reexm_capability_7
 {
@@ -3586,9 +3724,9 @@ union cavm_reex_af_reexm_capability_7
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t unix_time             : 32; /**< [ 31:  0](RO) Unix Timestamp for RTL drop. Value is drop-specific. */
+        uint64_t unix_time             : 32; /**< [ 31:  0](RO) Unix timestamp for RTL drop. Value is drop-specific. */
 #else /* Word 0 - Little Endian */
-        uint64_t unix_time             : 32; /**< [ 31:  0](RO) Unix Timestamp for RTL drop. Value is drop-specific. */
+        uint64_t unix_time             : 32; /**< [ 31:  0](RO) Unix timestamp for RTL drop. Value is drop-specific. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -3624,9 +3762,9 @@ union cavm_reex_af_reexm_clstr_mask
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
         uint64_t reex_reserved_1       : 24; /**< [ 31:  8](R/W) Reserved. */
-        uint64_t mask                  : 8;  /**< [  7:  0](R/W) Mask (disable) Clusters. Bit i=0..7 is for disabling Cluster[i]. */
+        uint64_t mask                  : 8;  /**< [  7:  0](R/W) Mask (disable) clusters. Bit i=0..7 is for disabling cluster[i]. */
 #else /* Word 0 - Little Endian */
-        uint64_t mask                  : 8;  /**< [  7:  0](R/W) Mask (disable) Clusters. Bit i=0..7 is for disabling Cluster[i]. */
+        uint64_t mask                  : 8;  /**< [  7:  0](R/W) Mask (disable) clusters. Bit i=0..7 is for disabling cluster[i]. */
         uint64_t reex_reserved_1       : 24; /**< [ 31:  8](R/W) Reserved. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
@@ -3662,9 +3800,9 @@ union cavm_reex_af_reexm_core_clk_count
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of Core-Clock cycles since initialization triggered. Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of core-clock cycles since initialization triggered. Wraps around. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of Core-Clock cycles since initialization triggered. Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of core-clock cycles since initialization triggered. Wraps around. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -3791,11 +3929,11 @@ union cavm_reex_af_reexm_fifo_status_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t jf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of REEX Job FIFO. */
-        uint64_t jdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of REEX Job Descriptor FIFO. */
+        uint64_t jf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill level of REEX job FIFO. */
+        uint64_t jdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill level of REEX job descriptor FIFO. */
 #else /* Word 0 - Little Endian */
-        uint64_t jdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of REEX Job Descriptor FIFO. */
-        uint64_t jf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of REEX Job FIFO. */
+        uint64_t jdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill level of REEX job descriptor FIFO. */
+        uint64_t jf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill level of REEX job FIFO. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -3830,11 +3968,11 @@ union cavm_reex_af_reexm_fifo_status_1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t mf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of REEX Match FIFO. */
-        uint64_t rdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of REEX Response Descriptor FIFO. */
+        uint64_t mf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill level of REEX match FIFO. */
+        uint64_t rdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill level of REEX response descriptor FIFO. */
 #else /* Word 0 - Little Endian */
-        uint64_t rdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of REEX Response Descriptor FIFO. */
-        uint64_t mf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of REEX Match FIFO. */
+        uint64_t rdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill level of REEX response descriptor FIFO. */
+        uint64_t mf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill level of REEX match FIFO. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -3861,7 +3999,7 @@ static inline uint64_t CAVM_REEX_AF_REEXM_FIFO_STATUS_1(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexm_identifier
  *
  * REE AF REEX Main Identifier Register
- * This register provides identification information about REEX
+ * This register provides identification information about REEX.
  */
 union cavm_reex_af_reexm_identifier
 {
@@ -3915,13 +4053,13 @@ union cavm_reex_af_reexm_intr_clstr_mask
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t tce_mask              : 16; /**< [ 31: 16](R/W) Mask (disable) TCEs in Cluster. */
+        uint64_t tce_mask              : 16; /**< [ 31: 16](R/W) Mask (disable) TCEs in cluster. */
         uint64_t reex_reserved_1       : 8;  /**< [ 15:  8](R/W) Reserved. */
-        uint64_t jce_mask              : 8;  /**< [  7:  0](R/W) Mask (disable) JCEs in Cluster. */
+        uint64_t jce_mask              : 8;  /**< [  7:  0](R/W) Mask (disable) JCEs in cluster. */
 #else /* Word 0 - Little Endian */
-        uint64_t jce_mask              : 8;  /**< [  7:  0](R/W) Mask (disable) JCEs in Cluster. */
+        uint64_t jce_mask              : 8;  /**< [  7:  0](R/W) Mask (disable) JCEs in cluster. */
         uint64_t reex_reserved_1       : 8;  /**< [ 15:  8](R/W) Reserved. */
-        uint64_t tce_mask              : 16; /**< [ 31: 16](R/W) Mask (disable) TCEs in Cluster. */
+        uint64_t tce_mask              : 16; /**< [ 31: 16](R/W) Mask (disable) TCEs in cluster. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -3956,9 +4094,9 @@ union cavm_reex_af_reexm_job_byt_count_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 lower bits. Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of job data bytes parsed, 32 lower bits. Wraps around. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 lower bits. Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of job data bytes parsed, 32 lower bits. Wraps around. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -3993,9 +4131,9 @@ union cavm_reex_af_reexm_job_byt_count_1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 higher bits.  Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of job data bytes parsed, 32 higher bits.  Wraps around. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 higher bits.  Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of job data bytes parsed, 32 higher bits.  Wraps around. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -4030,9 +4168,9 @@ union cavm_reex_af_reexm_job_count
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of valid Jobs ingressed. Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of valid jobs ingressed. Wraps around. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of valid Jobs ingressed. Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of valid jobs ingressed. Wraps around. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -4067,9 +4205,9 @@ union cavm_reex_af_reexm_match_count
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Matches detected.  Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of matches detected.  Wraps around. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Matches detected.  Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of matches detected.  Wraps around. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -4106,14 +4244,14 @@ union cavm_reex_af_reexm_max_latency_cnt
         uint64_t reserved_32_63        : 32;
         uint64_t reex_reserved_1       : 16; /**< [ 31: 16](R/W) Reserved. */
         uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum LATENCY_COUNT value per job before primary threads are aborted.
-                                                                 Use this as a proxy for providing an upper bound on Job latency.
+                                                                 Use this as a proxy for providing an upper bound on job latency.
                                                                  This register indicates a target maximum latency, but actual LATENCY_COUNT
                                                                  value returned for a job can be bigger due to house-keeping overheads.
                                                                  Range 0 to 65535, value 0 means unlimited.
                                                                  If maximum has been reached, MAX_LATENCY_COUNT_DETECTED is asserted and further threads aborted. */
 #else /* Word 0 - Little Endian */
         uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum LATENCY_COUNT value per job before primary threads are aborted.
-                                                                 Use this as a proxy for providing an upper bound on Job latency.
+                                                                 Use this as a proxy for providing an upper bound on job latency.
                                                                  This register indicates a target maximum latency, but actual LATENCY_COUNT
                                                                  value returned for a job can be bigger due to house-keeping overheads.
                                                                  Range 0 to 65535, value 0 means unlimited.
@@ -4242,11 +4380,11 @@ union cavm_reex_af_reexm_max_pthread_cnt
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
         uint64_t reex_reserved_1       : 16; /**< [ 31: 16](R/W) Reserved. */
-        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum number of Primary Threads per Job. Range 0 to 65535, value 0 means unlimited.
+        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum number of primary threads per job. Range 0 to 65535, value 0 means unlimited.
                                                                  If maximum has been reached, MAX_PRIMARY_THREAD_COUNT_DETECTED is asserted and
                                                                  further threads aborted. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum number of Primary Threads per Job. Range 0 to 65535, value 0 means unlimited.
+        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum number of primary threads per job. Range 0 to 65535, value 0 means unlimited.
                                                                  If maximum has been reached, MAX_PRIMARY_THREAD_COUNT_DETECTED is asserted and
                                                                  further threads aborted. */
         uint64_t reex_reserved_1       : 16; /**< [ 31: 16](R/W) Reserved. */
@@ -4284,9 +4422,9 @@ union cavm_reex_af_reexm_response_count
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Response Descriptors dispatched.  Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of response descriptors dispatched.  Wraps around. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Response Descriptors dispatched.  Wraps around. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of response descriptors dispatched.  Wraps around. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -4313,7 +4451,7 @@ static inline uint64_t CAVM_REEX_AF_REEXM_RESPONSE_COUNT(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexm_revision
  *
  * REE AF REEX Main Revision Register
- * This register contains capablity information about REEX.
+ * This register contains capability information about REEX.
  */
 union cavm_reex_af_reexm_revision
 {
@@ -4451,9 +4589,9 @@ union cavm_reex_af_reexm_write_count
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of CSR Write transactions. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of CSR write transactions. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of CSR Write transactions. */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of CSR write transactions. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -4480,7 +4618,7 @@ static inline uint64_t CAVM_REEX_AF_REEXM_WRITE_COUNT(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexr_capability
  *
  * REE AF REEX RTRU Capability Register
- * This register contains capablity information about REEX.
+ * This register contains capability information about REEX.
  */
 union cavm_reex_af_reexr_capability
 {
@@ -4489,11 +4627,11 @@ union cavm_reex_af_reexr_capability
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t rtru_fifo_width       : 16; /**< [ 31: 16](RO) RTRU FIFO Data width. */
+        uint64_t rtru_fifo_width       : 16; /**< [ 31: 16](RO) RTRU FIFO data width. */
         uint64_t rtru_fifo_depth       : 16; /**< [ 15:  0](RO) RTRU FIFO maximum legal number of entries. */
 #else /* Word 0 - Little Endian */
         uint64_t rtru_fifo_depth       : 16; /**< [ 15:  0](RO) RTRU FIFO maximum legal number of entries. */
-        uint64_t rtru_fifo_width       : 16; /**< [ 31: 16](RO) RTRU FIFO Data width. */
+        uint64_t rtru_fifo_width       : 16; /**< [ 31: 16](RO) RTRU FIFO data width. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -4520,7 +4658,7 @@ static inline uint64_t CAVM_REEX_AF_REEXR_CAPABILITY(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexr_ck_sum_0
  *
  * REE AF REEX RTRU Checksum 0 Register
- * This register contains address checksum value
+ * This register contains address checksum value.
  */
 union cavm_reex_af_reexr_ck_sum_0
 {
@@ -4529,9 +4667,9 @@ union cavm_reex_af_reexr_ck_sum_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t value                 : 32; /**< [ 31:  0](RO/H) RTRU Address checksum value. */
+        uint64_t value                 : 32; /**< [ 31:  0](RO/H) RTRU address checksum value. */
 #else /* Word 0 - Little Endian */
-        uint64_t value                 : 32; /**< [ 31:  0](RO/H) RTRU Address checksum value. */
+        uint64_t value                 : 32; /**< [ 31:  0](RO/H) RTRU address checksum value. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -4558,7 +4696,7 @@ static inline uint64_t CAVM_REEX_AF_REEXR_CK_SUM_0(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexr_ck_sum_1
  *
  * REE AF REEX RTRU Checksum 1 Register
- * This register contains data[31:0] checksum value
+ * This register contains data[31:0] checksum value.
  */
 union cavm_reex_af_reexr_ck_sum_1
 {
@@ -4596,7 +4734,7 @@ static inline uint64_t CAVM_REEX_AF_REEXR_CK_SUM_1(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexr_ck_sum_2
  *
  * REE AF REEX RTRU Checksum 2 Register
- * This register contains data[63:32] checksum value
+ * This register contains data[63:32] checksum value.
  */
 union cavm_reex_af_reexr_ck_sum_2
 {
@@ -4605,9 +4743,9 @@ union cavm_reex_af_reexr_ck_sum_2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t value                 : 32; /**< [ 31:  0](RO/H) data[63:32] checksum value. */
+        uint64_t value                 : 32; /**< [ 31:  0](RO/H) Data[63:32] checksum value. */
 #else /* Word 0 - Little Endian */
-        uint64_t value                 : 32; /**< [ 31:  0](RO/H) data[63:32] checksum value. */
+        uint64_t value                 : 32; /**< [ 31:  0](RO/H) Data[63:32] checksum value. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -4634,7 +4772,7 @@ static inline uint64_t CAVM_REEX_AF_REEXR_CK_SUM_2(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexr_ctrl
  *
  * REE AF REEX RTRU Control Register
- * This register controls REEX Programming Plane
+ * This register controls the REEX programming plane.
  */
 union cavm_reex_af_reexr_ctrl
 {
@@ -4725,7 +4863,7 @@ static inline uint64_t CAVM_REEX_AF_REEXR_DSCRD_COUNT(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexr_fifo_status
  *
  * REE AF REEX RTRU FIFO Status Register
- * This register contains status information about RTRU
+ * This register contains status information about RTRU.
  */
 union cavm_reex_af_reexr_fifo_status
 {
@@ -4763,7 +4901,7 @@ static inline uint64_t CAVM_REEX_AF_REEXR_FIFO_STATUS(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexr_rof_metadata
  *
  * REE AF REEX RTRU Metadata Register
- * Metadata value
+ * Metadata value.
  */
 union cavm_reex_af_reexr_rof_metadata
 {
@@ -4807,7 +4945,7 @@ static inline uint64_t CAVM_REEX_AF_REEXR_ROF_METADATA(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexr_rof_revision
  *
  * REE AF REEX RTRU Revision Register
- * Revision number
+ * Revision number.
  */
 union cavm_reex_af_reexr_rof_revision
 {
@@ -4816,13 +4954,13 @@ union cavm_reex_af_reexr_rof_revision
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t revision              : 32; /**< [ 31:  0](RO) Revision Value embedded in rules memories.
+        uint64_t revision              : 32; /**< [ 31:  0](RO) Revision value embedded in rules memories.
                                                                  It can change if there is a non-zero entry for a specific address is inserted in
-                                                                 the ROF file and written to the rules memories */
+                                                                 the ROF file and written to the rules memories. */
 #else /* Word 0 - Little Endian */
-        uint64_t revision              : 32; /**< [ 31:  0](RO) Revision Value embedded in rules memories.
+        uint64_t revision              : 32; /**< [ 31:  0](RO) Revision value embedded in rules memories.
                                                                  It can change if there is a non-zero entry for a specific address is inserted in
-                                                                 the ROF file and written to the rules memories */
+                                                                 the ROF file and written to the rules memories. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -4849,7 +4987,7 @@ static inline uint64_t CAVM_REEX_AF_REEXR_ROF_REVISION(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexr_rtru_count
  *
  * REE AF REEX RTRU Count Register
- * Number of completed RTRUs
+ * Number of completed RTRUs.
  */
 union cavm_reex_af_reexr_rtru_count
 {
@@ -4858,9 +4996,9 @@ union cavm_reex_af_reexr_rtru_count
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of completed RTRUs */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of completed RTRUs. */
 #else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of completed RTRUs */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of completed RTRUs. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -4887,7 +5025,7 @@ static inline uint64_t CAVM_REEX_AF_REEXR_RTRU_COUNT(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexr_status
  *
  * REE AF REEX RTRU Status Register
- * This register contains status information about RTRU
+ * This register contains status information about RTRU.
  */
 union cavm_reex_af_reexr_status
 {
@@ -4896,10 +5034,10 @@ union cavm_reex_af_reexr_status
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_8_63         : 56;
-        uint64_t em_init_done          : 1;  /**< [  7:  7](RO/H) Asserted if External memory intialization is complete. */
-        uint64_t l2_cache_init_done    : 1;  /**< [  6:  6](RO/H) Asserted if REEX L2 cache intialization is complete. */
-        uint64_t l1_cache_init_done    : 1;  /**< [  5:  5](RO/H) Asserted if REEX L1 cache intialization is complete. */
-        uint64_t im_init_done          : 1;  /**< [  4:  4](RO/H) Asserted if REEX Internal memory intialization is complete. */
+        uint64_t em_init_done          : 1;  /**< [  7:  7](RO/H) Asserted if External memory initialization is complete. */
+        uint64_t l2_cache_init_done    : 1;  /**< [  6:  6](RO/H) Asserted if REEX L2 cache initialization is complete. */
+        uint64_t l1_cache_init_done    : 1;  /**< [  5:  5](RO/H) Asserted if REEX L1 cache initialization is complete. */
+        uint64_t im_init_done          : 1;  /**< [  4:  4](RO/H) Asserted if REEX Internal memory initialization is complete. */
         uint64_t reserved_2_3          : 2;
         uint64_t update_done           : 1;  /**< [  1:  1](RO/H) Asserted if rules update transaction is complete. */
         uint64_t update_req            : 1;  /**< [  0:  0](RO/H) Update required is asserted if a rules update is required i.e. one or more
@@ -4909,10 +5047,10 @@ union cavm_reex_af_reexr_status
                                                                  values have been written to the RTRU FIFO. */
         uint64_t update_done           : 1;  /**< [  1:  1](RO/H) Asserted if rules update transaction is complete. */
         uint64_t reserved_2_3          : 2;
-        uint64_t im_init_done          : 1;  /**< [  4:  4](RO/H) Asserted if REEX Internal memory intialization is complete. */
-        uint64_t l1_cache_init_done    : 1;  /**< [  5:  5](RO/H) Asserted if REEX L1 cache intialization is complete. */
-        uint64_t l2_cache_init_done    : 1;  /**< [  6:  6](RO/H) Asserted if REEX L2 cache intialization is complete. */
-        uint64_t em_init_done          : 1;  /**< [  7:  7](RO/H) Asserted if External memory intialization is complete. */
+        uint64_t im_init_done          : 1;  /**< [  4:  4](RO/H) Asserted if REEX Internal memory initialization is complete. */
+        uint64_t l1_cache_init_done    : 1;  /**< [  5:  5](RO/H) Asserted if REEX L1 cache initialization is complete. */
+        uint64_t l2_cache_init_done    : 1;  /**< [  6:  6](RO/H) Asserted if REEX L2 cache initialization is complete. */
+        uint64_t em_init_done          : 1;  /**< [  7:  7](RO/H) Asserted if External memory initialization is complete. */
         uint64_t reserved_8_63         : 56;
 #endif /* Word 0 - End */
     } s;
@@ -4939,7 +5077,7 @@ static inline uint64_t CAVM_REEX_AF_REEXR_STATUS(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_0
  *
  * REE AF REEX STAT CLUSTER_0 Register
- * Statistics for REEX cluster 0
+ * Statistics for REEX cluster 0.
  */
 union cavm_reex_af_reexs_cluster_0
 {
@@ -4999,7 +5137,7 @@ static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_0(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_1
  *
  * REE AF REEX STAT CLUSTER_1 Register
- * Statistics for REEX cluster 1
+ * Statistics for REEX cluster 1.
  */
 union cavm_reex_af_reexs_cluster_1
 {
@@ -5059,7 +5197,7 @@ static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_1(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_2
  *
  * REE AF REEX STAT CLUSTER_2 Register
- * Statistics for REEX cluster 2
+ * Statistics for REEX cluster 2.
  */
 union cavm_reex_af_reexs_cluster_2
 {
@@ -5119,7 +5257,7 @@ static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_2(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_3
  *
  * REE AF REEX STAT CLUSTER_3 Register
- * Statistics for REEX cluster 3
+ * Statistics for REEX cluster 3.
  */
 union cavm_reex_af_reexs_cluster_3
 {
@@ -5179,7 +5317,7 @@ static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_3(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_4
  *
  * REE AF REEX STAT CLUSTER_4 Register
- * Statistics for REEX cluster 4
+ * Statistics for REEX cluster 4.
  */
 union cavm_reex_af_reexs_cluster_4
 {
@@ -5239,7 +5377,7 @@ static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_4(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_5
  *
  * REE AF REEX STAT CLUSTER_5 Register
- * Statistics for REEX cluster 5
+ * Statistics for REEX cluster 5.
  */
 union cavm_reex_af_reexs_cluster_5
 {
@@ -5299,7 +5437,7 @@ static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_5(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_6
  *
  * REE AF REEX STAT CLUSTER_6 Register
- * Statistics for REEX cluster 6
+ * Statistics for REEX cluster 6.
  */
 union cavm_reex_af_reexs_cluster_6
 {
@@ -5359,7 +5497,7 @@ static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_6(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_7
  *
  * REE AF REEX STAT CLUSTER_7 Register
- * Statistics for REEX cluster 7
+ * Statistics for REEX cluster 7.
  */
 union cavm_reex_af_reexs_cluster_7
 {
@@ -5419,7 +5557,7 @@ static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_7(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_dp
  *
  * REE AF REEX STAT DP Register
- * REEX Statistics for Data Plane I/F
+ * REEX statistics for data plane interface.
  */
 union cavm_reex_af_reexs_dp
 {
@@ -5471,7 +5609,7 @@ static inline uint64_t CAVM_REEX_AF_REEXS_DP(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_l2_cache
  *
  * REE AF REEX STAT L2_CACHE Register
- * Statistics for L2 Cache
+ * Statistics for L2 Cache.
  */
 union cavm_reex_af_reexs_l2_cache
 {
@@ -5519,7 +5657,7 @@ static inline uint64_t CAVM_REEX_AF_REEXS_L2_CACHE(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_reexs_pe
  *
  * REE AF REEX STAT PE Register
- * REEX Statistics for PE.
+ * REEX statistics for PE.
  */
 union cavm_reex_af_reexs_pe
 {
@@ -5528,14 +5666,14 @@ union cavm_reex_af_reexs_pe
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
-        uint64_t pthread_valid_duty_cycle : 8;/**< [ 15:  8](RO/H) Number of clock cycles the PE dispatched a Primary Thread
+        uint64_t pthread_valid_duty_cycle : 8;/**< [ 15:  8](RO/H) Number of clock cycles the PE dispatched a primary thread
                                                                  in the previous window component of 256 clock cycles. */
         uint64_t nd_duty_cycle         : 8;  /**< [  7:  0](RO/H) Number of clock cycles the PE received a new data word
                                                                  in the previous window component of 256 clock cycles. */
 #else /* Word 0 - Little Endian */
         uint64_t nd_duty_cycle         : 8;  /**< [  7:  0](RO/H) Number of clock cycles the PE received a new data word
                                                                  in the previous window component of 256 clock cycles. */
-        uint64_t pthread_valid_duty_cycle : 8;/**< [ 15:  8](RO/H) Number of clock cycles the PE dispatched a Primary Thread
+        uint64_t pthread_valid_duty_cycle : 8;/**< [ 15:  8](RO/H) Number of clock cycles the PE dispatched a primary thread
                                                                  in the previous window component of 256 clock cycles. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
@@ -5805,13 +5943,13 @@ union cavm_reex_af_throttle
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_7_63         : 57;
         uint64_t ld_infl               : 7;  /**< [  6:  0](R/W) Maximum number of in-flight data fetch transactions on the NCB. Larger values may improve
-                                                                 REE performance but may starve other devices on the same NCB. Maxiumal allowed value is 0x40.
+                                                                 REE performance but may starve other devices on the same NCB. Maximal allowed value is 0x40.
 
                                                                  The value zero causes the REE instruction execution unit to temporarily suspend
                                                                  NCB read accesses; such use is for diagnostic use only. */
 #else /* Word 0 - Little Endian */
         uint64_t ld_infl               : 7;  /**< [  6:  0](R/W) Maximum number of in-flight data fetch transactions on the NCB. Larger values may improve
-                                                                 REE performance but may starve other devices on the same NCB. Maxiumal allowed value is 0x40.
+                                                                 REE performance but may starve other devices on the same NCB. Maximal allowed value is 0x40.
 
                                                                  The value zero causes the REE instruction execution unit to temporarily suspend
                                                                  NCB read accesses; such use is for diagnostic use only. */
@@ -5960,13 +6098,13 @@ union cavm_reex_lf_done_ack
 
                                                                  Written by software to acknowledge interrupts. If REE_LF_DONE[DONE] is still
                                                                  nonzero, the interrupt will be re-sent if the conditions described in
-                                                                 REE_LF_DONE[DONE] are satified. */
+                                                                 REE_LF_DONE[DONE] are satisfied. */
 #else /* Word 0 - Little Endian */
         uint64_t done_ack              : 20; /**< [ 19:  0](R/W/H) Number of decrements to REE_LF_DONE[DONE]. When read, returns REE_LF_DONE[DONE].
 
                                                                  Written by software to acknowledge interrupts. If REE_LF_DONE[DONE] is still
                                                                  nonzero, the interrupt will be re-sent if the conditions described in
-                                                                 REE_LF_DONE[DONE] are satified. */
+                                                                 REE_LF_DONE[DONE] are satisfied. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
     } s;
@@ -6185,7 +6323,7 @@ static inline uint64_t CAVM_REEX_LF_DONE_INT_W1S(unsigned long a)
  * Register (RVU_PFVF_BAR2) ree#_lf_done_wait
  *
  * REE LF Queue Done Interrupt Coalescing Wait Registers
- * Specifies the per queue interrupt coalescing settings.
+ * Specifies the per-queue interrupt coalescing settings.
  */
 union cavm_reex_lf_done_wait
 {
@@ -6198,8 +6336,8 @@ union cavm_reex_lf_done_wait
                                                                  timer is cleared. When the timer reaches [TIME_WAIT] microseconds then interrupt
                                                                  coalescing ends; see REE_LF_DONE[DONE]. If zero, time coalescing is disabled.
 
-                                                                 The implimentation of timer is such that the timer can expire up to 1us less then TIME_WAIT.
-                                                                 Range of timer = [TIME_WAIT] * 1 us - (0 to 1 us) */
+                                                                 The implementation of timer is such that the timer can expire up to 1us less then TIME_WAIT.
+                                                                 Range of timer = [TIME_WAIT] * 1 us - (0 to 1 us). */
         uint64_t reserved_20_31        : 12;
         uint64_t num_wait              : 20; /**< [ 19:  0](R/W) Number of messages hold-off.  When REE_LF_DONE[DONE] \>= [NUM_WAIT] then interrupt
                                                                  coalescing ends; see REE_LF_DONE[DONE]. If zero, same behavior as 0x1. */
@@ -6211,8 +6349,8 @@ union cavm_reex_lf_done_wait
                                                                  timer is cleared. When the timer reaches [TIME_WAIT] microseconds then interrupt
                                                                  coalescing ends; see REE_LF_DONE[DONE]. If zero, time coalescing is disabled.
 
-                                                                 The implimentation of timer is such that the timer can expire up to 1us less then TIME_WAIT.
-                                                                 Range of timer = [TIME_WAIT] * 1 us - (0 to 1 us) */
+                                                                 The implementation of timer is such that the timer can expire up to 1us less then TIME_WAIT.
+                                                                 Range of timer = [TIME_WAIT] * 1 us - (0 to 1 us). */
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } s;
@@ -6300,7 +6438,7 @@ union cavm_reex_lf_ena
                                                                  Software must only transition [ENA] 0-\>1 when the queue is quiescent. See
                                                                  REE_LF_OUTSTAND_JOB[OJOB_CNT].
 
-                                                                 Transaition of [ENA] 0-\>1 will set REE_LF_DOORBELL[DBELL_CNT] to
+                                                                 Transition of [ENA] 0-\>1 will set REE_LF_DOORBELL[DBELL_CNT] to
                                                                  zero and REE_LF_SBUF_ADDR[PTR] and REE_LF_SBUF_ADDR[off] are set to starting
                                                                  IOVA.
 
@@ -6314,7 +6452,7 @@ union cavm_reex_lf_ena
                                                                  Software must only transition [ENA] 0-\>1 when the queue is quiescent. See
                                                                  REE_LF_OUTSTAND_JOB[OJOB_CNT].
 
-                                                                 Transaition of [ENA] 0-\>1 will set REE_LF_DOORBELL[DBELL_CNT] to
+                                                                 Transition of [ENA] 0-\>1 will set REE_LF_DOORBELL[DBELL_CNT] to
                                                                  zero and REE_LF_SBUF_ADDR[PTR] and REE_LF_SBUF_ADDR[off] are set to starting
                                                                  IOVA.
 
@@ -6354,7 +6492,7 @@ union cavm_reex_lf_misc_int
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_10_63        : 54;
-        uint64_t plle                  : 1;  /**< [  9:  9](R/W1C/H) Payload length error. Payload length not be between 1 and 16384 inclusive. */
+        uint64_t plle                  : 1;  /**< [  9:  9](R/W1C/H) Payload length error. Payload length not between 1 and 16384 inclusive. */
         uint64_t glse                  : 1;  /**< [  8:  8](R/W1C/H) Gather list size error. Gather list size is not between 1 and 8 entries inclusive. */
         uint64_t gdle                  : 1;  /**< [  7:  7](R/W1C/H) Gather data length error. Gather data length not equal to job length. */
         uint64_t idle                  : 1;  /**< [  6:  6](R/W1C/H) Instruction data length error. Data length not equal to job length. */
@@ -6374,7 +6512,7 @@ union cavm_reex_lf_misc_int
         uint64_t idle                  : 1;  /**< [  6:  6](R/W1C/H) Instruction data length error. Data length not equal to job length. */
         uint64_t gdle                  : 1;  /**< [  7:  7](R/W1C/H) Gather data length error. Gather data length not equal to job length. */
         uint64_t glse                  : 1;  /**< [  8:  8](R/W1C/H) Gather list size error. Gather list size is not between 1 and 8 entries inclusive. */
-        uint64_t plle                  : 1;  /**< [  9:  9](R/W1C/H) Payload length error. Payload length not be between 1 and 16384 inclusive. */
+        uint64_t plle                  : 1;  /**< [  9:  9](R/W1C/H) Payload length error. Payload length not between 1 and 16384 inclusive. */
         uint64_t reserved_10_63        : 54;
 #endif /* Word 0 - End */
     } s;
