@@ -111,11 +111,32 @@ int plat_octeontx_get_gser_count(void)
 	return 8;
 }
 
+int plat_otx2_get_gserp_count(void)
+{
+	return 5;
+}
+
 qlm_state_lane_t plat_otx2_get_qlm_state_lane(int qlm, int lane)
 {
 	qlm_state_lane_t state;
 
-	state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm, lane, 0));
+	state.u = 0;
+	state.s.mode = QLM_MODE_DISABLED;
+
+	if (qlm >= plat_octeontx_get_gser_count())
+		return state;
+
+	if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 3)) {
+		int gserr_qlm;
+		int gserp_count = plat_otx2_get_gserp_count();
+
+		if (qlm < gserp_count)
+			return state;
+		gserr_qlm = qlm - gserp_count;
+		state.u = CSR_READ(CAVM_GSERRX_SCRATCHX(gserr_qlm, lane));
+	} else {
+		state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm, lane, 0));
+	}
 
 	return state;
 }
@@ -138,6 +159,9 @@ int plat_octeontx_get_mcc_count(void)
 /* Return number of lanes available for different QLMs. */
 int plat_get_max_lane_num(int qlm)
 {
+	if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 3))
+		return 4;
+
 	if ((qlm == 4) || (qlm == 5))
 		return 2;
 	return 4;
@@ -258,10 +282,17 @@ void plat_add_mmio()
 		add_map_record(CAVM_PEM_BAR_E_PEMX_PF_BAR4_CN9(i), CAVM_PEM_BAR_E_PEMX_PF_BAR4_CN9_SIZE, attr);
 	}
 
-	device_type_count = plat_octeontx_get_gser_count();
-	for (i = 0; i < device_type_count; i++)
-		add_map_record(CAVM_GSERN_BAR_E_GSERNX_PF_BAR0(i),
-			       CAVM_GSERN_BAR_E_GSERNX_PF_BAR0_SIZE, attr);
+	if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 3)) {
+		device_type_count = plat_octeontx_get_cgx_count();
+		for (i = 0; i < device_type_count; i++)
+			add_map_record(CAVM_GSERR_BAR_E_GSERRX_PF_BAR0(i),
+				       CAVM_GSERR_BAR_E_GSERRX_PF_BAR0_SIZE, attr);
+	} else {
+		device_type_count = plat_octeontx_get_gser_count();
+		for (i = 0; i < device_type_count; i++)
+			add_map_record(CAVM_GSERN_BAR_E_GSERNX_PF_BAR0(i),
+				       CAVM_GSERN_BAR_E_GSERNX_PF_BAR0_SIZE, attr);
+	}
 
 	add_map_record(CAVM_DAP_BAR_E_DAP_PF_BAR0, CAVM_DAP_BAR_E_DAP_PF_BAR0_SIZE, attr);
 	add_map_record(CAVM_DAP_BAR_E_DAP_PF_BAR2_CN9, CAVM_DAP_BAR_E_DAP_PF_BAR2_CN9_SIZE, attr);

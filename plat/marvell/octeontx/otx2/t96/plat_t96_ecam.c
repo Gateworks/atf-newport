@@ -30,7 +30,7 @@
 #endif
 
 /* Probe GSERNX_LANE_SCRATCHX[] for CGX config */
-static int ecam_probe_cgx(unsigned long long arg)
+static int ecam_probe_cgx_p1(unsigned long long arg)
 {
 	qlm_state_lane_t qlm_state;
 	int qlm = -1, qlm1 = -1, lnum = 0;
@@ -90,6 +90,46 @@ static int ecam_probe_cgx(unsigned long long arg)
 		qlm1 = -1;
 	};
 	return 0;
+}
+
+static int ecam_probe_cgx_p3(unsigned long long arg)
+{
+	qlm_state_lane_t qlm_state;
+	int lnum = 0, qlm = 0;
+
+	printf("%s arg %lld\n", __func__, arg);
+
+	switch (arg) {
+	case 0:
+		qlm = 7;
+		break;
+	case 1:
+		qlm = 5;
+		break;
+	case 2:
+		qlm = 6;
+		break;
+	}
+
+	lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm];
+	for (int lane = 0; lane < lnum; lane++) {
+		qlm_state = plat_otx2_get_qlm_state_lane(qlm, lane);
+		if (qlm_state.s.cgx) {
+			debug_plat_ecam("%s: CGX detected on qlm %d lane %d\n",
+					__func__, qlm, lane);
+			return 1;
+		}
+	};
+
+	return 0;
+}
+
+static int ecam_probe_cgx(unsigned long long arg)
+{
+	if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 3))
+		return ecam_probe_cgx_p3(arg);
+	else
+		return ecam_probe_cgx_p1(arg);
 }
 
 struct ecam_probe_callback probe_callbacks[] = {
