@@ -1774,10 +1774,12 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		 */
 		if (!strncmp(plat_octeontx_bcfg->bcfg.board_model,
 					"ebb96", 5)) {
-			if (lmac->qlm == 4)
-				qlm = 5;
-			else if (lmac->qlm == 5)
-				qlm = 4;
+			if (qlm_get_lanes(lmac->qlm) == 2) {
+				if (lmac->qlm == 4)
+					qlm = 5;
+				else if (lmac->qlm == 5)
+					qlm = 4;
+			}
 		}
 		lane_mask = cgx_get_lane_mask(qlm, lane, lmac->mode);
 

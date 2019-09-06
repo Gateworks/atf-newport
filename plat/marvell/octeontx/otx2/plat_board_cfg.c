@@ -1231,7 +1231,7 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		 * and same for DLM 4.
 		 */
 		if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5)) {
-			if ((qlm == 4) || (qlm == 5))
+			if (plat_octeontx_scfg->qlm_max_lane_num[qlm] == 2)
 				lmac->rev_lane -= 2;
 		}
 		switch (mode) {
@@ -1245,7 +1245,9 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 			/* The RXAUI mode is always using a double lane. So
 			 * the lane value can be 0 or 2.
 			 */
-			if (cavm_is_model(OCTEONTX_CN9XXX) && (qlm == 5))
+			if (cavm_is_model(OCTEONTX_CN96XX)
+			    && (qlm == 5)
+			    && plat_octeontx_scfg->qlm_max_lane_num[qlm] == 2)
 				lane += 2;
 			lmac->lane_to_sds = (lane_to_sds >> (lane * 2)) & 0xF;
 			break;
@@ -1257,8 +1259,9 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 			if ((plat_get_altpkg() == CN95XXE_PKG) && (qlm == 4))
 				lmac->lane_to_sds = !lane;
 			else {
-				if (cavm_is_model(OCTEONTX_CN9XXX) &&
-							(qlm == 5))
+				if (cavm_is_model(OCTEONTX_CN96XX)
+				    && (qlm == 5)
+				    && plat_octeontx_scfg->qlm_max_lane_num[qlm] == 2)
 					lane += 2;
 
 				lmac->lane_to_sds = ((lane_to_sds >> (lane * 2))
@@ -1428,7 +1431,9 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 		int lane;
 		/* Look for lane index instead of LMAC index for each LMAC */
 		lmac = &cgx->lmac_cfg[lmac_idx];
-		if (cavm_is_model(OCTEONTX_CN9XXX) && (lmac->qlm == 5))
+		if (cavm_is_model(OCTEONTX_CN96XX)
+		    && (lmac->qlm == 5)
+		    && plat_octeontx_scfg->qlm_max_lane_num[lmac->qlm] == 2)
 			lane = lmac->lane + 2;
 		else
 			lane = lmac->lane;

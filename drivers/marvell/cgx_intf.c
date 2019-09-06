@@ -879,10 +879,12 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 			 */
 			if (!strncmp(plat_octeontx_bcfg->bcfg.board_model,
 					"ebb96", 5)) {
-				if (lmac->qlm == 4)
-					qlm = 5;
-				else if (lmac->qlm == 5)
-					qlm = 4;
+				if (qlm_get_lanes(qlm) == 2) {
+					if (lmac->qlm == 4)
+						qlm = 5;
+					else if (lmac->qlm == 5)
+						qlm = 4;
+				}
 			}
 			debug_cgx_intf("%s: Re-configuring serdes for mode %d, baud rate %d, lmac type %d\n",
 						__func__, qlm_mode, baud_mhz,
@@ -902,6 +904,7 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 			/* Update the SCRATCHX register with the new link info to the
 			 * original lane
 			 */
+			/* FIXME */
 			GSERN_CSR_WRITE(CAVM_GSERNX_LANEX_SCRATCHX(qlm, lmac->lane,
 						0), state.u);
 
