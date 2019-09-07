@@ -1431,9 +1431,8 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 		int lane;
 		/* Look for lane index instead of LMAC index for each LMAC */
 		lmac = &cgx->lmac_cfg[lmac_idx];
-		if (cavm_is_model(OCTEONTX_CN96XX)
-		    && (lmac->qlm == 5)
-		    && plat_octeontx_scfg->qlm_max_lane_num[lmac->qlm] == 2)
+		if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X)
+		    && (lmac->qlm == 5))
 			lane = lmac->lane + 2;
 		else
 			lane = lmac->lane;
