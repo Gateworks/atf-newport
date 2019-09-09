@@ -247,16 +247,13 @@ static void cgx_restart_an(int cgx_id, int lmac_id)
 
 static void cgx_restart_training(int cgx_id, int lmac_id)
 {
-	cavm_cgxx_spux_int_t spux_int;
-
 	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
 
 	/* clear the training interrupts by writing 1 - W1C CSR */
-	spux_int.u = CSR_READ(CAVM_CGXX_SPUX_INT(
-				cgx_id, lmac_id));
-	spux_int.s.training_done = 1;
-	spux_int.s.training_failure = 1;
-	CSR_WRITE(CAVM_CGXX_SPUX_INT(cgx_id, lmac_id), spux_int.u);
+	CSR_WRITE(CAVM_CGXX_SPUX_INT(cgx_id, lmac_id),
+			CGX_SPUX_TRAINING_DONE_MASK);
+	CSR_WRITE(CAVM_CGXX_SPUX_INT(cgx_id, lmac_id),
+			CGX_SPUX_TRAINING_FAIL_MASK);
 
 	CSR_WRITE(CAVM_CGXX_SPUX_BR_PMD_LD_CUP(cgx_id, lmac_id), 0);
 	CSR_WRITE(CAVM_CGXX_SPUX_BR_PMD_LP_CUP(cgx_id, lmac_id), 0);
@@ -1237,9 +1234,10 @@ static int cgx_complete_sw_an(int cgx_id, int lmac_id)
 					CGX_ERR_AN_CPT_FAIL);
 			return -1;
 		}
-		/* W1C */
-		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_int_t,
-			CAVM_CGXX_SPUX_INT(cgx_id, lmac_id), an_page_rx, 1);
+
+		/* Clear AN page RX - W1C */
+		CSR_WRITE(CAVM_CGXX_SPUX_INT(cgx_id, lmac_id),
+				CGX_SPUX_AN_RX_PAGE_MASK);
 
 		/* Read the link partner's base page ability */
 		an_lp_base.u = CSR_READ(CAVM_CGXX_SPUX_AN_LP_BASE(cgx_id,
@@ -1736,14 +1734,11 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 	/* check training is complete if enabled */
 	if (lmac->use_training) {
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_INT(cgx_id, lmac_id),
-			CGX_SPUX_TRAINING_MASK, 1, CGX_POLL_TRAINING_STATUS)) {
+			CGX_SPUX_TRAINING_DONE_MASK, 1,
+			CGX_POLL_TRAINING_STATUS)) {
 			spux_int.u = CSR_READ(CAVM_CGXX_SPUX_INT(
 					cgx_id, lmac_id));
 			if (!spux_int.s.training_failure) {
-				/* Training done not set, but training
-				 * failure not set. As of now, consider
-				 * this as valid, FIXME?
-				 */
 				debug_cgx("%s: %d:%d No Training failure\n",
 					__func__, cgx_id, lmac_id);
 			} else {
