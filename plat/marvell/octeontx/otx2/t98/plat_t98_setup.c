@@ -87,24 +87,37 @@ int plat_octeontx_get_cgx_count(void)
 
 int plat_octeontx_get_pem_count(void)
 {
-	return 9;
+	return 5;
 }
 
 int plat_octeontx_get_gser_count(void)
 {
-	return plat_octeontx_get_cgx_count();
+	return 15;
+}
+
+int plat_otx2_get_gserp_count(void)
+{
+	return 10;
 }
 
 qlm_state_lane_t plat_otx2_get_qlm_state_lane(int qlm, int lane)
 {
 	qlm_state_lane_t state;
+	int gserr_qlm;
+	int gserp_count;
 
-	if (qlm <= plat_octeontx_get_cgx_count())
-		state.u = CSR_READ(CAVM_GSERRX_SCRATCHX(qlm, lane));
-	else {
-		state.u = 0;
-		state.s.mode = QLM_MODE_DISABLED;
-	}
+	state.u = 0;
+	state.s.mode = QLM_MODE_DISABLED;
+
+	if (qlm >= plat_octeontx_get_gser_count())
+		return state;
+
+	gserp_count = plat_otx2_get_gserp_count();
+	if (qlm < gserp_count)
+		return state;
+
+	gserr_qlm = qlm - gserp_count;
+	state.u = CSR_READ(CAVM_GSERRX_SCRATCHX(gserr_qlm, lane));
 
 	return state;
 }

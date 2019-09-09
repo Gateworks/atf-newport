@@ -12,7 +12,7 @@
 #define MAX_MCC 2
 #define MAX_LMC 6
 
-#define MAX_QLM 5
+#define MAX_QLM 15
 #define MAX_LANES_PER_QLM 4
 
 #endif /* __PLATFORM_BOARD_CFG_H__ */
