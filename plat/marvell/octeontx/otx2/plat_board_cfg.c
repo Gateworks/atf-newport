@@ -1245,9 +1245,8 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 			/* The RXAUI mode is always using a double lane. So
 			 * the lane value can be 0 or 2.
 			 */
-			if (cavm_is_model(OCTEONTX_CN96XX)
-			    && (qlm == 5)
-			    && plat_octeontx_scfg->qlm_max_lane_num[qlm] == 2)
+			if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X)
+			    && (qlm == 5))
 				lane += 2;
 			lmac->lane_to_sds = (lane_to_sds >> (lane * 2)) & 0xF;
 			break;
@@ -1259,9 +1258,8 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 			if ((plat_get_altpkg() == CN95XXE_PKG) && (qlm == 4))
 				lmac->lane_to_sds = !lane;
 			else {
-				if (cavm_is_model(OCTEONTX_CN96XX)
-				    && (qlm == 5)
-				    && plat_octeontx_scfg->qlm_max_lane_num[qlm] == 2)
+				if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X)
+				    && (qlm == 5))
 					lane += 2;
 
 				lmac->lane_to_sds = ((lane_to_sds >> (lane * 2))
