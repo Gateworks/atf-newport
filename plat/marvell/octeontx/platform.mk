@@ -4,6 +4,11 @@
 # https://spdx.org/licenses
 
 
+ifeq (${BUILD_TYPE}, release)
+	# Use LOG_LEVEL_WARN in release builds
+        LOG_LEVEL	:=	30
+endif
+
 LIBFDT_DIR		:=	lib/libfdt
 
 PLAT_INCLUDES		:=	-Iinclude/common/tbbr				\
