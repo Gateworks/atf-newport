@@ -490,7 +490,7 @@ void plat_set_bphy_psm_msix_vectors(int msix_num, int irq_num, int enable)
 
 	while (cap_pointer) {
 		msicap = (struct msix_cap *)(config_base + cap_pointer);
-		if (msicap->cap_ID == PCI_MSIX_CAP_ID) {
+		if (msicap->cap_ID == ECAM_PCIEID_MSIX_CAP_ID) {
 			msicap->messagecontrol |= (1 << 15);
 			break;
 		}
