@@ -146,6 +146,10 @@ void phy_marvell_5123_config(int cgx_id, int lmac_id)
 		fec_type = MCD_FC_FEC_HOST;
 
 	switch (lmac_cfg->mode_idx) {
+	case QLM_MODE_1G_X:
+		op_mode = MCD_MODE_P1;
+		mode_str = "1000 BASE-X";
+	break;
 	case QLM_MODE_XLAUI:
 	case QLM_MODE_XLAUI_C2M:
 		op_mode = MCD_MODE_P40L;
@@ -255,6 +259,19 @@ void phy_marvell_5123_config(int cgx_id, int lmac_id)
 			return;
 		}
 	}
+	if (phy->forceconfig) {
+		/* SW reset the port */
+		mcdPortReset(&marvell_5123_priv.mcddev,
+				port_num,
+				MCD_BOTH_SIDE,
+				MCD_SOFT_RESET,
+				100);
+		if (status != MCD_OK) {
+			printf("%s: port%d mcdPortReset() fail %d\n",
+				__func__, port_num, status);
+			return;
+		}
+	}
 }
 
 /* To enable/disable AN */
@@ -358,6 +375,9 @@ void phy_marvell_5123_get_link_status(int cgx_id, int lmac_id,
 		 * mode configured
 		 */
 		switch (lmac_cfg->mode_idx) {
+		case QLM_MODE_1G_X:
+			link->s.speed = CGX_LINK_1G;
+		break;
 		case QLM_MODE_XFI:
 		case QLM_MODE_SFI:
 			link->s.speed = CGX_LINK_10G;
@@ -405,8 +425,7 @@ void phy_marvell_5123_supported_modes(int cgx_id, int lmac_id)
 
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
 
-	phy->supported_link_modes = ((1 << CGX_MODE_SGMII_BIT) |
-			(1 << CGX_MODE_1000_BASEX_BIT) |
+	phy->supported_link_modes = ((1 << CGX_MODE_1000_BASEX_BIT) |
 			(1 << CGX_MODE_10G_C2C_BIT) |
 			(1 << CGX_MODE_10G_C2M_BIT) |
 			(1 << CGX_MODE_20G_C2C_BIT) |
