@@ -24,6 +24,7 @@ typedef struct rvu_sw_rvu_pf {
 typedef enum {
 	SW_RVU_SSO_TIM_PF,
 	SW_RVU_NPA_PF,
+	SW_RVU_SDP_PF,
 	SW_RVU_CPT_PF,
 	SW_RVU_MAX_PF
 } sw_rvu_pfs;
@@ -31,6 +32,7 @@ typedef enum {
 typedef struct rvu_config {
 	int valid;
 	int cpt_dis;	/* to indicate if CPT block is not present */
+	int sdp_dis;	/* to indicate if SDP is not in FDT */
 	rvu_sw_rvu_pf_t admin_pf;
 	rvu_sw_rvu_pf_t sw_pf[SW_RVU_MAX_PF];
 } rvu_config_t;

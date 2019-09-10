@@ -527,6 +527,15 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 		return;
 	}
 
+#ifdef RVU_SDP_FDT_NODE
+	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_SDP_FDT_NODE,
+				    SW_RVU_SDP_PF, fdt_vfs);
+	if (rc < 0)
+		plat_octeontx_bcfg->rvu_config.sdp_dis = 1;
+#else /* RVU_SDP_FDT_NODE */
+	plat_octeontx_bcfg->rvu_config.sdp_dis = 1;
+#endif /* RVU_SDP_FDT_NODE */
+
 	/* Find if CPT node is available */
 	if (plat_octeontx_get_cpt_count()) {
 		/* if CPT block is available, check if node is

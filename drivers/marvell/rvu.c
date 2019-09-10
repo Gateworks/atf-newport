@@ -18,6 +18,7 @@
 #include <debug.h>
 #include <octeontx_utils.h>
 #include <plat_scfg.h>
+#include <plat_otx2_configuration.h>
 
 #ifdef DEBUG_ATF_RVU
 #define debug_rvu printf
@@ -94,6 +95,15 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 		rvu_dev[rvu].vf_num_msix_vec = has_vfs ?
 						sw_pf->num_msix_vec : 0;
 		break;
+	case SW_RVU_SDP_PF:
+		rvu_dev[rvu].pci.pf_devid =
+			CAVM_PCC_DEV_IDL_E_SW_RVU_SDP_PF & DEVID_MASK;
+		rvu_dev[rvu].pci.vf_devid =
+			CAVM_PCC_DEV_IDL_E_SW_RVU_SDP_VF & DEVID_MASK;
+		rvu_dev[rvu].pci.class_code = GSP_CLASS_CODE & CLASS_CODE_MASK;
+		rvu_dev[rvu].vf_num_msix_vec = has_vfs ?
+						sw_pf->num_msix_vec : 0;
+		break;
 	case SW_RVU_CPT_PF:
 		rvu_dev[rvu].pci.pf_devid =
 			CAVM_PCC_DEV_IDL_E_SW_RVU_CPT_PF & DEVID_MASK;
@@ -124,6 +134,27 @@ static void octeontx_init_rvu_lmac(int *hwvf, int rvu, cgx_config_t *cgx,
 	*hwvf += rvu_dev[rvu].num_vfs;
 }
 
+/* Return true if any PEM is in EP mode */
+static int octeontx_is_in_ep_mode(void)
+{
+	cavm_pemx_cfg_t pemx_cfg;
+	cavm_pemx_on_t pemx_on;
+	int pem, pem_num;
+
+	pem_num = plat_octeontx_get_pem_count();
+
+	for (pem = 0; pem < pem_num; pem++) {
+		/* Check pemon and hostmd bits of PEM0 for EP mode */
+		pemx_on.u = CSR_READ(CAVM_PEMX_ON(pem));
+		pemx_cfg.u = CSR_READ(CAVM_PEMX_CFG(pem));
+		if (pemx_on.cn9.pemon && !pemx_cfg.cn9.hostmd)
+			return 1;
+	}
+
+	/* Device is not in EP mode */
+	return 0;
+}
+
 static int octeontx_init_rvu_from_fdt(void)
 {
 	int cgx_id, lmac_id, pf, current_hwvf = 0;
@@ -147,9 +178,17 @@ static int octeontx_init_rvu_from_fdt(void)
 	octeontx_init_rvu_fixed(&current_hwvf, RVU_SSO_TIM,
 				SW_RVU_SSO_TIM_PF, TRUE);
 
-	/* Init RVU(last-1) - NPA (PF(last-1)) */
-	octeontx_init_rvu_fixed(&current_hwvf, RVU_NPA,
-				SW_RVU_NPA_PF, TRUE);
+	/*
+	 * Init RVU(last-1) - NPA (PF(last-1))
+	 * If there is SDP node in FDT and device is in EP mode,
+	 * use PF(last-1) as SDP instead of NPA
+	 */
+	if (!plat_octeontx_bcfg->rvu_config.sdp_dis && octeontx_is_in_ep_mode())
+		octeontx_init_rvu_fixed(&current_hwvf, RVU_NPA,
+					SW_RVU_SDP_PF, TRUE);
+	else
+		octeontx_init_rvu_fixed(&current_hwvf, RVU_NPA,
+					SW_RVU_NPA_PF, TRUE);
 
 	if (plat_octeontx_bcfg->rvu_config.cpt_dis)
 		uninit_pfs = 1;
