@@ -409,6 +409,7 @@ retry_mod_stat:
 					"trans_type %d\n",
 					__func__, cgx_id, lmac_id,
 					trans_type);
+					goto retry_link;
 				} else {
 					ERROR("%s: %d:%d User config\t"
 						"doesn't match EEPROM\n",
