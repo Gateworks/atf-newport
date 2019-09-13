@@ -248,7 +248,7 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id);
 int cgx_sgmii_check_an_cpt(int cgx_id, int lmac_id);
 int cgx_fec_change(int cgx_id, int lmac_id, int new_fec);
 int cgx_get_supported_fec_type(int cgx_id, int lmac_id);
-int cgx_validate_fec_config(int mode, int req_fec);
+int cgx_validate_fec_config(int cgx_id, int lmac_id, int req_fec);
 int cgx_get_lane_speed(int cgx_id, int lmac_id);
 void cgx_lmac_init(int cgx_id, int lmac_id);
 

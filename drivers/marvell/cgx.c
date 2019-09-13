@@ -1011,11 +1011,15 @@ static void cgx_mode_change(int cgx_id, int lmac_id, int new_mode,
 	debug_cgx("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 }
 
-int cgx_validate_fec_config(int mode, int req_fec)
+int cgx_validate_fec_config(int cgx_id, int lmac_id, int req_fec)
 {
+	cgx_lmac_config_t *lmac;
 	int fec = req_fec;
 
-	debug_cgx("%s: mode %d, req_fec %d\n", __func__, mode, req_fec);
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	debug_cgx("%s: %d:%d mode %d, req_fec %d\n", __func__, cgx_id, lmac_id,
+		  lmac->mode, req_fec);
 
 	/* FEC can be disabled by user. In that case, no need
 	 * to validate against any PCS supported FEC option.
@@ -1029,11 +1033,34 @@ int cgx_validate_fec_config(int mode, int req_fec)
 	 * If the type is not correct, set FEC to be -1 so default
 	 * FEC type can be configured
 	 */
-	switch (mode) {
+	switch (lmac->mode) {
 	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
-	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
 		if (fec != CGX_FEC_BASE_R) {
-			WARN("%s: 10G/40G PCS doesn't support FEC type %d\t"
+			WARN("%s: 10G PCS doesn't support FEC type %d\t"
+				"default FEC type will be set\n",
+				__func__, req_fec);
+			fec = -1;
+		}
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+		if (lmac->mode_idx == QLM_MODE_50GAUI_4_C2C) {
+			/* The T9X's proprietary 50GBASE-R4 PCS (which is based
+			 * on 40GBASE-R4) does not support FEC, but the PHY
+			 * line-side PCS (50GBASE-R2 or 50GBASE-R1) does.
+			 */
+			if (lmac->phy_config.mod_type == PHY_MOD_TYPE_PAM4) {
+				if (fec != CGX_FEC_RS) {
+					WARN("%s: PAM4 does not support FEC type %d\t"
+					     "default FEC type will be set\n",
+					      __func__, req_fec);
+					fec = -1;
+				}
+			} else {
+				if (fec != CGX_FEC_BASE_R && fec != CGX_FEC_RS)
+					fec = -1;
+			}
+		} else if (fec != CGX_FEC_BASE_R) {
+			WARN("%s: 40G PCS doesn't support FEC type %d\t"
 				"default FEC type will be set\n",
 				__func__, req_fec);
 			fec = -1;

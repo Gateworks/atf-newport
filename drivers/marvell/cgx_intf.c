@@ -942,8 +942,8 @@ int cgx_set_fec_type(int cgx_id, int lmac_id, int req_fec)
 		return 0;
 	}
 
-	/* Validate FEC based on LMAC mode */
-	ret = cgx_validate_fec_config(lmac->mode, req_fec);
+	/* Validate FEC based on LMAC mode, QLM mode, and PHY mod type */
+	ret = cgx_validate_fec_config(cgx_id, lmac_id, req_fec);
 	if (ret == -1) {
 		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_SET_FEC_INVALID);
 		return -1;

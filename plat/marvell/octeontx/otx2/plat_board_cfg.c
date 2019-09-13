@@ -1505,7 +1505,8 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 					  "octeontx,fec-type", &len);
 			if (val) {
 				req_fec = fdt32_to_cpu(*val);
-				lmac->fec = cgx_validate_fec_config(lmac->mode,
+				lmac->fec = cgx_validate_fec_config(cgx_idx,
+								    lmac_idx,
 								    req_fec);
 			} else {
 				/* User did not specify FEC type property
