@@ -499,11 +499,8 @@ struct cgx_mode_change_args {
         uint64_t duplex:1; /* 0 - full duplex, 1 - half duplex */
         uint64_t an:1;  /* 0 - disable AN, 1 - enable AN */
         uint64_t port:8; /* device port */
-        uint64_t flags:8; /* private flags if required */
-        uint64_t reserved2:34;
+        uint64_t mode:42;
 };
-
-For now, speed and autoneg are supported.
 
 ATF generates interrupt as a response to this command,
   - evt_type : `CGX_EVT_CMD_RESP`
@@ -1173,24 +1170,51 @@ Turning off PAM4 means setting modulation type to NRZ.
 -- Set PHY MOD type for any of RVU PF based network interfaces
 	* where type - 0 [NRZ] 1 [PAM4]
 
-### 9.5 Change speed via ethtool
+### 9.5 Change speed/mode via ethtool
 
---  command to change the speed to 1000
+--  command to change the mode
 
- > ethtool -s ethX speed 1000
+ > ethtool -s ethX advertise 0xXXXXXXX (ethtool argument from the below table for the corresponding mode)
 
--- command to change the speed to 10000 (changes the mode to SFI)
 
- > ethtool -s ethX speed 10000
+|    Serial   no    |    ATF   MODE            |    ETHTOOL   MODE                                  |     ethtool   argument    |
+|-------------------|--------------------------|----------------------------------------------------|----------------------------|
+|    1              |    CGX_MODE_SGMII        |    ETHTOOL_LINK_MODE_10BaseT_Half_BIT              |    0x1                     |
+|    2              |    CGX_MODE_1000BASEX    |    ETHTOOL_LINK_MODE_1000BaseX_Full_BIT            |    0x20000000000           |
+|    3              |    CGX_MODE_QSGMII       |    ETHTOOL_LINK_MODE_1000BaseT_Full_BIT            |    0x1000                  |
+|    4              |    CGX_MODE_10G_C2C      |    ETHTOOL_LINK_MODE_10000BaseKX4_Full_BIT         |    0x40000                 |
+|    5              |    CGX_MODE_10G_C2M      |    ETHTOOL_LINK_MODE_10000BaseR_Fec_Full_BIT       |    0x100000                |
+|    6              |    CGX_MODE_10G_KR       |    ETHTOOL_LINK_MODE_10000BaseKR_Full_BIT          |    0x80000                 |
+|    7              |    CGX_MODE_20G_C2C      |    ETHTOOL_LINK_MODE_20000BaseMLD2_Full_BIT        |    0x200000                |
+|    8              |    CGX_MODE_25G_C2C      |    ETHTOOL_LINK_MODE_10000BaseCR_Full_BIT          |    0x40000000000           |
+|    9              |    CGX_MODE_25G_C2M      |    ETHTOOL_LINK_MODE_25000BaseSR_Full_BIT          |    0x200000000             |
+|    10             |    CGX_MODE_25G_2_C2M    |    ETHTOOL_LINK_MODE_20000BaseKR2_Full_BIT         |    0x400000                |
+|    11             |    CGX_MODE_25G_CR       |    ETHTOOL_LINK_MODE_25000BaseCR_Full_BIT          |    0x8000000               |
+|    12             |    CGX_MODE_25G_KR       |    ETHTOOL_LINK_MODE_25000BaseKR_Full_BIT          |    0x100000000             |
+|    13             |    CGX_MODE_40G_C2C      |    ETHTOOL_LINK_MODE_40000BaseSR4_Full_BIT         |    0x2000000               |
+|    14             |    CGX_MODE_40G_C2M      |    ETHTOOL_LINK_MODE_40000BaseLR4_Full_BIT         |    0x4000000               |
+|    15             |    CGX_MODE_40G_CR4      |    ETHTOOL_LINK_MODE_40000BaseCR4_Full_BIT         |    0x1000000               |
+|    16             |    CGX_MODE_40G_KR4      |    ETHTOOL_LINK_MODE_40000BaseKR4_Full_BIT         |    0x800000                |
+|    17             |    CGX_MODE_40GAUI       |    ETHTOOL_LINK_MODE_40000BaseR_Full_BIT           |    0x80000000000           |
+|    18             |    CGX_MODE_50G_C2C      |    ETHTOOL_LINK_MODE_50000BaseSR2_Full_BIT         |    0x10000000000           |
+|    19             |    CGX_MODE_50G_C2M      |    ETHTOOL_LINK_MODE_10000BaseLR_Full_BIT          |    0x100000000000          |
+|    20             |    CGX_MODE_50G_4_C2C    |    ETHTOOL_LINK_MODE_50000BaseSR2_Full_BIT         |    0x8000000               |
+|    21             |    CGX_MODE_50G_CR       |    ETHTOOL_LINK_MODE_50000BaseCR2_Full_BIT         |    0x400000000             |
+|    22             |    CGX_MODE_50G_KR       |    ETHTOOL_LINK_MODE_50000BaseKR2_Full_BIT         |    0x800000000             |
+|    23             |    CGX_MODE_80GAUI       |    ETHTOOL_LINK_MODE_10000BaseLRM_Full_BIT         |    0x200000000000          |
+|    24             |    CGX_MODE_100G_C2C     |    ETHTOOL_LINK_MODE_100000BaseSR4_Full_BIT        |    0x2000000000            |
+|    25             |    CGX_MODE_100G_C2M     |    ETHTOOL_LINK_MODE_100000BaseLR4_ER4_Full_BIT    |    0x8000000000            |
+|    26             |    CGX_MODE_100G_CR4     |    ETHTOOL_LINK_MODE_100000BaseCR4_Full_BIT        |    0x4000000000            |
+|    27             |    CGX_MODE_100G_KR4     |    ETHTOOL_LINK_MODE_100000BaseKR4_Full_BIT        |    0x1000000000            |
+|    28             |    CGX_MODE_SGMII        |    ETHTOOL_LINK_MODE_10BaseT_Full_BIT		    |    0x2			 |
+|    29             |    CGX_MODE_SGMII        |    ETHTOOL_LINK_MODE_100BaseT_Half_BIT		    |    0x4			 |
+|    30             |    CGX_MODE_SGMII        |    ETHTOOL_LINK_MODE_100BaseT_Full_BIT		    |    0x8			 |
+|    31             |    CGX_MODE_SGMII        |    ETHTOOL_LINK_MODE_1000BaseT_Half_BIT	    |    0x10			 |
+|    32             |    CGX_MODE_SGMII        |    ETHTOOL_LINK_MODE_1000BaseT_Full_BIT	    |    0x20			 |
 
--- command to change the speed to 10000 with KR mode
+Mode/Speed change is restricted based on the physical port capability. Each port depending on whether it has PHY or no PHY, can support different MODES listed above. In addition, MODE change cannot be supported for MODES that require changes in number of lanes it uses. For Ex: run time, MODE change from XLAUI (which uses 4 lanes) cannot be changed to XFI(which uses 1 lane).
 
- > ethtool -s ethX speed 10000 autoneg on
-
--- command to change the speed to 20000
-
- > ethtool -s ethX speed 20000
-
-Note : For any other speed settings, it is considered invalid and
-error is returned.
-
+Some of the valid use cases are listed here:
+* MODE change between 1G_X(1000 BASE-X)/10G_*/20G_*
+* MODE change between 50G_4*/25G_2*/10G_KR
+* MODE change between 40G_*/80GAUI*
