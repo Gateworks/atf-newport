@@ -3,6 +3,9 @@
 # SPDX-License-Identifier:     BSD-3-Clause
 # https://spdx.org/licenses
 
+include plat/marvell/version.mk
+
+VERSION_STRING		+=(Marvell-${SUBVERSION})
 
 ifeq (${BUILD_TYPE}, release)
 	# Use LOG_LEVEL_WARN in release builds
