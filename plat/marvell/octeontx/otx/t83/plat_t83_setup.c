@@ -114,6 +114,8 @@ void plat_add_mmio()
 		add_map_record(CAVM_BGX_BAR_E_BGXX_PF_BAR0(i), CAVM_BGX_BAR_E_BGXX_PF_BAR0_SIZE, attr);
 
 	add_map_record(CAVM_GPIO_BAR_E_GPIO_PF_BAR0_CN8, CAVM_GPIO_BAR_E_GPIO_PF_BAR0_CN8_SIZE, attr);
+	add_map_record(CAVM_GPIO_BAR_E_GPIO_PF_BAR4,
+		       CAVM_GPIO_BAR_E_GPIO_PF_BAR4_SIZE, attr);
 
 	for (i = 0; i < 4; i++) {
 		add_map_record(UAAX_PF_BAR0(i), CAVM_UAA_BAR_E_UAAX_PF_BAR0_CN8_SIZE, attr);
