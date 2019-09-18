@@ -27,10 +27,13 @@
 #include <timers.h>
 #include <delay_timer.h>
 
-#ifdef DEBUG_ATF_RAS
-# define debug_ras printf
+/* DEBUG_RAS requires DEBUG, 0/1 dis/enables DEBUG=1 RAS chatter */
+#define DEBUG_RAS (0 && DEBUG)
+
+#if DEBUG_RAS
+# define debug_ras(...) printf(__VA_ARGS__)
 #else
-# define debug_ras(...) ((void)(0))
+# define debug_ras(...) (void)0
 #endif
 
 #define CACHE_LINE_SIZE		128
@@ -270,7 +273,7 @@ uint64_t ras_ccs_convert_lmc_to_pa_algorithm(
 				struct ras_ccs_addr_conversion_data *addr_data)
 {
 	uint64_t pre_offset     = addr_data->addr;
-#ifdef DEBUG_ATF_RAS
+#if DEBUG_RAS
 	int region		= addr_data->ASC_REGION;
 #endif
 	int ASC_MD_LR_BIT       = addr_data->ASC_MD_LR_BIT;
@@ -300,7 +303,7 @@ uint64_t ras_ccs_convert_lmc_to_pa_algorithm(
 	 * isn't mapped to this ASC
 	 */
 	if ((phys_lmc_mask & ASC_LMC_MASK) == 0) {
-		debug_ras("LMC mask 0x%x Does not Fit into ASC %d LMC_MASK 0x%x\n",
+		debug_ras("LMC mask %x but ASC%d LMC_MASK 0x%x\n",
 			  phys_lmc_mask, region, ASC_LMC_MASK);
 		return -1;
 	}
@@ -362,7 +365,7 @@ uint64_t ras_ccs_convert_lmc_to_pa_algorithm(
 				pa_no_lr_hash_mod6 = 0x1;
 				MD_right = 0;
 			} else {
-				debug_ras("ERROR: Unsupported lmc, lmcquarter: %x %x\n",
+				debug_ras("ERROR: bad lmc%d.quarter: %x\n",
 					  phys_lmc_mask, lmcquarter);
 				return -1;
 			}
@@ -377,7 +380,7 @@ uint64_t ras_ccs_convert_lmc_to_pa_algorithm(
 			else if (lmcquarter == 0x3)
 				pa_no_lr_hash_mod6 = 0x4;
 			else {
-				debug_ras("ERROR: Unsupported lmc, lmcquarter: %x %x\n",
+				debug_ras("ERROR: bad lmc%d.quarter: %x\n",
 					  phys_lmc_mask, lmcquarter);
 				return -1;
 			}
@@ -393,7 +396,7 @@ uint64_t ras_ccs_convert_lmc_to_pa_algorithm(
 				pa_no_lr_hash_mod6 = 0x5;
 				MD_right = 0;
 			} else {
-				debug_ras("ERROR: Unsupported lmc, lmcquarter: %x %x\n",
+				debug_ras("ERROR: bad lmc%d.quarter: %x\n",
 					  phys_lmc_mask, lmcquarter);
 				return -1;
 			}
@@ -965,7 +968,7 @@ static uint64_t tx2_mdc_isr(uint32_t id, uint32_t flags, void *cookie)
 
 	stat.u = CSR_READ(CAVM_MDC_ECC_STATUS);
 	if (stat.u && edac_alive) {
-		INFO("%s: ecc_status: %llx r: %x c: %x h:%x n: %x db:%d+%d sb%d+%d\n",
+		debug_ras("%s: ecc_status: %llx r: %x c: %x h:%x n: %x db:%d+%d sb%d+%d\n",
 		      __func__, stat.u, stat.s.row, stat.s.chain_id,
 		      stat.s.hub_id, stat.s.node_id,
 		      stat.s.dbe_plus, stat.s.dbe,
@@ -989,7 +992,7 @@ static uint64_t tx2_mcc_isr(uint32_t id, uint32_t flags, void *cookie)
 			lmcoe_ras_int.u = CSR_READ(CAVM_MCCX_LMCOEX_RAS_INT(mcc,
 									lmcoe));
 			if (lmcoe_ras_int.u)
-				INFO("%s(0x%x, 0x%x, %p) lmcoe_ras_int: 0x%llx\n",
+				debug_ras("%s(0x%x, 0x%x, %p) lmcoe_ras_int: 0x%llx\n",
 				      __func__, id, flags, cookie,
 				      lmcoe_ras_int.u);
 		}
@@ -1034,8 +1037,8 @@ static int ras_init_mcc(int mcc)
 	uint64_t vctl;
 	int rc = 0;
 
-	INFO("%s(%d)\n", __func__, mcc);
-	INFO("Installing tx2_mcc_isr\n");
+	debug_ras("%s(%d)\n", __func__, mcc);
+	debug_ras("Installing tx2_mcc_isr\n");
 
 
 	mc.u = CSR_READ(CAVM_MCCX_CONST(mcc));
@@ -1052,18 +1055,18 @@ static int ras_init_mcc(int mcc)
 		rc = register_interrupt_handler(INTR_TYPE_EL3, irq,
 						tx2_mcc_isr);
 		if (rc) {
-			INFO("e?%d tx2_mcc_isr(%x), mcc: %d\n",
+			debug_ras("e?%d tx2_mcc_isr(%x), mcc: %d\n",
 			     rc, irq, mcc);
 			return rc;
 		}
 
-		INFO("Enabling error MSIX interrupt %d for MCC %d, LMCOE %d, vaddr: 0x%llx, vctl: 0x%llx, irq: 0x%x\n",
+		debug_ras("Enabling error MSIX interrupt %d for MCC %d, LMCOE %d, vaddr: 0x%llx, vctl: 0x%llx, irq: 0x%x\n",
 		     vec, mcc, lmcoe, vaddr, vctl, irq);
 
 		octeontx_write64(vaddr, CAVM_GICD_SETSPI_SR | 1);
 		octeontx_write64(vctl, irq);
 
-		INFO("addr: 0x%llx, ctl: 0x%llx\n",
+		debug_ras("addr: 0x%llx, ctl: 0x%llx\n",
 		     octeontx_read64(vaddr), octeontx_read64(vctl));
 
 		int_ena.u = 0;
@@ -1079,7 +1082,7 @@ static int ras_init_mcc(int mcc)
 			  int_ena.u);
 	}
 
-	INFO("%s done\n", __func__);
+	debug_ras("%s done\n", __func__);
 
 	return 0;
 }
@@ -1093,16 +1096,16 @@ static int ras_init_mccs(void)
 	int mcc;
 	int num_mccs = plat_octeontx_get_mcc_count();
 
-	INFO("%s: %d MCCs\n", __func__, num_mccs);
+	debug_ras("%s: %d MCCs\n", __func__, num_mccs);
 	for (mcc = 0; mcc < num_mccs; mcc++)
 		ras_init_mcc(mcc);
 
 	uint64_t ctl = CAVM_GICD_SETSPI_SR | 1;
 
-	INFO("Registering MCC interrupt handlers\n");
+	debug_ras("Registering MCC interrupt handlers\n");
 	rc = register_interrupt_handler(INTR_TYPE_EL3, irq, tx2_mdc_isr);
 	if (rc) {
-		INFO("e?%d tx2_mdc_isr(%x)\n", rc, irq);
+		debug_ras("e?%d tx2_mdc_isr(%x)\n", rc, irq);
 		return rc;
 	}
 	octeontx_write64(vaddr, ctl);
@@ -1128,7 +1131,7 @@ static int ras_init_mccs(void)
 
 int plat_dram_ras_init(void)
 {
-	INFO("%s\n", __func__);
+	debug_ras("%s\n", __func__);
 	if (is_asim())
 		return 0;
 
@@ -1139,7 +1142,7 @@ int plat_dram_ras_init(void)
 		ras_init_mccs();
 		break;
 	default:
-		ERROR("e: %s: OcteonTX device not supported\n", __func__);
+		debug_ras("e: %s: OcteonTX device not supported\n", __func__);
 		break;
 	}
 	INFO("RAS handlers registered\n");
