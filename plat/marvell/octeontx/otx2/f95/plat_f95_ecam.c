@@ -174,7 +174,7 @@ struct ecam_init_callback plat_init_callbacks[] = {
  * from non-secure world.
  */
 struct secure_devices secure_devs[] = {
-	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GIC},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GIC5},
 /*	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GTI}, */
 	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_UAA},
 	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_LMC},
@@ -194,7 +194,7 @@ struct secure_devices secure_devs[] = {
 };
 
 struct secure_devices secure_mcp_devs[] = {
-	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GIC},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GIC5},
 	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GTI},
 	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_UAA},
 	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_LMC},
