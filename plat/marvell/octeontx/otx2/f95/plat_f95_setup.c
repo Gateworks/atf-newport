@@ -28,7 +28,7 @@
 #define CAVM_PSM_INT_VEC_E_GPINTX(a) (0 + (a))
 uint64_t CAVM_PSM_MSIX_VECX_ADDR(unsigned long a)
 {
-	if (a <= 6)
+	if (a <= 26)
 		return 0x860000000000ll + 0x10ll * ((a) & 0x1f);
 	return 0;
 }
