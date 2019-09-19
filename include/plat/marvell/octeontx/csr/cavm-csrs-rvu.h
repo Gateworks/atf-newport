@@ -624,6 +624,35 @@ union cavm_rvu_af_gen_int
     struct cavm_rvu_af_gen_int_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t bar4_mem_fault        : 1;  /**< [  2:  2](R/W1C/H) Memory fault on BAR4 mailbox read or write. */
+        uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1C/H) Memory fault on RVU_MSIX_VEC_S read or write. If the fault is on a
+                                                                 RVU_MSIX_VEC_S read for an MSI-X message to be generated, RVUM drops the
+                                                                 interrupt and does not generate a message to the GIC. */
+        uint64_t unmapped              : 1;  /**< [  0:  0](R/W1C/H) Received a register read or write request to an unmapped or disabled PF or
+                                                                 VF. Specifically:
+                                                                 * A PF/VF  BAR2 access in a PF whose RVU_PRIV_PF()_CFG[ENA] is
+                                                                 clear.
+                                                                 * A VF BAR2 access to a VF number that is greater than or equal to the
+                                                                 associated PF's RVU_PRIV_PF()_CFG[NVF]. */
+#else /* Word 0 - Little Endian */
+        uint64_t unmapped              : 1;  /**< [  0:  0](R/W1C/H) Received a register read or write request to an unmapped or disabled PF or
+                                                                 VF. Specifically:
+                                                                 * A PF/VF  BAR2 access in a PF whose RVU_PRIV_PF()_CFG[ENA] is
+                                                                 clear.
+                                                                 * A VF BAR2 access to a VF number that is greater than or equal to the
+                                                                 associated PF's RVU_PRIV_PF()_CFG[NVF]. */
+        uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1C/H) Memory fault on RVU_MSIX_VEC_S read or write. If the fault is on a
+                                                                 RVU_MSIX_VEC_S read for an MSI-X message to be generated, RVUM drops the
+                                                                 interrupt and does not generate a message to the GIC. */
+        uint64_t bar4_mem_fault        : 1;  /**< [  2:  2](R/W1C/H) Memory fault on BAR4 mailbox read or write. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_gen_int_s cn9; */
+    struct cavm_rvu_af_gen_int_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_63         : 62;
         uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1C/H) Memory fault on RVU_MSIX_VEC_S read or write. If the fault is on a
                                                                  RVU_MSIX_VEC_S read for an MSI-X message to be generated, RVUM drops the
@@ -646,8 +675,10 @@ union cavm_rvu_af_gen_int
                                                                  interrupt and does not generate a message to the GIC. */
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_gen_int_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_gen_int_s cn98xx; */
+    /* struct cavm_rvu_af_gen_int_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_gen_int_cn96xx loki; */
 };
 typedef union cavm_rvu_af_gen_int cavm_rvu_af_gen_int_t;
 
@@ -679,6 +710,21 @@ union cavm_rvu_af_gen_int_ena_w1c
     struct cavm_rvu_af_gen_int_ena_w1c_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t bar4_mem_fault        : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for RVU_AF_GEN_INT[BAR4_MEM_FAULT]. */
+        uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for RVU_AF_GEN_INT[MSIX_FAULT]. */
+        uint64_t unmapped              : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for RVU_AF_GEN_INT[UNMAPPED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t unmapped              : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for RVU_AF_GEN_INT[UNMAPPED]. */
+        uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for RVU_AF_GEN_INT[MSIX_FAULT]. */
+        uint64_t bar4_mem_fault        : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for RVU_AF_GEN_INT[BAR4_MEM_FAULT]. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_gen_int_ena_w1c_s cn9; */
+    struct cavm_rvu_af_gen_int_ena_w1c_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_63         : 62;
         uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for RVU_AF_GEN_INT[MSIX_FAULT]. */
         uint64_t unmapped              : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for RVU_AF_GEN_INT[UNMAPPED]. */
@@ -687,8 +733,10 @@ union cavm_rvu_af_gen_int_ena_w1c
         uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for RVU_AF_GEN_INT[MSIX_FAULT]. */
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_gen_int_ena_w1c_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_gen_int_ena_w1c_s cn98xx; */
+    /* struct cavm_rvu_af_gen_int_ena_w1c_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_gen_int_ena_w1c_cn96xx loki; */
 };
 typedef union cavm_rvu_af_gen_int_ena_w1c cavm_rvu_af_gen_int_ena_w1c_t;
 
@@ -720,6 +768,21 @@ union cavm_rvu_af_gen_int_ena_w1s
     struct cavm_rvu_af_gen_int_ena_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t bar4_mem_fault        : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for RVU_AF_GEN_INT[BAR4_MEM_FAULT]. */
+        uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for RVU_AF_GEN_INT[MSIX_FAULT]. */
+        uint64_t unmapped              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for RVU_AF_GEN_INT[UNMAPPED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t unmapped              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for RVU_AF_GEN_INT[UNMAPPED]. */
+        uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for RVU_AF_GEN_INT[MSIX_FAULT]. */
+        uint64_t bar4_mem_fault        : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for RVU_AF_GEN_INT[BAR4_MEM_FAULT]. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_gen_int_ena_w1s_s cn9; */
+    struct cavm_rvu_af_gen_int_ena_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_63         : 62;
         uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for RVU_AF_GEN_INT[MSIX_FAULT]. */
         uint64_t unmapped              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for RVU_AF_GEN_INT[UNMAPPED]. */
@@ -728,8 +791,10 @@ union cavm_rvu_af_gen_int_ena_w1s
         uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for RVU_AF_GEN_INT[MSIX_FAULT]. */
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_gen_int_ena_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_gen_int_ena_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_gen_int_ena_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_gen_int_ena_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_gen_int_ena_w1s cavm_rvu_af_gen_int_ena_w1s_t;
 
@@ -761,6 +826,21 @@ union cavm_rvu_af_gen_int_w1s
     struct cavm_rvu_af_gen_int_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t bar4_mem_fault        : 1;  /**< [  2:  2](R/W1S/H) Reads or sets RVU_AF_GEN_INT[BAR4_MEM_FAULT]. */
+        uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets RVU_AF_GEN_INT[MSIX_FAULT]. */
+        uint64_t unmapped              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets RVU_AF_GEN_INT[UNMAPPED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t unmapped              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets RVU_AF_GEN_INT[UNMAPPED]. */
+        uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets RVU_AF_GEN_INT[MSIX_FAULT]. */
+        uint64_t bar4_mem_fault        : 1;  /**< [  2:  2](R/W1S/H) Reads or sets RVU_AF_GEN_INT[BAR4_MEM_FAULT]. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_gen_int_w1s_s cn9; */
+    struct cavm_rvu_af_gen_int_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_63         : 62;
         uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets RVU_AF_GEN_INT[MSIX_FAULT]. */
         uint64_t unmapped              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets RVU_AF_GEN_INT[UNMAPPED]. */
@@ -769,8 +849,10 @@ union cavm_rvu_af_gen_int_w1s
         uint64_t msix_fault            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets RVU_AF_GEN_INT[MSIX_FAULT]. */
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_gen_int_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_gen_int_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_gen_int_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_gen_int_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_gen_int_w1s cavm_rvu_af_gen_int_w1s_t;
 
@@ -918,32 +1000,7 @@ union cavm_rvu_af_pfx_vf_bar4_addr
     } s;
     /* struct cavm_rvu_af_pfx_vf_bar4_addr_s cn9; */
     /* struct cavm_rvu_af_pfx_vf_bar4_addr_s cn96xx; */
-    struct cavm_rvu_af_pfx_vf_bar4_addr_cn98xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t addr                  : 48; /**< [ 63: 16](R/W) When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, programmable base physical
-                                                                 address of the PF/VF mailbox memory, consisting of RVU_PRIV_PF()_CFG[NVF]
-                                                                 consecutive 64 KB pages in LLC/DRAM.
-
-                                                                 May be used as VF/PF mailbox memory in addition to
-                                                                 RVU_PF_VF()_PFVF_MBOX()/RVU_VF_VFPF_MBOX().
-
-                                                                 Not used when RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is clear
-                                                                 (RVU_PF_VF_BAR4_ADDR is used instead). */
-        uint64_t reserved_0_15         : 16;
-#else /* Word 0 - Little Endian */
-        uint64_t reserved_0_15         : 16;
-        uint64_t addr                  : 48; /**< [ 63: 16](R/W) When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, programmable base physical
-                                                                 address of the PF/VF mailbox memory, consisting of RVU_PRIV_PF()_CFG[NVF]
-                                                                 consecutive 64 KB pages in LLC/DRAM.
-
-                                                                 May be used as VF/PF mailbox memory in addition to
-                                                                 RVU_PF_VF()_PFVF_MBOX()/RVU_VF_VFPF_MBOX().
-
-                                                                 Not used when RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is clear
-                                                                 (RVU_PF_VF_BAR4_ADDR is used instead). */
-#endif /* Word 0 - End */
-    } cn98xx;
+    /* struct cavm_rvu_af_pfx_vf_bar4_addr_s cn98xx; */
     struct cavm_rvu_af_pfx_vf_bar4_addr_loki
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -2021,6 +2078,23 @@ union cavm_rvu_af_ras
     struct cavm_rvu_af_ras_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_2_63         : 62;
+        uint64_t bar4_mem_poison       : 1;  /**< [  1:  1](R/W1C/H) Received BAR4 read response with poisoned data. */
+        uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1C/H) Received MSI-X table read response with poisoned data.
+                                                                 RVUM drops the interrupt and does not generate a message to the GIC
+                                                                 for that interrupt. */
+#else /* Word 0 - Little Endian */
+        uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1C/H) Received MSI-X table read response with poisoned data.
+                                                                 RVUM drops the interrupt and does not generate a message to the GIC
+                                                                 for that interrupt. */
+        uint64_t bar4_mem_poison       : 1;  /**< [  1:  1](R/W1C/H) Received BAR4 read response with poisoned data. */
+        uint64_t reserved_2_63         : 62;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_ras_s cn9; */
+    struct cavm_rvu_af_ras_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
         uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1C/H) Received MSI-X table read response with poisoned data.
                                                                  RVUM drops the interrupt and does not generate a message to the GIC
@@ -2031,8 +2105,10 @@ union cavm_rvu_af_ras
                                                                  for that interrupt. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_ras_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_ras_s cn98xx; */
+    /* struct cavm_rvu_af_ras_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_ras_cn96xx loki; */
 };
 typedef union cavm_rvu_af_ras cavm_rvu_af_ras_t;
 
@@ -2064,14 +2140,29 @@ union cavm_rvu_af_ras_ena_w1c
     struct cavm_rvu_af_ras_ena_w1c_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_2_63         : 62;
+        uint64_t bar4_mem_poison       : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for RVU_AF_RAS[BAR4_MEM_POISON]. */
+        uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for RVU_AF_RAS[MSIX_POISON]. */
+#else /* Word 0 - Little Endian */
+        uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for RVU_AF_RAS[MSIX_POISON]. */
+        uint64_t bar4_mem_poison       : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for RVU_AF_RAS[BAR4_MEM_POISON]. */
+        uint64_t reserved_2_63         : 62;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_ras_ena_w1c_s cn9; */
+    struct cavm_rvu_af_ras_ena_w1c_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
         uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for RVU_AF_RAS[MSIX_POISON]. */
 #else /* Word 0 - Little Endian */
         uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for RVU_AF_RAS[MSIX_POISON]. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_ras_ena_w1c_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_ras_ena_w1c_s cn98xx; */
+    /* struct cavm_rvu_af_ras_ena_w1c_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_ras_ena_w1c_cn96xx loki; */
 };
 typedef union cavm_rvu_af_ras_ena_w1c cavm_rvu_af_ras_ena_w1c_t;
 
@@ -2103,14 +2194,29 @@ union cavm_rvu_af_ras_ena_w1s
     struct cavm_rvu_af_ras_ena_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_2_63         : 62;
+        uint64_t bar4_mem_poison       : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for RVU_AF_RAS[BAR4_MEM_POISON]. */
+        uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for RVU_AF_RAS[MSIX_POISON]. */
+#else /* Word 0 - Little Endian */
+        uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for RVU_AF_RAS[MSIX_POISON]. */
+        uint64_t bar4_mem_poison       : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for RVU_AF_RAS[BAR4_MEM_POISON]. */
+        uint64_t reserved_2_63         : 62;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_ras_ena_w1s_s cn9; */
+    struct cavm_rvu_af_ras_ena_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
         uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for RVU_AF_RAS[MSIX_POISON]. */
 #else /* Word 0 - Little Endian */
         uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for RVU_AF_RAS[MSIX_POISON]. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_ras_ena_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_ras_ena_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_ras_ena_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_ras_ena_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_ras_ena_w1s cavm_rvu_af_ras_ena_w1s_t;
 
@@ -2142,14 +2248,29 @@ union cavm_rvu_af_ras_w1s
     struct cavm_rvu_af_ras_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_2_63         : 62;
+        uint64_t bar4_mem_poison       : 1;  /**< [  1:  1](R/W1S/H) Reads or sets RVU_AF_RAS[BAR4_MEM_POISON]. */
+        uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1S/H) Reads or sets RVU_AF_RAS[MSIX_POISON]. */
+#else /* Word 0 - Little Endian */
+        uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1S/H) Reads or sets RVU_AF_RAS[MSIX_POISON]. */
+        uint64_t bar4_mem_poison       : 1;  /**< [  1:  1](R/W1S/H) Reads or sets RVU_AF_RAS[BAR4_MEM_POISON]. */
+        uint64_t reserved_2_63         : 62;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_ras_w1s_s cn9; */
+    struct cavm_rvu_af_ras_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
         uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1S/H) Reads or sets RVU_AF_RAS[MSIX_POISON]. */
 #else /* Word 0 - Little Endian */
         uint64_t msix_poison           : 1;  /**< [  0:  0](R/W1S/H) Reads or sets RVU_AF_RAS[MSIX_POISON]. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_ras_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_ras_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_ras_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_ras_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_ras_w1s cavm_rvu_af_ras_w1s_t;
 
@@ -2553,30 +2674,55 @@ union cavm_rvu_pf_msix_vecx_addr
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
+                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
                                                                  1 = This vector's RVU_PF_MSIX_VEC()_ADDR, RVU_PF_MSIX_VEC()_CTL, and
                                                                  corresponding bit of RVU_PF_MSIX_PBA() are RAZ/WI and does not cause a
                                                                  fault when accessed by the nonsecure world.
+                                                                 The vector's IOVA is sent to the SMMU as secure (though this only affects
+                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1 or
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1).
 
                                                                  If PCCPF_RVU_VSEC_SCTL[MSIX_SEC] (for documentation, see
                                                                  PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is set, all vectors of the function are
-                                                                 secure as if [SECVEC] was set. */
+                                                                 secure as if [SECVEC] was set.
+
+                                                                 Also note the following:
+                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_EN]=1, all secure vectors (including secure
+                                                                 VF vectors) will act as if PCCPF/PCCVF_XXX_MSIX_CAP_HDR[MSIXEN]=1,
+                                                                 PCCPF/PCCVF_XXX_MSIX_CAP_HDR[FUNM]=0 and PCCPF/PCCVF_XXX_CMD[ME]=1.
+                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1, all secure vectors (including
+                                                                 secure VF vectors) are considered physical, regardless of
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]. */
 #else /* Word 0 - Little Endian */
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
+                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
                                                                  1 = This vector's RVU_PF_MSIX_VEC()_ADDR, RVU_PF_MSIX_VEC()_CTL, and
                                                                  corresponding bit of RVU_PF_MSIX_PBA() are RAZ/WI and does not cause a
                                                                  fault when accessed by the nonsecure world.
+                                                                 The vector's IOVA is sent to the SMMU as secure (though this only affects
+                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1 or
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1).
 
                                                                  If PCCPF_RVU_VSEC_SCTL[MSIX_SEC] (for documentation, see
                                                                  PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is set, all vectors of the function are
-                                                                 secure as if [SECVEC] was set. */
+                                                                 secure as if [SECVEC] was set.
+
+                                                                 Also note the following:
+                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_EN]=1, all secure vectors (including secure
+                                                                 VF vectors) will act as if PCCPF/PCCVF_XXX_MSIX_CAP_HDR[MSIXEN]=1,
+                                                                 PCCPF/PCCVF_XXX_MSIX_CAP_HDR[FUNM]=0 and PCCPF/PCCVF_XXX_CMD[ME]=1.
+                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1, all secure vectors (including
+                                                                 secure VF vectors) are considered physical, regardless of
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]. */
         uint64_t reserved_1            : 1;
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) PF IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } cn98xx;
-    /* struct cavm_rvu_pf_msix_vecx_addr_cn98xx cnf95xx; */
-    struct cavm_rvu_pf_msix_vecx_addr_loki
+    struct cavm_rvu_pf_msix_vecx_addr_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -2584,54 +2730,29 @@ union cavm_rvu_pf_msix_vecx_addr
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
-                                                                 The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
-                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
                                                                  1 = This vector's RVU_PF_MSIX_VEC()_ADDR, RVU_PF_MSIX_VEC()_CTL, and
                                                                  corresponding bit of RVU_PF_MSIX_PBA() are RAZ/WI and does not cause a
                                                                  fault when accessed by the nonsecure world.
-                                                                 The vector's IOVA is sent to the SMMU as secure (though this only affects
-                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1 or
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1).
 
                                                                  If PCCPF_RVU_VSEC_SCTL[MSIX_SEC] (for documentation, see
                                                                  PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is set, all vectors of the function are
-                                                                 secure as if [SECVEC] was set.
-
-                                                                 Also note the following:
-                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_EN]=1, all secure vectors (including secure
-                                                                 VF vectors) will act as if PCCPF/PCCVF_XXX_MSIX_CAP_HDR[MSIXEN]=1,
-                                                                 PCCPF/PCCVF_XXX_MSIX_CAP_HDR[FUNM]=0 and PCCPF/PCCVF_XXX_CMD[ME]=1.
-                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1, all secure vectors (including
-                                                                 secure VF vectors) are considered physical, regardless of
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]. */
+                                                                 secure as if [SECVEC] was set. */
 #else /* Word 0 - Little Endian */
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
-                                                                 The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
-                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
                                                                  1 = This vector's RVU_PF_MSIX_VEC()_ADDR, RVU_PF_MSIX_VEC()_CTL, and
                                                                  corresponding bit of RVU_PF_MSIX_PBA() are RAZ/WI and does not cause a
                                                                  fault when accessed by the nonsecure world.
-                                                                 The vector's IOVA is sent to the SMMU as secure (though this only affects
-                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1 or
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1).
 
                                                                  If PCCPF_RVU_VSEC_SCTL[MSIX_SEC] (for documentation, see
                                                                  PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is set, all vectors of the function are
-                                                                 secure as if [SECVEC] was set.
-
-                                                                 Also note the following:
-                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_EN]=1, all secure vectors (including secure
-                                                                 VF vectors) will act as if PCCPF/PCCVF_XXX_MSIX_CAP_HDR[MSIXEN]=1,
-                                                                 PCCPF/PCCVF_XXX_MSIX_CAP_HDR[FUNM]=0 and PCCPF/PCCVF_XXX_CMD[ME]=1.
-                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1, all secure vectors (including
-                                                                 secure VF vectors) are considered physical, regardless of
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]. */
+                                                                 secure as if [SECVEC] was set. */
         uint64_t reserved_1            : 1;
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) PF IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } loki;
+    } cnf95xx;
+    /* struct cavm_rvu_pf_msix_vecx_addr_cn98xx loki; */
 };
 typedef union cavm_rvu_pf_msix_vecx_addr cavm_rvu_pf_msix_vecx_addr_t;
 
@@ -4309,130 +4430,7 @@ union cavm_rvu_priv_pfx_cfg
 #endif /* Word 0 - End */
     } cn96xxp1;
     /* struct cavm_rvu_priv_pfx_cfg_s cn96xxp3; */
-    struct cavm_rvu_priv_pfx_cfg_cn98xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_24_63        : 40;
-        uint64_t pf_vf_io_bar4         : 1;  /**< [ 23: 23](R/W) "Selects how the PF/VF mailbox memory in LLC/DRAM is configured accessed by
-                                                                 the VFs. The mailbox memory consists of RVU_PRIV_PF()_CFG[NVF] consecutive
-                                                                 64 KB pages in LLC/DRAM (one page per VF).
-                                                                 0 = The PF/VF mailbox memory is at physical address RVU_PF_VF_BAR4_ADDR.
-                                                                 The VF's BAR4 in the PCIe EA capability header points to the VF's page
-                                                                 (RVU_PF_VF_ADDR[ADDR] + (VF#)*64K). Both the PF and VF  drivers directly
-                                                                 access the mailbox memory in LLC/DRAM, which is never accessed by RVU
-                                                                 hardware.
-                                                                 1 = The PF/VF mailbox memory is at physical address
-                                                                 RVU_AF_PF()_VF_BAR4_ADDR. The VF's BAR4 in the PCIe EA capability header
-                                                                 points to the VF's BAR4 (RVU_BAR_E::RVU_PF()_FUNC()_BAR4). The PF driver
-                                                                 directly accesses the mailbox memory in LLC/DRAM, but the VF driver
-                                                                 accesses the mailbox memory through RVU hardware."
-
-                                                                 Internal:
-                                                                 "* When set, RVU hardware aliases a VF BAR4 access to a physical memory access
-                                                                 (ncbi_cmd.paddr = 1) relative to RVU_AF_PF()_VF_BAR4_ADDR + (VF#)*64K.
-                                                                 * When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, RVU_AF_PF()_VF_BAR4_ADDR is
-                                                                 used instead of RVU_PF_VF_BAR4_ADDR for security reasons. An EL0 PF driver
-                                                                 could write an arbitrary PA to RVU_PF_VF_BAR4_ADDR, and using it would have
-                                                                 allowed an EL0 VF driver to access a 64KB region at that PA." */
-        uint64_t me_flr_ena            : 1;  /**< [ 22: 22](R/W) Bus master enable (ME) and function level reset (FLR) enable. This bit
-                                                                 should be set when the PF is configured and associated PF and/or AF drivers
-                                                                 that manage VF and/or PF ME/FLR are loaded.
-
-                                                                 When clear, PCCPF/PCCVF_XXX_CMD[ME] state changes are ignored, and
-                                                                 PCCPF/PCCVF_XXX_E_DEV_CTL[BCR_FLR] reset the PF/VF configuration space.
-
-                                                                 When set, hardware updates to the following registers in response to ME/FLR
-                                                                 events are additionally enabled:
-                                                                 RVU_PF_VFTRPEND(), RVU_PF_VFFLR_INT(), RVU_PF_VFME_INT(),
-                                                                 RVU_AF_PFTRPEND, RVU_AF_PFFLR_INT, and RVU_AF_PFFLR_INT. */
-        uint64_t af_ena                : 1;  /**< [ 21: 21](R/W) Admin function enable. When set, the PF is allowed to access AF (RVU PF
-                                                                 BAR0) registers in all RVU blocks. When clear, BAR0 is hidden in the PF's
-                                                                 PCI configuration EA capability header, and accesses to the PF's BAR0 are
-                                                                 RAZ/WI or will fault.
-
-                                                                 Must be clear when [ENA] is clear. Software should keep this bit set for
-                                                                 PF(0) when RVU is used.
-
-                                                                 Internal:
-                                                                 BAR0 accesses to RVUM registers are RAZ/WI. BAR0 accesses to all other RVU
-                                                                 blocks will fault. */
-        uint64_t ena                   : 1;  /**< [ 20: 20](R/W) Enable the PF. When clear, the PF is unused and hidden in the PCI config
-                                                                 space. A BAR2 access to any function in the PF is RAZ/WI and sets
-                                                                 RVU_AF_GEN_INT[UNMAPPED].
-
-                                                                 When set, the PF is enabled and remaining fields in this register are
-                                                                 valid.
-
-                                                                 Software should keep this bit set for PF(0) when RVU is used. Hardware
-                                                                 delivers all AF interrupts to PF(0). */
-        uint64_t nvf                   : 8;  /**< [ 19: 12](R/W) Number of VFs in the PF. Must be less than or equal to
-                                                                 RVU_PRIV_CONST[MAX_VFS_PER_PF]. */
-        uint64_t first_hwvf            : 12; /**< [ 11:  0](R/W) HWVF index of the PF's first VF.  Valid when [NVF] is non-zero. The HWVF
-                                                                 index range for the PF is [FIRST_HWVF] to [FIRST_HWVF]+[NVF]-1, inclusive.
-                                                                 Different PFs must have non-overlapping HWVF ranges, and the maximum HWVF
-                                                                 index in any range must be less than RVU_PRIV_CONST[HWVFS]. */
-#else /* Word 0 - Little Endian */
-        uint64_t first_hwvf            : 12; /**< [ 11:  0](R/W) HWVF index of the PF's first VF.  Valid when [NVF] is non-zero. The HWVF
-                                                                 index range for the PF is [FIRST_HWVF] to [FIRST_HWVF]+[NVF]-1, inclusive.
-                                                                 Different PFs must have non-overlapping HWVF ranges, and the maximum HWVF
-                                                                 index in any range must be less than RVU_PRIV_CONST[HWVFS]. */
-        uint64_t nvf                   : 8;  /**< [ 19: 12](R/W) Number of VFs in the PF. Must be less than or equal to
-                                                                 RVU_PRIV_CONST[MAX_VFS_PER_PF]. */
-        uint64_t ena                   : 1;  /**< [ 20: 20](R/W) Enable the PF. When clear, the PF is unused and hidden in the PCI config
-                                                                 space. A BAR2 access to any function in the PF is RAZ/WI and sets
-                                                                 RVU_AF_GEN_INT[UNMAPPED].
-
-                                                                 When set, the PF is enabled and remaining fields in this register are
-                                                                 valid.
-
-                                                                 Software should keep this bit set for PF(0) when RVU is used. Hardware
-                                                                 delivers all AF interrupts to PF(0). */
-        uint64_t af_ena                : 1;  /**< [ 21: 21](R/W) Admin function enable. When set, the PF is allowed to access AF (RVU PF
-                                                                 BAR0) registers in all RVU blocks. When clear, BAR0 is hidden in the PF's
-                                                                 PCI configuration EA capability header, and accesses to the PF's BAR0 are
-                                                                 RAZ/WI or will fault.
-
-                                                                 Must be clear when [ENA] is clear. Software should keep this bit set for
-                                                                 PF(0) when RVU is used.
-
-                                                                 Internal:
-                                                                 BAR0 accesses to RVUM registers are RAZ/WI. BAR0 accesses to all other RVU
-                                                                 blocks will fault. */
-        uint64_t me_flr_ena            : 1;  /**< [ 22: 22](R/W) Bus master enable (ME) and function level reset (FLR) enable. This bit
-                                                                 should be set when the PF is configured and associated PF and/or AF drivers
-                                                                 that manage VF and/or PF ME/FLR are loaded.
-
-                                                                 When clear, PCCPF/PCCVF_XXX_CMD[ME] state changes are ignored, and
-                                                                 PCCPF/PCCVF_XXX_E_DEV_CTL[BCR_FLR] reset the PF/VF configuration space.
-
-                                                                 When set, hardware updates to the following registers in response to ME/FLR
-                                                                 events are additionally enabled:
-                                                                 RVU_PF_VFTRPEND(), RVU_PF_VFFLR_INT(), RVU_PF_VFME_INT(),
-                                                                 RVU_AF_PFTRPEND, RVU_AF_PFFLR_INT, and RVU_AF_PFFLR_INT. */
-        uint64_t pf_vf_io_bar4         : 1;  /**< [ 23: 23](R/W) "Selects how the PF/VF mailbox memory in LLC/DRAM is configured accessed by
-                                                                 the VFs. The mailbox memory consists of RVU_PRIV_PF()_CFG[NVF] consecutive
-                                                                 64 KB pages in LLC/DRAM (one page per VF).
-                                                                 0 = The PF/VF mailbox memory is at physical address RVU_PF_VF_BAR4_ADDR.
-                                                                 The VF's BAR4 in the PCIe EA capability header points to the VF's page
-                                                                 (RVU_PF_VF_ADDR[ADDR] + (VF#)*64K). Both the PF and VF  drivers directly
-                                                                 access the mailbox memory in LLC/DRAM, which is never accessed by RVU
-                                                                 hardware.
-                                                                 1 = The PF/VF mailbox memory is at physical address
-                                                                 RVU_AF_PF()_VF_BAR4_ADDR. The VF's BAR4 in the PCIe EA capability header
-                                                                 points to the VF's BAR4 (RVU_BAR_E::RVU_PF()_FUNC()_BAR4). The PF driver
-                                                                 directly accesses the mailbox memory in LLC/DRAM, but the VF driver
-                                                                 accesses the mailbox memory through RVU hardware."
-
-                                                                 Internal:
-                                                                 "* When set, RVU hardware aliases a VF BAR4 access to a physical memory access
-                                                                 (ncbi_cmd.paddr = 1) relative to RVU_AF_PF()_VF_BAR4_ADDR + (VF#)*64K.
-                                                                 * When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, RVU_AF_PF()_VF_BAR4_ADDR is
-                                                                 used instead of RVU_PF_VF_BAR4_ADDR for security reasons. An EL0 PF driver
-                                                                 could write an arbitrary PA to RVU_PF_VF_BAR4_ADDR, and using it would have
-                                                                 allowed an EL0 VF driver to access a 64KB region at that PA." */
-        uint64_t reserved_24_63        : 40;
-#endif /* Word 0 - End */
-    } cn98xx;
+    /* struct cavm_rvu_priv_pfx_cfg_s cn98xx; */
     /* struct cavm_rvu_priv_pfx_cfg_cn96xxp1 cnf95xx; */
     struct cavm_rvu_priv_pfx_cfg_loki
     {

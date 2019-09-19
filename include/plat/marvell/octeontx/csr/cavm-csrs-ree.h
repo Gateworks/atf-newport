@@ -794,7 +794,7 @@ union cavm_ree_res_s
                                                                  See REE_AF_REEXM_MAX_MATCH\<31:0\> for the legal values of max_match. */
         uint64_t ree_res_dmcnt         : 8;  /**< [ 55: 48] DETECTED_MATCH_COUNT.
                                                                  Number of matches detected in job.
-                                                                 This value saturates at 255. */
+                                                                 This value saturates at 254. */
         uint64_t ree_res_status        : 16; /**< [ 47: 32] REE job result status field (RESPONSE_DESCRIPTOR_TUPLE.STATUS); by
                                                                  REE_RES_STATUS_S format definition. */
         uint64_t ree_res_job_id        : 24; /**< [ 31:  8] Matches in the input job ID supplied in REE_INST_S[REE_JOB_ID] */
@@ -808,7 +808,7 @@ union cavm_ree_res_s
                                                                  REE_RES_STATUS_S format definition. */
         uint64_t ree_res_dmcnt         : 8;  /**< [ 55: 48] DETECTED_MATCH_COUNT.
                                                                  Number of matches detected in job.
-                                                                 This value saturates at 255. */
+                                                                 This value saturates at 254. */
         uint64_t ree_res_mcnt          : 8;  /**< [ 63: 56] MATCH_COUNT.
                                                                  The total number of matches returned by the REE engine for this job.
                                                                  If the job was submitted with the control flag REE_JOB_CTRL_S[MODE]==HPM,
@@ -817,7 +817,8 @@ union cavm_ree_res_s
                                                                  See REE_AF_REEXM_MAX_MATCH\<31:0\> for the legal values of max_match. */
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
-        uint64_t pmi_min_byte_ptr      : 16; /**< [127:112] Minimum BYTE_PTR for threads still active at the end of job. */
+        uint64_t pmi_min_byte_ptr      : 16; /**< [127:112] Minimum BYTE_PTR for threads still active at the end of job.
+                                                                 De facto REEX will only use 15 lsbits (bit 63 is reserved). */
         uint64_t ree_meta_lcnt         : 16; /**< [111: 96] LATENCY_COUNT.
                                                                  How long it took REEX to scan job in multiples of 256 core_clk cycles. */
         uint64_t ree_meta_icnt         : 16; /**< [ 95: 80] INSTRUCTION_CONT.
@@ -831,7 +832,8 @@ union cavm_ree_res_s
                                                                  The number of REE instructions executed in this job. */
         uint64_t ree_meta_lcnt         : 16; /**< [111: 96] LATENCY_COUNT.
                                                                  How long it took REEX to scan job in multiples of 256 core_clk cycles. */
-        uint64_t pmi_min_byte_ptr      : 16; /**< [127:112] Minimum BYTE_PTR for threads still active at the end of job. */
+        uint64_t pmi_min_byte_ptr      : 16; /**< [127:112] Minimum BYTE_PTR for threads still active at the end of job.
+                                                                 De facto REEX will only use 15 lsbits (bit 63 is reserved). */
 #endif /* Word 1 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
         uint64_t doneint               : 1;  /**< [191:191] Done interrupt has been set. This bit is copied from the corresponding REE
@@ -2325,7 +2327,8 @@ union cavm_reex_af_ctl_cfg
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_26_63        : 38;
         uint64_t lo_pri_thr            : 6;  /**< [ 25: 20](R/W) This register sets the threshold for how many high priority jobs will be
-                                                                 serviced before a low priority job is serviced.
+                                                                 serviced before a low priority job is serviced (jobs here mean arbiter selections, which
+                                                                 could translate to 1 or 2 jobs de-facto).
                                                                  REE_AF_QUE()_SBUF_CTL[PRI] controls if a given queue is high priority or low priority. */
         uint64_t reserved_19           : 1;
         uint64_t rl2ld_cmd             : 3;  /**< [ 18: 16](R/W) This field indicates the NCB load command to use for REEX memory requests. This
@@ -2357,7 +2360,8 @@ union cavm_reex_af_ctl_cfg
                                                                  REE_L2LD_CMD_E::LDE must not be used. */
         uint64_t reserved_19           : 1;
         uint64_t lo_pri_thr            : 6;  /**< [ 25: 20](R/W) This register sets the threshold for how many high priority jobs will be
-                                                                 serviced before a low priority job is serviced.
+                                                                 serviced before a low priority job is serviced (jobs here mean arbiter selections, which
+                                                                 could translate to 1 or 2 jobs de-facto).
                                                                  REE_AF_QUE()_SBUF_CTL[PRI] controls if a given queue is high priority or low priority. */
         uint64_t reserved_26_63        : 38;
 #endif /* Word 0 - End */
@@ -4576,43 +4580,6 @@ static inline uint64_t CAVM_REEX_AF_REEXM_STATUS(unsigned long a)
 #define device_bar_CAVM_REEX_AF_REEXM_STATUS(a) 0x0 /* RVU_BAR0 */
 #define busnum_CAVM_REEX_AF_REEXM_STATUS(a) (a)
 #define arguments_CAVM_REEX_AF_REEXM_STATUS(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_reexm_write_count
- *
- * REE AF REEX Main Write-CSR Count Register
- */
-union cavm_reex_af_reexm_write_count
-{
-    uint64_t u;
-    struct cavm_reex_af_reexm_write_count_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of CSR write transactions. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of CSR write transactions. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_reexm_write_count_s cn; */
-};
-typedef union cavm_reex_af_reexm_write_count cavm_reex_af_reexm_write_count_t;
-
-static inline uint64_t CAVM_REEX_AF_REEXM_WRITE_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_REEXM_WRITE_COUNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008088ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_REEXM_WRITE_COUNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) cavm_reex_af_reexm_write_count_t
-#define bustype_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) "REEX_AF_REEXM_WRITE_COUNT"
-#define device_bar_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) (a)
-#define arguments_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) (a),-1,-1,-1
 
 /**
  * Register (RVU_PF_BAR0) ree#_af_reexr_capability

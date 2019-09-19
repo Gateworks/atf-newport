@@ -13730,6 +13730,7 @@ static inline uint64_t CAVM_PCIEEPX_EBAR(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_eq_ctl01
  *
  * PCIe EP PF Equalization Control Lane 0/1 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_eq_ctl01
 {
@@ -13800,6 +13801,7 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL01(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_eq_ctl1011
  *
  * PCIe EP PF Equalization Control Lane 10/11 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_eq_ctl1011
 {
@@ -13870,6 +13872,7 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL1011(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_eq_ctl1213
  *
  * PCIe EP PF Equalization Control Lane 12/13 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_eq_ctl1213
 {
@@ -13940,6 +13943,7 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL1213(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_eq_ctl1415
  *
  * PCIe EP PF Equalization Control Lane 14/15 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_eq_ctl1415
 {
@@ -14010,6 +14014,7 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL1415(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_eq_ctl23
  *
  * PCIe EP PF Equalization Control Lane 2/3 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_eq_ctl23
 {
@@ -14080,6 +14085,7 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL23(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_eq_ctl45
  *
  * PCIe EP PF Equalization Control Lane 4/5 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_eq_ctl45
 {
@@ -14150,6 +14156,7 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL45(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_eq_ctl67
  *
  * PCIe EP PF Equalization Control Lane 6/7 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_eq_ctl67
 {
@@ -14220,6 +14227,7 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL67(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_eq_ctl89
  *
  * PCIe EP PF Equalization Control Lane 8/9 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_eq_ctl89
 {
@@ -15638,6 +15646,7 @@ static inline uint64_t CAVM_PCIEEPX_L1_SUBSTATES(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_l1sub_cap
  *
  * PCIe EP PF L1 Substates Capability Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_l1sub_cap
 {
@@ -15718,6 +15727,7 @@ static inline uint64_t CAVM_PCIEEPX_L1SUB_CAP(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_l1sub_cap_hdr
  *
  * PCIe EP PF L1 Substates Extended Capability Header Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_l1sub_cap_hdr
 {
@@ -15768,6 +15778,7 @@ static inline uint64_t CAVM_PCIEEPX_L1SUB_CAP_HDR(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_l1sub_ctl1
  *
  * PCIe EP L1 Substates Control 1 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_l1sub_ctl1
 {
@@ -15824,6 +15835,7 @@ static inline uint64_t CAVM_PCIEEPX_L1SUB_CTL1(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_l1sub_ctl2
  *
  * PCIe EP L1 Substates Control 2 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_l1sub_ctl2
 {
@@ -15884,6 +15896,7 @@ static inline uint64_t CAVM_PCIEEPX_L1SUB_CTL2(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_lane_err
  *
  * PCIe EP PF Lane Error Status Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_lane_err
 {
@@ -16576,6 +16589,7 @@ static inline uint64_t CAVM_PCIEEPX_LINK_CTL2(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_link_ctl3
  *
  * PCIe EP PF Link Control 3 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_link_ctl3
 {
@@ -16746,6 +16760,7 @@ static inline uint64_t CAVM_PCIEEPX_LTR_LAT(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_margin_ext_cap_hdr
  *
  * PCIe RC Margining Extended Capability Header Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_margin_ext_cap_hdr
 {
@@ -16880,6 +16895,7 @@ static inline uint64_t CAVM_PCIEEPX_MISC_CTL1(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_mrg_lane_ctl_stat0
  *
  * PCIe RC Margining Lane Control and Status Register 0
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_mrg_lane_ctl_stat0
 {
@@ -17808,6 +17824,7 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT9(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_mrg_port_cap_stat
  *
  * PCIe RC Margining Port Capabilities and Status Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_mrg_port_cap_stat
 {
@@ -19168,6 +19185,7 @@ static inline uint64_t CAVM_PCIEEPX_PIPE_REL(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_cap
  *
  * PCIe RC 16.0 GT/s Capabilities Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_cap
 {
@@ -19208,6 +19226,7 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_CAP(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_ctl
  *
  * PCIe RC 16.0 GT/s Control Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_ctl
 {
@@ -19248,6 +19267,7 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_CTL(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_eq_ctl0123
  *
  * PCIe RC 16.0 GT/s Lane Equalization Control for Lane 0-3 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_eq_ctl0123
 {
@@ -19302,6 +19322,7 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_EQ_CTL0123(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_eq_ctl12131415
  *
  * PCIe RC 16.0 GT/s Lane Equalization Control for Lane 12-15 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_eq_ctl12131415
 {
@@ -19356,6 +19377,7 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_EQ_CTL12131415(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_eq_ctl4567
  *
  * PCIe RC 16.0 GT/s Lane Equalization Control for Lane 4-7 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_eq_ctl4567
 {
@@ -19410,6 +19432,7 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_EQ_CTL4567(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_eq_ctl891011
  *
  * PCIe RC 16.0 GT/s Lane Equalization Control for Lane 8-11 Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_eq_ctl891011
 {
@@ -19464,6 +19487,7 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_EQ_CTL891011(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_ext_cap_hdr
  *
  * PCIe RC Pysical Layer 16.0 GT/s Extended Capability Header Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_ext_cap_hdr
 {
@@ -19514,6 +19538,7 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_EXT_CAP_HDR(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_fret_dpar_stat
  *
  * PCIe RC 16.0 GT/s First Retimer Data Parity Mismatch Status Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_fret_dpar_stat
 {
@@ -19556,6 +19581,7 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_FRET_DPAR_STAT(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_lc_dpar_stat
  *
  * PCIe RC 16.0 GT/s Local Data Parity Mismatch Status Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_lc_dpar_stat
 {
@@ -19598,6 +19624,7 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_LC_DPAR_STAT(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_sret_dpar_stat
  *
  * PCIe RC 16.0 GT/s Second Retimer Data Parity Mismatch Status Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_sret_dpar_stat
 {
@@ -19640,6 +19667,7 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_SRET_DPAR_STAT(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_pl16g_status
  *
  * PCIe RC 16.0 GT/s Status Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_pl16g_status
 {
@@ -26097,6 +26125,7 @@ static inline uint64_t CAVM_PCIEEPX_RX_SER_Q_CTRL(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_scap_hdr
  *
  * PCIe EP PF Secondary Capability (Gen3) Header Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_scap_hdr
 {
@@ -28675,6 +28704,7 @@ static inline uint64_t CAVM_PCIEEPX_VPD_DATA(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_vsecst_cap_hdr
  *
  * PCIe EP Vendor Specific Status Capability Header Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_vsecst_cap_hdr
 {
@@ -28725,6 +28755,7 @@ static inline uint64_t CAVM_PCIEEPX_VSECST_CAP_HDR(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_vsecst_ctl
  *
  * PCIe EP Vendor Specific Status Control Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_vsecst_ctl
 {
@@ -28779,6 +28810,7 @@ static inline uint64_t CAVM_PCIEEPX_VSECST_CTL(unsigned long a)
  * Register (PCICONFIGEP) pcieep#_vsecst_hdr
  *
  * PCIe EP Vendor Specific Status Header Register
+ * This register exists for PF0 only.
  */
 union cavm_pcieepx_vsecst_hdr
 {
