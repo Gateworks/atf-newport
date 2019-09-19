@@ -175,8 +175,10 @@ static void phy_vitesse_vsc8574_program(phy_config_t *phy)
 		mdelay(10);
 	} while (timeout--);
 
-	if (!timeout)
-		WARN("%s: Operation 1 not complete, timeout\n", __func__);
+	if (timeout <= 0) {
+		ERROR("%s: Operation 1 not complete, timeout\n", __func__);
+		return;
+	}
 
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0);
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0010);
@@ -226,6 +228,7 @@ static void phy_vitesse_vsc8574_program(phy_config_t *phy)
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0010);
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 18, 0x8008);
 
+	timeout = 10;
 	do {
 		val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 18);
 		if (!(val & (1 << 15)))
@@ -233,16 +236,19 @@ static void phy_vitesse_vsc8574_program(phy_config_t *phy)
 		mdelay(10);
 	} while (timeout--);
 
-	if (!timeout)
-		WARN("%s: Operation 2 not complete, timeout\n", __func__);
+	if (timeout <= 0) {
+		ERROR("%s: Operation 2 not complete, timeout\n", __func__);
+		return;
+	}
 
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0001);
 
 	/* CRC check */
 	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 25);
 	if (val != vsc8574_program_crc) {
-		WARN("%s: Expected CRC 0x%x, Calculated CRC 0x%x\n",
+		ERROR("%s: Expected CRC 0x%x, Calculated CRC 0x%x\n",
 			__func__, vsc8574_program_crc, val);
+		return;
 	}
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0000);
 }
@@ -335,8 +341,10 @@ void phy_vitesse_probe(int cgx_id, int lmac_id)
 			mdelay(100);
 		} while (timeout--);
 
-		if (!timeout)
-			WARN("%s: MAC mode configuration not complete, timeout\n", __func__);
+		if (timeout <= 0) {
+			ERROR("%s: MAC mode configuration not complete, timeout\n", __func__);
+			return;
+		}
 
 		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 31, 0);
 		/* 9. If Fiber Media on all 4 PHYs configure register 18G by writing:
@@ -356,16 +364,18 @@ void phy_vitesse_probe(int cgx_id, int lmac_id)
 			/* 10. If Fiber Media read register 18G till (SIC) bit 15
 			 * equals 0.
 			 */
+			timeout = 10;
 			do {
 				val = smi_read(phy->mdio_bus, CLAUSE22, mdio_addr, -1, 18);
 				if (!(val & (1 << 15)))
 					break;
 				mdelay(10);
 			} while (timeout--);
-			if (!timeout)
-				WARN("%s: PHY optical configuration not complete, timeout\n", __func__);
+			if (timeout <= 0) {
+				ERROR("%s: PHY optical configuration not complete, timeout\n", __func__);
+				return;
+			}
 		}
-
 		/* 11. Configure register 23 for MAC and Media mode (to access
 		 * register 23, register 31 must be 0). Read register 23.
 		 *	Set bits 10:8 as follows:
@@ -394,6 +404,7 @@ void phy_vitesse_probe(int cgx_id, int lmac_id)
 		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 0, val);
 
 		/* 13. Read register 0 until bit 15 equals 0 */
+		timeout = 10;
 		do {
 			val = smi_read(phy->mdio_bus, CLAUSE22, mdio_addr, -1, 18);
 			if (!(val & (1 << 15)))
@@ -401,8 +412,10 @@ void phy_vitesse_probe(int cgx_id, int lmac_id)
 			mdelay(10);
 		} while (timeout--);
 
-		if (!timeout)
-			WARN("%s: PHY I/O error, timeout\n", __func__);
+		if (timeout <= 0) {
+			ERROR("%s: PHY I/O error, timeout\n", __func__);
+			return;
+		}
 
 		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 31, 3);
 		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 16, 0x80);
