@@ -90,6 +90,7 @@ typedef struct qlm_config {
 	int lane_tx_polarity[MAX_LANES_PER_QLM];
 	int lane_rx_prevga_gn_adapt[MAX_LANES_PER_QLM];
 	int lane_rx_prevga_gn_ovrd[MAX_LANES_PER_QLM];
+	int rx_adaptation[MAX_LANES_PER_QLM];
 } qlm_config_t;
 
 typedef struct mcc_ras_config {

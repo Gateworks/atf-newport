@@ -11,6 +11,9 @@
 /* Default value of QLM-VOLTAGE.N0 property */
 #define QLM_DEFAULT_VOLTAGE	900
 
+/* Perform RX adaptation by default */
+#define QLM_DEFAULT_RX_ADAPTATION 1
+
 /*
  * Define different QLM-MODE variants. These definitions based on the BDK code.
  */

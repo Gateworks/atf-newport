@@ -1783,12 +1783,20 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 
 static void octeontx2_fill_qlm_details(const void *fdt)
 {
-	int qlm, lane, polarity, max_lanes, voltage;
+	int qlm, lane, polarity, max_lanes, voltage, rx_ad;
 	char prop[64];
 
 	for (qlm = 0; qlm < plat_octeontx_scfg->gser_count; qlm++) {
 		max_lanes = plat_octeontx_scfg->qlm_max_lane_num[qlm];
 		for (lane = 0; lane < max_lanes; lane++) {
+			snprintf(prop, sizeof(prop),
+				"QLM-RX-ADAPTATION.N0.QLM%d.LANE%d", qlm, lane);
+			rx_ad = octeontx2_fdtbdk_get_num(fdt, prop, 10);
+			if (rx_ad == -1)
+				rx_ad = QLM_DEFAULT_RX_ADAPTATION;
+			plat_octeontx_bcfg->qlm_cfg[qlm].rx_adaptation[lane]
+				= rx_ad;
+
 			snprintf(prop, sizeof(prop),
 				"QLM-LANE-TX-POLARITY.N0.QLM%d.LANE%d",
 				qlm, lane);

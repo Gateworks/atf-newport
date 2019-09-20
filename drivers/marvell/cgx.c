@@ -1816,6 +1816,9 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 			for (int lane = 0; lane < num_lanes; lane++) {
 				if (!(lane_mask & (1 << lane)))
 					continue;
+				if (!plat_octeontx_bcfg->qlm_cfg[qlm].
+							rx_adaptation[lane])
+					continue;
 				if (qlm_rx_equalization_gsern(qlm, lane)
 							== -1) {
 					debug_cgx("%s:RX EQU failed %d:%d\n",
