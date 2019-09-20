@@ -19,27 +19,35 @@
 
 #include <libfdt.h>
 
+#undef DEBUG_BOARD_INFO
+
+#ifdef DEBUG_BOARD_INFO
+#define board_info INFO
+#else
+#define board_info(...) ((void) (0))
+#endif
+
 static void print_board_variables()
 {
-	INFO("======================\n");
-	INFO("BOARD MODEL = %s\n", plat_octeontx_bcfg->bcfg.board_model);
-	INFO("BMC BOOT TWSI bus=0x%x, addr=0x%x\n",
+	board_info("======================\n");
+	board_info("BOARD MODEL = %s\n", plat_octeontx_bcfg->bcfg.board_model);
+	board_info("BMC BOOT TWSI bus=0x%x, addr=0x%x\n",
 		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_bus,
 		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_addr);
-	INFO("BMC IPMI TWSI bus=0x%x, addr=0x%x\n",
+	board_info("BMC IPMI TWSI bus=0x%x, addr=0x%x\n",
 		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_bus,
 		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_addr);
-	INFO("GPIO Shutdown pin IN = 0x%x\n",
+	board_info("GPIO Shutdown pin IN = 0x%x\n",
 		plat_octeontx_bcfg->bcfg.gpio_shutdown_ctl_in);
-	INFO("GPIO Shutdown pin OUT = 0x%x\n",
+	board_info("GPIO Shutdown pin OUT = 0x%x\n",
 		plat_octeontx_bcfg->bcfg.gpio_shutdown_ctl_out);
 #if TRUSTED_BOARD_BOOT
-	INFO("TRUST-ROT-ADDR = 0x%llx\n",
+	board_info("TRUST-ROT-ADDR = 0x%llx\n",
 		plat_octeontx_bcfg->bcfg.trust_rot_addr);
-	INFO("TRUST-BSSK-ADDR = 0x%llx\n",
+	board_info("TRUST-BSSK-ADDR = 0x%llx\n",
 		plat_octeontx_bcfg->bcfg.trust_key_addr);
 #endif
-	INFO("======================\n");
+	board_info("======================\n");
 
 }
 
@@ -51,7 +59,7 @@ static uint64_t octeontx_fdt_get_uint64(const void *fdt, int offset, const char 
 
 	name = fdt_getprop(fdt, offset, property, &len);
 	if (!name) {
-		WARN("No %s is found\n", property);
+		VERBOSE("No %s is found\n", property);
 		return 0;
 	} else {
 		return (uint64_t)strtol(name, NULL, base);
@@ -66,7 +74,7 @@ static int octeontx_fdt_get(const void *fdt, int offset, const char *property, i
 
 	name = fdt_getprop(fdt, offset, property, &len);
 	if (!name) {
-		WARN("No %s is found\n", property);
+		board_info("No %s is found\n", property);
 		return -1;
 	} else {
 		return (int)strtol(name, NULL, base);
@@ -189,7 +197,7 @@ int octeontx_fill_board_details(int info)
 
   rc = plat_octeontx_fill_board_details();
 	if (rc) {
-		WARN("Processing family FDT failed\n");
+		INFO("Processing family FDT failed\n");
 		return rc;
 	}
 
