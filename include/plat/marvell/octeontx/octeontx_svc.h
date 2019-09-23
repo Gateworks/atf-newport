@@ -41,7 +41,24 @@
 
 #define OCTEONTX_RESTORE_WDOG_CTXT	0xc2000c04
 
-#define OCTEONTX_NUM_CALLS		12
+
+/* ARM trace buffer related */
+
+/* Args: x1 - size, x2 - cpu, x3 - llc lock flag
+ * Returns: x0 - status, x1 - secure buffer address
+ */
+#define OCTEONTX_TRC_ALLOC_SBUF		0xc2000c05
+/* Args: x1 - non secure buffer address, x2 - size */
+#define OCTEONTX_TRC_REGISTER_DRVBUF	0xc2000c06
+/* Args: x1 - dst(non secure), x2 - src(secure), x3 - size */
+#define OCTEONTX_TRC_COPY_TO_DRVBUF	0xc2000c07
+/* Args: x1 - secure buffer address, x2 - size */
+#define OCTEONTX_TRC_FREE_SBUF		0xc2000c08
+/* Args: x1 - non secure buffer address, x2 - size */
+#define OCTEONTX_TRC_UNREGISTER_DRVBUF	0xc2000c09
+
+#define OCTEONTX_NUM_CALLS		17
+
 
 /* API that allows to define family specific SMC CALLS */
 uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,

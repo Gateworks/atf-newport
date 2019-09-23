@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <libfdt.h>
 #include <octeontx_dram.h>
+#include <octeontx_trace.h>
 #include <platform_svc.h>
 
 /*
@@ -134,6 +135,34 @@ uintptr_t octeontx_svc_smc_handler(uint32_t smc_fid,
 		SMC_RET1(handle, ret);
 		break;
 
+#if defined ARM_TRACE_SECURE_BUFFER
+	uint64_t address;
+
+	case OCTEONTX_TRC_ALLOC_SBUF:
+		ret = arm_trace_alloc_sbuf(x1, x2, x3, &address);
+		SMC_RET2(handle, ret, address);
+		break;
+
+	case OCTEONTX_TRC_REGISTER_DRVBUF:
+		ret = arm_trace_register_drvbuf(x1, x2);
+		SMC_RET1(handle, ret);
+		break;
+
+	case OCTEONTX_TRC_COPY_TO_DRVBUF:
+		ret = arm_trace_copy_to_drvbuf(x1, x2, x3);
+		SMC_RET1(handle, ret);
+		break;
+
+	case OCTEONTX_TRC_FREE_SBUF:
+		/* Nothing to do here */
+		SMC_RET1(handle, ret);
+		break;
+
+	case OCTEONTX_TRC_UNREGISTER_DRVBUF:
+		arm_trace_unregister_drvbuf(x1, x2);
+		SMC_RET1(handle, 0);
+		break;
+#endif
 	default:
 		return plat_octeontx_svc_smc_handler(smc_fid, x1, x2, x3, x4,
 			cookie, handle, flags);

@@ -52,6 +52,7 @@ BL31_LIBS               +=      lib/libphy/libphy_88x5113.a     \
 BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/aarch64/plat_helpers.S	\
 				plat/marvell/octeontx/otx2/plat_topology.c		\
+				plat/marvell/octeontx/otx2/octeontx_trace.c		\
 				drivers/marvell/phy/phy_gen.c		\
 				drivers/marvell/phy/phy_vitesse.c	\
 				drivers/marvell/phy/phy_marvell.c	\

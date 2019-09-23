@@ -8,6 +8,7 @@
 #ifndef __OCTEONTX_COMMON_H__
 #define __OCTEONTX_COMMON_H__
 
+#include <debug.h>
 #include <stdint.h>
 #include <xlat_tables_v2.h>
 #include <arch_helpers.h>
@@ -85,6 +86,28 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmnvbar_el3, AP_CVM_NVBAR_EL3)
 #define set_bit(reg, bit) reg |= (1ULL<<(bit))
 #define unset_bit(reg, bit) reg &= ~(1ULL<<(bit))
 
+/* LLC cache locking */
+static inline int octeontx_llc_lock(uint64_t phys_addr, uint64_t size)
+{
+	/* Check for cache size alignment */
+	if (size & (CACHE_WRITEBACK_GRANULE - 1) ||
+	    phys_addr & (CACHE_WRITEBACK_GRANULE - 1))
+		return -1;
+
+	while (size) {
+		/* Ensure cache block is allocated in LLC for this address */
+		*(uint8_t *)phys_addr = 0x0;
+		CACHE_LCK_L2(phys_addr);
+		phys_addr += CACHE_WRITEBACK_GRANULE;
+		size -= CACHE_WRITEBACK_GRANULE;
+	}
+
+	/* Ensure completion */
+	MB;
+
+	return 0;
+}
+
 void add_map_record(unsigned long addr, unsigned long size, mmap_attr_t attr);
 
 void plat_add_mmio_map(void);
@@ -98,5 +121,7 @@ void plat_flr_init(void);
 #ifdef NT_FW_CONFIG
 void plat_octeontx_set_nt_fw_config_size(uint64_t nt_fw_config_size);
 #endif
+
+
 
 #endif /* __OCTEONTX_COMMON_H__ */
