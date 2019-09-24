@@ -902,6 +902,73 @@ In that case, set it to high power mode, before reading from EEPROM.
     are read which  is used for read only identification information.
     These contents are copied to SM as well.
 
+## 5.6. I2C Switches supported
+
+Below table lists the I2C MUX/Switches supported and the corresponding DTS compatible for each of the types.
+
+static const i2c_compat_t i2c_compat_list[] = {
+	{ "cavium,thunder-8890-twsi", I2C_BUS_DEFAULT, I2C_OTHER,  0, 6},
+	{ "cavium,thunderx-i2c", I2C_BUS_DEFAULT, I2C_OTHER,  0, 6},
+	{ "nxp_pca9540", I2C_BUS_PCA9540, I2C_MUX,    4, 2 },
+	{ "nxp_pca9542", I2C_BUS_PCA9542, I2C_MUX,    4, 2 },
+	{ "nxp_pca9543", I2C_BUS_PCA9543, I2C_SWITCH, 0, 2 },
+	{ "nxp_pca9544", I2C_BUS_PCA9544, I2C_MUX,    4, 4 },
+	{ "nxp_pca9545", I2C_BUS_PCA9545, I2C_SWITCH, 0, 4 },
+	{ "nxp_pca9546", I2C_BUS_PCA9546, I2C_SWITCH, 0, 4 },
+	{ "nxp_pca9547", I2C_BUS_PCA9547, I2C_MUX,    8, 8 },
+	{ "nxp_pca9548", I2C_BUS_PCA9548, I2C_SWITCH, 0, 8 },
+};
+
+NOTE: MCP supports only PCA9548 driver currently. If a platform requires other I2C switch/MUX type, corresponding driver should be added in MCP.
+
+## 5.7. GPIO Expanders supported
+
+Below table lists the GPIO expanders supported and the corresponding DTS compatible for each of the GPIO expanders.
+
+If a GPIO expander needs to be added other than the listed below, this array in ATF and driver for the GPIO expander in MCP(if it doesn't belong to the below mentioned generic expander types), should be incorporated.
+
+static const gpio_compat_t gpio_compat_list[] = {
+	{ "cavium,thunder-8890-gpio", GPIO_PIN_DEFAULT, 64 },	/* 64 pins for T9x */
+	{ "nxp_pca9505",	GPIO_PIN_PCA953X, 40 },
+	{ "nxp_pca9698",	GPIO_PIN_PCA953X, 40 },
+	{ "nxp_pca9534",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp_pca9535",	GPIO_PIN_PCA953X, 16 },
+	{ "nxp_pca9536",	GPIO_PIN_PCA953X, 4 },
+	{ "nxp_pca9537",	GPIO_PIN_PCA953X, 4 },
+	{ "nxp_pca9538",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp_pca9539",	GPIO_PIN_PCA953X, 16 },
+	{ "nxp_pca9554",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp_pca9554a",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp_pca9555",	GPIO_PIN_PCA953X, 16 },
+	{ "nxp_pca9555a",	GPIO_PIN_PCA953X, 16 },
+	{ "nxp_pca9556",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp_pca9557",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp_pca9574",	GPIO_PIN_PCA957X, 8 },
+	{ "nxp_pca9575",	GPIO_PIN_PCA957X, 16 },
+	{ "maxim_max7310",	GPIO_PIN_PCA953X, 8 },
+	{ "maxim_max7312",	GPIO_PIN_PCA953X, 16 },
+	{ "maxim_max7313",	GPIO_PIN_PCA953X, 16 },
+	{ "maxim_max7315",	GPIO_PIN_PCA953X, 8 },
+	{ "ti_pca6107",		GPIO_PIN_PCA953X, 8 },
+	{ "ti_tca6408",		GPIO_PIN_PCA953X, 8 },
+	{ "ti_tca6416",		GPIO_PIN_PCA953X, 16 },
+	{ "ti_tca9554",		GPIO_PIN_PCA953X, 8 },
+	{ "nxp_pcf8574",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp_pcf8574a",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp_pca8574",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp_pca9670",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp_pca9672",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp_pca9674",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp_pca8575",	GPIO_PIN_PCF857X, 16 },
+	{ "nxp_pcf8575",	GPIO_PIN_PCF857X, 16 },
+	{ "nxp_pca9671",	GPIO_PIN_PCF857X, 16 },
+	{ "nxp_pca9673",	GPIO_PIN_PCF857X, 16 },
+	{ "nxp_pca9675",	GPIO_PIN_PCF857X, 16 },
+	{ "maxim_max7328",	GPIO_PIN_PCF857X, 8 },
+	{ "maxim_max7329",	GPIO_PIN_PCF857X, 8 },
+	{ "cavium,cpld96xx",	GPIO_PIN_CPLD,	8},
+};
+
 ---
 
 ## 6. LED management
