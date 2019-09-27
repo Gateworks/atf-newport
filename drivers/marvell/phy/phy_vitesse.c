@@ -334,6 +334,7 @@ void phy_vitesse_probe(int cgx_id, int lmac_id)
 				__func__, lmac->mode);
 		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 18, val);
 
+		timeout = 10;
 		do {
 			val = smi_read(phy->mdio_bus, CLAUSE22, mdio_addr, -1, 18);
 			if (!(val & (1 << 15)))
