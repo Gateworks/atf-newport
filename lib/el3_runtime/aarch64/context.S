@@ -417,6 +417,8 @@ func el3_exit_wfi
 	msr tcr_el1, x9
 	ldr x9, [x8, #EL0ISR_CTX_TTBR0_EL1]
 	msr ttbr0_el1, x9
+	ldr x9, [x8, #EL0ISR_CTX_TTBR1_EL1]
+	msr ttbr1_el1, x9
 	ldr x9, [x8, #EL0ISR_CTX_SCR_EL3]
 	msr scr_el3, x9
 	ldr x9, [x8, #EL0ISR_CTX_SPSR_EL3]
@@ -458,11 +460,12 @@ func el3_start_el0_isr
 	 * EL2 virtualization
 	 * X0 holds the gpio_num,
 	 * X1 holds sp
-	 * X2 holds ttbr
-	 * X3 holds isr_base
-	 * X4 holds spsr_el3
-	 * X5 holds scr_el3
-	 * X6 holds tcr_el1
+	 * X2 holds ttbr0
+	 * X3 holds ttbr1
+	 * X4 holds isr_base
+	 * X5 holds spsr_el3
+	 * X6 holds scr_el3
+	 * X7 holds tcr_el1
 	 * -------------------------------------------------------
 	 */
 	msr spsel, #1
@@ -502,6 +505,8 @@ func el3_start_el0_isr
 	str x9, [x8, #EL0ISR_CTX_TCR_EL1]
 	mrs x9, ttbr0_el1
 	str x9, [x8, #EL0ISR_CTX_TTBR0_EL1]
+	mrs x9, ttbr1_el1
+	str x9, [x8, #EL0ISR_CTX_TTBR1_EL1]
 	mrs x9, scr_el3
 	str x9, [x8, #EL0ISR_CTX_SCR_EL3]
 	mrs x9, spsr_el3
@@ -510,15 +515,16 @@ func el3_start_el0_isr
 	str x9, [x8, #EL0ISR_CTX_ELR_EL3]
 
 	/*EL0 specific settings
-	 * This will allow wfi in EL0 to cuase async exception to EL3
+	 * This will allow wfi in EL0 to cause async exception to EL3
 	 */
 	msr sp_el0, x1
 	nop
-	msr tcr_el1, x6
+	msr tcr_el1, x7
 	msr ttbr0_el1, x2
-	msr scr_el3, x5
-	msr spsr_el3, x4
-	msr elr_el3, x3
+	msr ttbr1_el1, x3
+	msr scr_el3, x6
+	msr spsr_el3, x5
+	msr elr_el3, x4
 	/*clear all registers except x0(gpio_num)*/
 	mov x1, xzr; mov x2, xzr; mov x3, xzr; mov x4, xzr;
 	mov x5, xzr; mov x6, xzr; mov x7, xzr; mov x8, xzr;

@@ -44,14 +44,15 @@ int gpio_intercept_interrupts;
  * EL2 virtualization
  * X0 holds the gpio_num,
  * X1 holds sp
- * X2 holds ttbr
- * X3 holds isr_base
- * X4 holds spsr_el3
- * X5 holds scr_el3
- * X6 holds tcr_el1
+ * X2 holds ttbr0
+ * X3 holds ttbr1
+ * X4 holds isr_base
+ * X5 holds spsr_el3
+ * X6 holds scr_el3
+ * X7 holds tcr_el1
  */
 void el3_start_el0_isr(uint64_t gpio_num, uint64_t sp,
-		       uint64_t ttbr, uint64_t isr_base,
+		       uint64_t ttbr0, uint64_t ttrb1, uint64_t isr_base,
 		       uint64_t spsr_el3, uint64_t scr_el3,
 		       uint64_t tcr_el1);
 
@@ -79,7 +80,7 @@ static volatile struct irq_cpu el3_gpio_irqs[] = {
 static void prepare_el0_isr_callback(uint64_t gpio_num, uint64_t counter)
 {
 	uint64_t sp;
-	uint64_t ttbr;
+	uint64_t ttbr0, ttbr1;
 	uint64_t isr_base;
 	uint64_t tcr;
 
@@ -110,7 +111,8 @@ static void prepare_el0_isr_callback(uint64_t gpio_num, uint64_t counter)
 		goto finish;
 
 	sp = __atomic_load_n(&gpio_ints[gpio_num].sp, __ATOMIC_SEQ_CST);
-	ttbr = __atomic_load_n(&gpio_ints[gpio_num].ttbr, __ATOMIC_SEQ_CST);
+	ttbr0 = __atomic_load_n(&gpio_ints[gpio_num].ttbr0, __ATOMIC_SEQ_CST);
+	ttbr1 = __atomic_load_n(&gpio_ints[gpio_num].ttbr1, __ATOMIC_SEQ_CST);
 	isr_base = __atomic_load_n(&gpio_ints[gpio_num].isr_base,
 				   __ATOMIC_SEQ_CST);
 	tcr = __atomic_load_n(&gpio_ints[gpio_num].tcr, __ATOMIC_SEQ_CST);
@@ -123,7 +125,8 @@ static void prepare_el0_isr_callback(uint64_t gpio_num, uint64_t counter)
 			    __ATOMIC_SEQ_CST) != counter)
 		goto finish;
 
-	el3_start_el0_isr(gpio_num, sp, ttbr, isr_base, SPSR_ISR, SCR_ISR, tcr);
+	el3_start_el0_isr(gpio_num, sp, ttbr0, ttbr1, isr_base, SPSR_ISR,
+			  SCR_ISR, tcr);
 
 finish:
 	__atomic_fetch_sub(&gpio_ints[gpio_num].lock, 1, __ATOMIC_SEQ_CST);
@@ -302,17 +305,19 @@ int gpio_install_irq(uint64_t gpio_num, uint64_t sp, uint64_t  cpu,
 	}
 	gpio_ints[gpio_num].sp = sp;
 	gpio_ints[gpio_num].cpu = cpu;
-	gpio_ints[gpio_num].ttbr = 0;
+	gpio_ints[gpio_num].ttbr0 = 0;
+	gpio_ints[gpio_num].ttbr1 = 0;
 	gpio_ints[gpio_num].isr_base = isr_base;
-	asm volatile("mrs %0, ttbr0_el1\n\t" : "=r"(gpio_ints[gpio_num].ttbr));
+	asm volatile("mrs %0, ttbr0_el1\n\t" : "=r"(gpio_ints[gpio_num].ttbr0));
+	asm volatile("mrs %0, ttbr1_el1\n\t" : "=r"(gpio_ints[gpio_num].ttbr1));
 	gpio_ints[gpio_num].tcr = 0;
 	asm volatile("mrs %0, tcr_el1\n\t" : "=r"(gpio_ints[gpio_num].tcr));
-	gpio_ints[gpio_num].tcr &= ~(1ULL << 22);
 	retval = setup_interrupt_entries(gpio_num, cpu, 1);
 	if (retval != 0) {
 		gpio_ints[gpio_num].sp = 0;
 		gpio_ints[gpio_num].cpu = 0;
-		gpio_ints[gpio_num].ttbr = 0;
+		gpio_ints[gpio_num].ttbr0 = 0;
+		gpio_ints[gpio_num].ttbr1 = 0;
 		ERROR("Can't install irq handlerfor gpio:%llu cpu:%llu\n",
 		       gpio_num, cpu);
 		__atomic_thread_fence(__ATOMIC_SEQ_CST);
@@ -320,9 +325,10 @@ int gpio_install_irq(uint64_t gpio_num, uint64_t sp, uint64_t  cpu,
 		__atomic_fetch_sub(&gpio_ints[gpio_num].in_use, 1,
 				   __ATOMIC_SEQ_CST);
 	} else {
-		INFO("Installed irq handler for gpio:%llu ttrb:%llx sp:%llx\n"
-		       "\tisr_base:%llx cpu:%llu tcr:%llx\n",
-		       gpio_num, gpio_ints[gpio_num].ttbr,
+		INFO("Installed irq handler for gpio:%llu ttrb0:%llx\n"
+		       "\tttrb1:%llx sp:%llx isr_base:%llx cpu:%llu tcr:%llx\n",
+		       gpio_num, gpio_ints[gpio_num].ttbr0,
+		       gpio_ints[gpio_num].ttbr1,
 		       gpio_ints[gpio_num].sp,
 		       gpio_ints[gpio_num].isr_base, gpio_ints[gpio_num].cpu,
 		       gpio_ints[gpio_num].tcr);
@@ -362,7 +368,8 @@ void gpio_clear_irq(uint64_t gpio_num)
 	setup_interrupt_entries(gpio_num, gpio_ints[gpio_num].cpu, 0);
 	gpio_ints[gpio_num].sp = 0;
 	gpio_ints[gpio_num].cpu = 0;
-	gpio_ints[gpio_num].ttbr = 0;
+	gpio_ints[gpio_num].ttbr0 = 0;
+	gpio_ints[gpio_num].ttbr1 = 0;
 	__atomic_thread_fence(__ATOMIC_SEQ_CST);
 	do {
 		/* Acknowledge interrupt for this GPIO */

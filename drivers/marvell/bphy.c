@@ -34,7 +34,8 @@
 struct bphy_psm_irq {
 	volatile uint64_t sp;
 	volatile uint64_t cpu;
-	volatile uint64_t ttbr;
+	volatile uint64_t ttbr0;
+	volatile uint64_t ttbr1;
 	volatile uint64_t isr_base;
 	volatile uint64_t tcr;
 	volatile uint64_t counter;
@@ -55,14 +56,15 @@ struct irq_cpu {
  * EL2 virtualization
  * X0 holds the irq_num,
  * X1 holds sp
- * X2 holds ttbr
- * X3 holds isr_base
- * X4 holds spsr_el3
- * X5 holds scr_el3
- * X6 holds tcr_el1
+ * X2 holds ttbr0
+ * X3 holds ttbr1
+ * X4 holds isr_base
+ * X5 holds spsr_el3
+ * X6 holds scr_el3
+ * X7 holds tcr_el1
  */
 void el3_start_el0_isr(uint64_t irq_num, uint64_t sp,
-		       uint64_t ttbr, uint64_t isr_base,
+		       uint64_t ttbr0, uint64_t ttbr1, uint64_t isr_base,
 		       uint64_t spsr_el3, uint64_t scr_el3,
 		       uint64_t tcr_el1);
 
@@ -75,7 +77,7 @@ static volatile struct irq_cpu el3_bphy_irqs[] =
 static void prepare_el0_isr_callback(uint64_t irq_num, uint64_t counter)
 {
 	uint64_t sp;
-	uint64_t ttbr;
+	uint64_t ttbr0, ttbr1;
 	uint64_t isr_base;
 	uint64_t tcr;
 
@@ -106,7 +108,8 @@ static void prepare_el0_isr_callback(uint64_t irq_num, uint64_t counter)
 		goto finish;
 
 	sp = __atomic_load_n(&bphy_ints[irq_num].sp, __ATOMIC_SEQ_CST);
-	ttbr = __atomic_load_n(&bphy_ints[irq_num].ttbr, __ATOMIC_SEQ_CST);
+	ttbr0 = __atomic_load_n(&bphy_ints[irq_num].ttbr0, __ATOMIC_SEQ_CST);
+	ttbr1 = __atomic_load_n(&bphy_ints[irq_num].ttbr1, __ATOMIC_SEQ_CST);
 	isr_base = __atomic_load_n(&bphy_ints[irq_num].isr_base,
 				   __ATOMIC_SEQ_CST);
 	tcr = __atomic_load_n(&bphy_ints[irq_num].tcr, __ATOMIC_SEQ_CST);
@@ -119,7 +122,8 @@ static void prepare_el0_isr_callback(uint64_t irq_num, uint64_t counter)
 			    __ATOMIC_SEQ_CST) != counter)
 		goto finish;
 
-	el3_start_el0_isr(irq_num, sp, ttbr, isr_base, SPSR_ISR, SCR_ISR, tcr);
+	el3_start_el0_isr(irq_num, sp, ttbr0, ttbr1, isr_base, SPSR_ISR,
+			  SCR_ISR, tcr);
 
 finish:
 	__atomic_fetch_sub(&bphy_ints[irq_num].lock, 1, __ATOMIC_SEQ_CST);
@@ -276,17 +280,19 @@ int bphy_psm_install_irq(uint64_t irq_num, uint64_t sp, uint64_t  cpu,
 	}
 	bphy_ints[irq_num].sp = sp;
 	bphy_ints[irq_num].cpu = cpu;
-	bphy_ints[irq_num].ttbr = 0;
+	bphy_ints[irq_num].ttbr0 = 0;
+	bphy_ints[irq_num].ttbr1 = 0;
 	bphy_ints[irq_num].isr_base = isr_base;
-	asm volatile("mrs %0, ttbr0_el1\n\t" : "=r"(bphy_ints[irq_num].ttbr));
+	asm volatile("mrs %0, ttbr0_el1\n\t" : "=r"(bphy_ints[irq_num].ttbr0));
+	asm volatile("mrs %0, ttbr1_el1\n\t" : "=r"(bphy_ints[irq_num].ttbr1));
 	bphy_ints[irq_num].tcr = 0;
 	asm volatile("mrs %0, tcr_el1\n\t" : "=r"(bphy_ints[irq_num].tcr));
-	bphy_ints[irq_num].tcr &= ~(1ULL << 22);
 	retval = setup_interrupt_entries(irq_num, cpu, 1);
 	if (retval != 0) {
 		bphy_ints[irq_num].sp = 0;
 		bphy_ints[irq_num].cpu = 0;
-		bphy_ints[irq_num].ttbr = 0;
+		bphy_ints[irq_num].ttbr0 = 0;
+		bphy_ints[irq_num].ttbr1 = 0;
 		ERROR("Can't install irq handler for bphy psm:%llu cpu:%llu\n",
 		       irq_num, cpu);
 		__atomic_thread_fence(__ATOMIC_SEQ_CST);
@@ -294,9 +300,10 @@ int bphy_psm_install_irq(uint64_t irq_num, uint64_t sp, uint64_t  cpu,
 		__atomic_fetch_sub(&bphy_ints[irq_num].in_use, 1,
 				   __ATOMIC_SEQ_CST);
 	} else {
-		INFO("Installed irq handler for bphy psm:%llu ttrb:%llx sp:%llx\n"
-		       "\tisr_base:%llx cpu:%llu tcr:%llx\n",
-		       irq_num, bphy_ints[irq_num].ttbr,
+		INFO("Installed irq handler for bphy psm:%llu ttrb0:%llx\n"
+		       "\tttrb1:%llx sp:%llx isr_base:%llx cpu:%llu tcr:%llx\n",
+		       irq_num, bphy_ints[irq_num].ttbr0,
+		       bphy_ints[irq_num].ttbr1,
 		       bphy_ints[irq_num].sp,
 		       bphy_ints[irq_num].isr_base, bphy_ints[irq_num].cpu,
 		       bphy_ints[irq_num].tcr);
@@ -337,7 +344,8 @@ void bphy_psm_clear_irq(uint64_t irq_num)
 	setup_interrupt_entries(irq_num, bphy_ints[irq_num].cpu, 0);
 	bphy_ints[irq_num].sp = 0;
 	bphy_ints[irq_num].cpu = 0;
-	bphy_ints[irq_num].ttbr = 0;
+	bphy_ints[irq_num].ttbr0 = 0;
+	bphy_ints[irq_num].ttbr1 = 0;
 	__atomic_thread_fence(__ATOMIC_SEQ_CST);
 
 	__atomic_thread_fence(__ATOMIC_SEQ_CST);
