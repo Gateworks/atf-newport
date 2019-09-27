@@ -413,15 +413,33 @@ func el3_exit_wfi
 	ldr	x0, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_LR_BCK]
 	str	x0, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_LR]
 
-	/*Restores EL0ISR sysregs*/
+	/* Restores EL0ISR sysregs */
+	/* OS-ELmode was saved at CTX_GPREG_X6 of EL0ISR_CTX_GPREGS_OFFSET */
+	mov	x0, xzr
+	add	x0, sp, #EL0ISR_CTX_GPREGS_OFFSET
+	ldr	x6, [x0, #CTX_GPREG_X6]
+
 	mov x8, xzr
 	add x8, sp, #EL0ISR_CTX_SYSREGS_OFFSET
-	ldr x9, [x8, #EL0ISR_CTX_TCR_EL1]
+	cmp x6, xzr
+	beq 1f
+	/* X6 == 1, OS is in EL2 mode */
+	ldr x9, [x8, #EL0ISR_CTX_TCR_EL12]
+	msr tcr_el2, x9
+	ldr x9, [x8, #EL0ISR_CTX_TTBR0_EL12]
+	msr ttbr0_el2, x9
+	ldr x9, [x8, #EL0ISR_CTX_TTBR1_EL12]
+	msr S3_4_C2_C0_1, x9
+	b 2f
+1:
+	/* X6 == 0, OS is in EL2 mode */
+	ldr x9, [x8, #EL0ISR_CTX_TCR_EL12]
 	msr tcr_el1, x9
-	ldr x9, [x8, #EL0ISR_CTX_TTBR0_EL1]
+	ldr x9, [x8, #EL0ISR_CTX_TTBR0_EL12]
 	msr ttbr0_el1, x9
-	ldr x9, [x8, #EL0ISR_CTX_TTBR1_EL1]
+	ldr x9, [x8, #EL0ISR_CTX_TTBR1_EL12]
 	msr ttbr1_el1, x9
+2:
 	ldr x9, [x8, #EL0ISR_CTX_SCR_EL3]
 	msr scr_el3, x9
 	ldr x9, [x8, #EL0ISR_CTX_SPSR_EL3]
@@ -467,6 +485,7 @@ func el3_start_el0_isr
 	 * X3 holds ttbr1
 	 * X4 holds isr_base
 	 * X5 holds tcr_el1
+	 * X6 holds el_mode
 	 * -------------------------------------------------------
 	 */
 	msr spsel, #1
@@ -502,12 +521,25 @@ func el3_start_el0_isr
 	/*save EL0ISR specific system registers */
 	mov x8, xzr
 	add x8, sp, #EL0ISR_CTX_SYSREGS_OFFSET
+	/* X6 == 0, OS is in EL1 mode
+	 * X6 == 1, OS is in EL2 mode */
+	cmp	x6, xzr
+	beq	1f
+	mrs 	x9, tcr_el2
+	str 	x9, [x8, #EL0ISR_CTX_TCR_EL12]
+	mrs 	x9, ttbr0_el2
+	str 	x9, [x8, #EL0ISR_CTX_TTBR0_EL12]
+	mrs	x9, S3_4_C2_C0_1		 /* ttbr1_el2 */
+	str	x9, [x8, #EL0ISR_CTX_TTBR1_EL12]
+	b	2f
+1:
 	mrs x9, tcr_el1
-	str x9, [x8, #EL0ISR_CTX_TCR_EL1]
+	str x9, [x8, #EL0ISR_CTX_TCR_EL12]
 	mrs x9, ttbr0_el1
-	str x9, [x8, #EL0ISR_CTX_TTBR0_EL1]
+	str x9, [x8, #EL0ISR_CTX_TTBR0_EL12]
 	mrs x9, ttbr1_el1
-	str x9, [x8, #EL0ISR_CTX_TTBR1_EL1]
+	str x9, [x8, #EL0ISR_CTX_TTBR1_EL12]
+2:
 	mrs x9, scr_el3
 	str x9, [x8, #EL0ISR_CTX_SCR_EL3]
 	mrs x9, spsr_el3
@@ -520,9 +552,17 @@ func el3_start_el0_isr
 	 */
 	msr sp_el0, x1
 	nop
+	cmp	x6, xzr
+	beq	1f
+	msr	tcr_el2, x5
+	msr	ttbr0_el2, x2
+	msr	S3_4_C2_C0_1, x3
+	b	2f
+1:
 	msr tcr_el1, x5
 	msr ttbr0_el1, x2
 	msr ttbr1_el1, x3
+2:
 	ldr x2, =SCR_ISR
 	ldr x3, =SPSR_ISR
 	msr scr_el3, x2

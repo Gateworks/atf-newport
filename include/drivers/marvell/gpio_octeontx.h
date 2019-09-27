@@ -16,6 +16,7 @@ struct gpio_irq {
 	volatile uint64_t isr_base;
 	volatile uint64_t tcr;
 	volatile uint64_t counter;
+	volatile uint64_t el_mode;
 	volatile int lock;
 	volatile int in_use;
 	volatile int in_use_ready;

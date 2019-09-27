@@ -30,6 +30,7 @@
 #include <octeontx_common.h>
 #include <gpio_octeontx.h>
 #include <octeontx_irqs_def.h>
+#include <arm_sysreg.h>
 
 uint64_t gpio_intrx_base;
 int gpio_intercept_interrupts;
@@ -45,10 +46,11 @@ int gpio_intercept_interrupts;
  * X3 holds ttbr1
  * X4 holds isr_base
  * X5 holds tcr_el1
+ * X6 holds Linux/OS el_mode
  */
 void el3_start_el0_isr(uint64_t gpio_num, uint64_t sp,
 		       uint64_t ttbr0, uint64_t ttrb1, uint64_t isr_base,
-		       uint64_t tcr_el1);
+		       uint64_t tcr_el1, uint64_t el_mode);
 
 static volatile int irq_cpu_lock_counter;
 volatile struct gpio_irq gpio_ints[MAX_GPIO_INTERRUPTS] = {0};
@@ -77,6 +79,7 @@ static void prepare_el0_isr_callback(uint64_t gpio_num, uint64_t counter)
 	uint64_t ttbr0, ttbr1;
 	uint64_t isr_base;
 	uint64_t tcr;
+	uint64_t el_mode;
 
 	/*
 	 * This system of lock and counter looks somewhat cumbersome,
@@ -110,6 +113,8 @@ static void prepare_el0_isr_callback(uint64_t gpio_num, uint64_t counter)
 	isr_base = __atomic_load_n(&gpio_ints[gpio_num].isr_base,
 				   __ATOMIC_SEQ_CST);
 	tcr = __atomic_load_n(&gpio_ints[gpio_num].tcr, __ATOMIC_SEQ_CST);
+	el_mode = __atomic_load_n(&gpio_ints[gpio_num].el_mode,
+				  __ATOMIC_SEQ_CST);
 
 	if (__atomic_load_n(&gpio_ints[gpio_num].in_use_ready,
 			   __ATOMIC_SEQ_CST) == 0)
@@ -119,7 +124,7 @@ static void prepare_el0_isr_callback(uint64_t gpio_num, uint64_t counter)
 			    __ATOMIC_SEQ_CST) != counter)
 		goto finish;
 
-	el3_start_el0_isr(gpio_num, sp, ttbr0, ttbr1, isr_base, tcr);
+	el3_start_el0_isr(gpio_num, sp, ttbr0, ttbr1, isr_base, tcr, el_mode);
 
 finish:
 	__atomic_fetch_sub(&gpio_ints[gpio_num].lock, 1, __ATOMIC_SEQ_CST);
@@ -271,6 +276,7 @@ int gpio_install_irq(uint64_t gpio_num, uint64_t sp, uint64_t  cpu,
 		     uint64_t isr_base)
 {
 	int retval;
+	uint64_t el_mode;
 
 	/* Check if this functionality is available */
 	if (gpio_intercept_interrupts == 0)
@@ -301,16 +307,33 @@ int gpio_install_irq(uint64_t gpio_num, uint64_t sp, uint64_t  cpu,
 	gpio_ints[gpio_num].ttbr0 = 0;
 	gpio_ints[gpio_num].ttbr1 = 0;
 	gpio_ints[gpio_num].isr_base = isr_base;
-	asm volatile("mrs %0, ttbr0_el1\n\t" : "=r"(gpio_ints[gpio_num].ttbr0));
-	asm volatile("mrs %0, ttbr1_el1\n\t" : "=r"(gpio_ints[gpio_num].ttbr1));
 	gpio_ints[gpio_num].tcr = 0;
-	asm volatile("mrs %0, tcr_el1\n\t" : "=r"(gpio_ints[gpio_num].tcr));
+
+	el_mode = get_os_elmode();
+	gpio_ints[gpio_num].el_mode = el_mode;
+	if (el_mode) {
+		asm volatile("mrs %0, ttbr0_el2\n\t"
+			     : "=r"(gpio_ints[gpio_num].ttbr0));
+		asm volatile("mrs %0, S3_4_C2_C0_1\n\t"
+			     : "=r"(gpio_ints[gpio_num].ttbr1));
+		asm volatile("mrs %0, tcr_el2\n\t"
+			     : "=r"(gpio_ints[gpio_num].tcr));
+	} else {
+		asm volatile("mrs %0, ttbr0_el1\n\t"
+			     : "=r"(gpio_ints[gpio_num].ttbr0));
+		asm volatile("mrs %0, ttbr1_el1\n\t"
+			     : "=r"(gpio_ints[gpio_num].ttbr1));
+		asm volatile("mrs %0, tcr_el1\n\t"
+			     : "=r"(gpio_ints[gpio_num].tcr));
+	}
+
 	retval = setup_interrupt_entries(gpio_num, cpu, 1);
 	if (retval != 0) {
 		gpio_ints[gpio_num].sp = 0;
 		gpio_ints[gpio_num].cpu = 0;
 		gpio_ints[gpio_num].ttbr0 = 0;
 		gpio_ints[gpio_num].ttbr1 = 0;
+		gpio_ints[gpio_num].el_mode = 0;
 		ERROR("Can't install irq handlerfor gpio:%llu cpu:%llu\n",
 		       gpio_num, cpu);
 		__atomic_thread_fence(__ATOMIC_SEQ_CST);
@@ -319,12 +342,14 @@ int gpio_install_irq(uint64_t gpio_num, uint64_t sp, uint64_t  cpu,
 				   __ATOMIC_SEQ_CST);
 	} else {
 		INFO("Installed irq handler for gpio:%llu ttrb0:%llx\n"
-		       "\tttrb1:%llx sp:%llx isr_base:%llx cpu:%llu tcr:%llx\n",
+		       "\tttrb1:%llx sp:%llx isr_base:%llx cpu:%llu\n"
+		       "\ttcr:%llx el_mode:%llx\n",
 		       gpio_num, gpio_ints[gpio_num].ttbr0,
 		       gpio_ints[gpio_num].ttbr1,
 		       gpio_ints[gpio_num].sp,
 		       gpio_ints[gpio_num].isr_base, gpio_ints[gpio_num].cpu,
-		       gpio_ints[gpio_num].tcr);
+		       gpio_ints[gpio_num].tcr,
+		       gpio_ints[gpio_num].el_mode);
 		__atomic_thread_fence(__ATOMIC_SEQ_CST);
 		/*
 		 * Success, increment .counter, and indicate that GPIO is
@@ -363,6 +388,7 @@ void gpio_clear_irq(uint64_t gpio_num)
 	gpio_ints[gpio_num].cpu = 0;
 	gpio_ints[gpio_num].ttbr0 = 0;
 	gpio_ints[gpio_num].ttbr1 = 0;
+	gpio_ints[gpio_num].el_mode = 0;
 	__atomic_thread_fence(__ATOMIC_SEQ_CST);
 	do {
 		/* Acknowledge interrupt for this GPIO */

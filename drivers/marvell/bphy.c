@@ -24,6 +24,7 @@
 #include <octeontx_svc.h>
 #include <octeontx_common.h>
 #include <bphy.h>
+#include <arm_sysreg.h>
 
 /* */
 #define MAX_BPHY_PSM_INTS	27
@@ -36,6 +37,7 @@ struct bphy_psm_irq {
 	volatile uint64_t isr_base;
 	volatile uint64_t tcr;
 	volatile uint64_t counter;
+	volatile uint64_t el_mode;
 	volatile int lock;
 	volatile int in_use;
 	volatile int in_use_ready;
@@ -57,10 +59,11 @@ struct irq_cpu {
  * X3 holds ttbr1
  * X4 holds isr_base
  * X5 holds tcr_el1
+ * X6 holds Linux/OS el_mode
  */
 void el3_start_el0_isr(uint64_t irq_num, uint64_t sp,
 		       uint64_t ttbr0, uint64_t ttbr1, uint64_t isr_base,
-		       uint64_t tcr_el1);
+		       uint64_t tcr_el1, uint64_t el_mode);
 
 static volatile int irq_cpu_lock_counter;
 volatile struct bphy_psm_irq bphy_ints[MAX_BPHY_PSM_INTS] = {0};
@@ -74,6 +77,7 @@ static void prepare_el0_isr_callback(uint64_t irq_num, uint64_t counter)
 	uint64_t ttbr0, ttbr1;
 	uint64_t isr_base;
 	uint64_t tcr;
+	uint64_t el_mode;
 
 	/*
 	 * This system of lock and counter looks somewhat cumbersome,
@@ -107,6 +111,8 @@ static void prepare_el0_isr_callback(uint64_t irq_num, uint64_t counter)
 	isr_base = __atomic_load_n(&bphy_ints[irq_num].isr_base,
 				   __ATOMIC_SEQ_CST);
 	tcr = __atomic_load_n(&bphy_ints[irq_num].tcr, __ATOMIC_SEQ_CST);
+	el_mode = __atomic_load_n(&bphy_ints[irq_num].el_mode,
+				  __ATOMIC_SEQ_CST);
 
 	if (__atomic_load_n(&bphy_ints[irq_num].in_use_ready,
 			   __ATOMIC_SEQ_CST) == 0)
@@ -116,7 +122,7 @@ static void prepare_el0_isr_callback(uint64_t irq_num, uint64_t counter)
 			    __ATOMIC_SEQ_CST) != counter)
 		goto finish;
 
-	el3_start_el0_isr(irq_num, sp, ttbr0, ttbr1, isr_base, tcr);
+	el3_start_el0_isr(irq_num, sp, ttbr0, ttbr1, isr_base, tcr, el_mode);
 
 finish:
 	__atomic_fetch_sub(&bphy_ints[irq_num].lock, 1, __ATOMIC_SEQ_CST);
@@ -249,6 +255,7 @@ int bphy_psm_install_irq(uint64_t irq_num, uint64_t sp, uint64_t  cpu,
 			 uint64_t isr_base)
 {
 	int retval;
+	uint64_t el_mode;
 
 	INFO("Entering %s\n", __func__);
 	/* Lock */
@@ -276,16 +283,33 @@ int bphy_psm_install_irq(uint64_t irq_num, uint64_t sp, uint64_t  cpu,
 	bphy_ints[irq_num].ttbr0 = 0;
 	bphy_ints[irq_num].ttbr1 = 0;
 	bphy_ints[irq_num].isr_base = isr_base;
-	asm volatile("mrs %0, ttbr0_el1\n\t" : "=r"(bphy_ints[irq_num].ttbr0));
-	asm volatile("mrs %0, ttbr1_el1\n\t" : "=r"(bphy_ints[irq_num].ttbr1));
 	bphy_ints[irq_num].tcr = 0;
-	asm volatile("mrs %0, tcr_el1\n\t" : "=r"(bphy_ints[irq_num].tcr));
+
+	el_mode = get_os_elmode();
+	bphy_ints[irq_num].el_mode = el_mode;
+	if (el_mode) {
+		asm volatile("mrs %0, ttbr0_el2\n\t"
+			     : "=r"(bphy_ints[irq_num].ttbr0));
+		asm volatile("mrs %0, S3_4_C2_C0_1\n\t"
+			     : "=r"(bphy_ints[irq_num].ttbr1));
+		asm volatile("mrs %0, tcr_el2\n\t"
+			     : "=r"(bphy_ints[irq_num].tcr));
+	} else {
+		asm volatile("mrs %0, ttbr0_el1\n\t"
+			     : "=r"(bphy_ints[irq_num].ttbr0));
+		asm volatile("mrs %0, ttbr1_el1\n\t"
+			     : "=r"(bphy_ints[irq_num].ttbr1));
+		asm volatile("mrs %0, tcr_el1\n\t"
+			     : "=r"(bphy_ints[irq_num].tcr));
+	}
+
 	retval = setup_interrupt_entries(irq_num, cpu, 1);
 	if (retval != 0) {
 		bphy_ints[irq_num].sp = 0;
 		bphy_ints[irq_num].cpu = 0;
 		bphy_ints[irq_num].ttbr0 = 0;
 		bphy_ints[irq_num].ttbr1 = 0;
+		bphy_ints[irq_num].el_mode = 0;
 		ERROR("Can't install irq handler for bphy psm:%llu cpu:%llu\n",
 		       irq_num, cpu);
 		__atomic_thread_fence(__ATOMIC_SEQ_CST);
@@ -294,12 +318,14 @@ int bphy_psm_install_irq(uint64_t irq_num, uint64_t sp, uint64_t  cpu,
 				   __ATOMIC_SEQ_CST);
 	} else {
 		INFO("Installed irq handler for bphy psm:%llu ttrb0:%llx\n"
-		       "\tttrb1:%llx sp:%llx isr_base:%llx cpu:%llu tcr:%llx\n",
+		       "\tttrb1:%llx sp:%llx isr_base:%llx cpu:%llu\n"
+		       "\ttcr:%llx el_mode:%llx\n",
 		       irq_num, bphy_ints[irq_num].ttbr0,
 		       bphy_ints[irq_num].ttbr1,
 		       bphy_ints[irq_num].sp,
 		       bphy_ints[irq_num].isr_base, bphy_ints[irq_num].cpu,
-		       bphy_ints[irq_num].tcr);
+		       bphy_ints[irq_num].tcr,
+		       bphy_ints[irq_num].el_mode);
 		__atomic_thread_fence(__ATOMIC_SEQ_CST);
 		/*
 		 * Success, increment .counter, and indicate that IRQ is
@@ -339,6 +365,7 @@ void bphy_psm_clear_irq(uint64_t irq_num)
 	bphy_ints[irq_num].cpu = 0;
 	bphy_ints[irq_num].ttbr0 = 0;
 	bphy_ints[irq_num].ttbr1 = 0;
+	bphy_ints[irq_num].el_mode = 0;
 	__atomic_thread_fence(__ATOMIC_SEQ_CST);
 
 	__atomic_thread_fence(__ATOMIC_SEQ_CST);
