@@ -31,9 +31,6 @@
 #include <gpio_octeontx.h>
 #include <octeontx_irqs_def.h>
 
-#define SPSR_ISR	((1ULL << SPSR_E_SHIFT) | (3 << SPSR_AIF_SHIFT))
-#define SCR_ISR		(SCR_NS_BIT | SCR_TWE_BIT | SCR_TWI_BIT | SCR_RW_BIT)
-
 uint64_t gpio_intrx_base;
 int gpio_intercept_interrupts;
 
@@ -47,13 +44,10 @@ int gpio_intercept_interrupts;
  * X2 holds ttbr0
  * X3 holds ttbr1
  * X4 holds isr_base
- * X5 holds spsr_el3
- * X6 holds scr_el3
- * X7 holds tcr_el1
+ * X5 holds tcr_el1
  */
 void el3_start_el0_isr(uint64_t gpio_num, uint64_t sp,
 		       uint64_t ttbr0, uint64_t ttrb1, uint64_t isr_base,
-		       uint64_t spsr_el3, uint64_t scr_el3,
 		       uint64_t tcr_el1);
 
 static volatile int irq_cpu_lock_counter;
@@ -125,8 +119,7 @@ static void prepare_el0_isr_callback(uint64_t gpio_num, uint64_t counter)
 			    __ATOMIC_SEQ_CST) != counter)
 		goto finish;
 
-	el3_start_el0_isr(gpio_num, sp, ttbr0, ttbr1, isr_base, SPSR_ISR,
-			  SCR_ISR, tcr);
+	el3_start_el0_isr(gpio_num, sp, ttbr0, ttbr1, isr_base, tcr);
 
 finish:
 	__atomic_fetch_sub(&gpio_ints[gpio_num].lock, 1, __ATOMIC_SEQ_CST);
