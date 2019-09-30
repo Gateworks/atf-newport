@@ -208,12 +208,16 @@ void plat_octeontx_print_board_variables(void)
 					debug_dts("\tPHY: mdio_bus=%d\t"
 							"phy_addr=0x%x\t"
 							"type=%d switch=%d\t"
-							"port=%d\n",
+							"port=%d\t"
+							"host_order=0x%x\t"
+							"line_order=0x%x\n",
 							phy->mdio_bus,
 							phy->addr,
 							phy->type,
 							phy->mux_switch,
-							phy->port);
+							phy->port,
+							phy->host_order,
+							phy->line_order);
 				}
 			} else {
 				debug_dts("\tPHY: NONE\n");
@@ -1185,6 +1189,7 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 	int cgx_idx;
 	int i, j;
 	int lcnt, lused, lane_to_sds;
+	int lane_order;
 
 	if ((mode_idx < QLM_MODE_SGMII) || (mode_idx >= QLM_MODE_LAST)) {
 		debug_dts("QLM%d.LANE%d: not configured for CGX, skip.\n", qlm, lane);
@@ -1246,30 +1251,33 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 	}
 
 	mode = qlmmode_strmap[mode_idx].mode;
-	/* Fill in the CGX/LMAC structures. */
+	/* Obtain lane order from NETWORK-LANE-ORDER property parsed
+	 * from BDK DT
+	 * Examples:
+	 * 0x3210: Default connection, lanes in order
+	 * 0x0123: All lanes are swizzled. 0->3, 1->2, 2->1, 3->0
+	 */
+	lane_order = plat_octeontx_bcfg->cgx_cfg[cgx_idx].network_lane_order;
+
 	for (i = 0; i < lcnt; i++) {
 		lmac = &cgx->lmac_cfg[cgx->lmac_count];
-		/* EBB9604, EBB9304 and 95E based EBB9504 boards have lane
-		 * reversed. Handle it accordingly
+		/* lane_to_sds(8 bits) is an array of 2-bit values that map each
+		 * logical PCS lane in the LMAC to a physical SerDes lane.
+		 * Extract the lane info from lane order and build lane_to_sds.
 		 */
-		if ((!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96",
-				5)) ||
-			(!strncmp(plat_octeontx_bcfg->bcfg.board_model,
-				"ebb93", 5)) ||
-			(plat_get_altpkg() == CN95XXE_PKG))
-			lane_to_sds = 0x1B; /* Lanes are reversed */
-		else
-			lane_to_sds = 0xE4; /* Default value */
+		lane_to_sds = ((((lane_order >> 12) & 3) << 6) |
+			(((lane_order >> 8) & 3) << 4) |
+			(((lane_order >> 4) & 3) << 2) |
+			(((lane_order >> 0) & 3)));
+
+		/* Fill in the CGX/LMAC structures */
 		lmac->mode = mode;
 		lmac->mode_idx = mode_idx;
 		lmac->qlm = qlm;
-		/* FIXME: Parser needs to fixed to pass the correct lane
-		 * as sent by BDK and to support mode configuration
-		 * based on any possible lane.
-		 */
+
 		if (mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
 			if (!cgx->usxgmii_mode) {
-				/* this is the first lane with USXGMII mode.
+				/* This is the first lane with USXGMII mode.
 				 * update one time all LMACs lane with the same
 				 * physical lane. physical SerDes lane to be
 				 * programmed in case of USXGMII mode instead
@@ -1293,7 +1301,7 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		/* Use NETWORK-LANE-ORDER to fill the lane info that are
 		 * reversed
 		 */
-		lmac->rev_lane = (plat_octeontx_bcfg->cgx_cfg[cgx_idx].network_lane_order >> (lmac->lane * 4)) & 3;
+		lmac->rev_lane = (lane_order >> (lmac->lane * 4)) & 3;
 
 		/* For spanning two DLMs, NETWORK-LANE-ORDER should be
 		 * interpreted as below. The first DLM is lane 0
@@ -1302,7 +1310,8 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		 * reversed lane should be lane 1 of DLM4 not lane 3
 		 * and same for DLM 4.
 		 */
-		if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5)) {
+		if ((!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5)) &&
+			(cavm_is_model(OCTEONTX_CN96XX_PASS1_X))) {
 			if (plat_octeontx_scfg->qlm_max_lane_num[qlm] == 2)
 				lmac->rev_lane -= 2;
 		}
@@ -1343,20 +1352,20 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		switch (mode_idx) {
 		case QLM_MODE_10G_KR:
 		case QLM_MODE_40G_KR4:
-			lmac->use_training = 1; /* FIXME: should be coming from SFP/QSFP */
+			lmac->use_training = 1;
 			break;
 		case QLM_MODE_USXGMII_1X1:
 		case QLM_MODE_USXGMII_2X1:
 		case QLM_MODE_USXGMII_4X1:
-			cgx->usxgmii_mode = 1;	/* set USXGMII for this CGX */
+			/* set USXGMII for this CGX */
+			cgx->usxgmii_mode = 1;
 		case QLM_MODE_XFI:
 		case QLM_MODE_SFI:
 		case QLM_MODE_XLAUI:
 		case QLM_MODE_XLAUI_C2M:
 		case QLM_MODE_RXAUI:
 		case QLM_MODE_XAUI:
-		/* fixed speed option. consider as AN disabled cases */
-
+		/* Fixed speed option. consider as AN disabled cases */
 		case QLM_MODE_20GAUI_C2C:
 		case QLM_MODE_25GAUI_C2C:
 		case QLM_MODE_25GAUI_C2M:
@@ -1385,7 +1394,7 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 
 	cgx->enable = 1;
 
-	/* if a QLM/DLM is configured as USXGMII (even if it uses 1 LMAC),
+	/* If a QLM/DLM is configured as USXGMII (even if it uses 1 LMAC),
 	 * CGX may not be used by other lanes. Hence always return 4
 	 */
 	if (cgx->usxgmii_mode)
@@ -1406,7 +1415,8 @@ static int octeontx2_cgx_get_phy_info(const void *fdt, int lmac_offset, int cgx_
 	strncpy(phyname, "phy-handle", sizeof(phyname));
 
 	/* FIXME: Using board model is safe to use for now */
-	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5)) {
+	if ((!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5))
+		&& (cavm_is_model(OCTEONTX_CN96XX_PASS1_X))) {
 		/* On EBB9604 board, PHY address can be different on
 		 * QLM 3 and QLM 7 and at a time, ethernet can be configured
 		 * either on QLM3 or QLM7 only and not both. CGX0 is mapped to
@@ -1445,6 +1455,20 @@ static int octeontx2_cgx_get_phy_info(const void *fdt, int lmac_offset, int cgx_
 				lmac_idx);
 		phy->port = octeontx2_fdt_get_int32(fdt,
 					"port", phy_offset);
+
+		phy->host_order = octeontx2_fdt_get_int32(fdt,
+					"host_order", phy_offset);
+
+		phy->line_order = octeontx2_fdt_get_int32(fdt,
+					"line_order", phy_offset);
+
+		/* Assign default lane order if property is not
+		 * present in DT
+		 */
+		if (phy->host_order == -1)
+			phy->host_order = 0x3210;
+		if (phy->line_order == -1)
+			phy->line_order = 0x3210;
 
 		/* Check if the MDIO bus is behind a switch */
 		mux_offset = octeontx2_fdt_lookup_phandle(fdt,

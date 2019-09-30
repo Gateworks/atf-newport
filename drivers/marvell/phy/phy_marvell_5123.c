@@ -41,6 +41,10 @@ typedef struct {
 		int cmain_line;
 		int cpre_line;
 		int cpost_line;
+		int tx_host_lane;
+		int tx_line_lane;
+		int rx_host_lane;
+		int rx_line_lane;
 	} port[8];
 } phy_mcd_priv_t;
 
@@ -73,7 +77,7 @@ void phy_marvell_5123_probe(int cgx_id, int lmac_id)
 	MCD_STATUS status;
 	MCD_U16 serdesRevision = 0;
 	MCD_U16 sbmRevision = 0;
-	phy_config_t *phy;
+	phy_config_t *phy, *phy1 = NULL;
 
 	if (init)
 		return;
@@ -81,6 +85,11 @@ void phy_marvell_5123_probe(int cgx_id, int lmac_id)
 	printf("%s: Initializing Marvell 88x5123 PHY...\n", __func__);
 
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+	for (int i = cgx_id + 1; i < MAX_CGX; i++) {
+		phy1 = &plat_octeontx_bcfg->cgx_cfg[i].lmac_cfg[lmac_id].phy_config;
+		if (phy1->type == PHY_MARVELL_5123)
+			break;
+	}
 
 	phy->priv = &marvell_5123_priv;
 	status = mcdInitDriver(mcd_read_mdio, mcd_write_mdio, phy->addr,
@@ -109,6 +118,60 @@ void phy_marvell_5123_probe(int cgx_id, int lmac_id)
 	}
 	printf("%s: SERDES FW revision 0x%x BUS MASTER FW revision 0x%x\n",
 				__func__, serdesRevision, sbmRevision);
+
+	/* Remap serdes lane if lanes are swapped. Swapped
+	 * lane info is obtained from DTS for each board
+	 */
+	for (int i = 0; i < 4; i++) {
+		marvell_5123_priv.port[i].tx_host_lane = (phy->host_order >> (4 * i)) & 0xF;
+
+		marvell_5123_priv.port[i].rx_host_lane = marvell_5123_priv.port[i].tx_host_lane;
+
+		marvell_5123_priv.port[i].tx_line_lane = (phy->line_order >> (4 * i)) & 0xF;
+
+		marvell_5123_priv.port[i].rx_line_lane = marvell_5123_priv.port[i].tx_line_lane;
+
+		if (phy1 == NULL)
+			continue;
+
+		marvell_5123_priv.port[i + 4].tx_host_lane = (phy1->host_order >> (4 * i)) & 0xF;
+
+		marvell_5123_priv.port[i + 4].rx_host_lane = marvell_5123_priv.port[i + 4].tx_host_lane;
+
+		marvell_5123_priv.port[i + 4].tx_line_lane = (phy1->line_order >> (4 * i)) & 0xF;
+
+		marvell_5123_priv.port[i + 4].rx_line_lane = marvell_5123_priv.port[i + 4].tx_line_lane;
+	}
+
+	/* Program lane order */
+	MCD_SERDES_TXRX_LANE_REMAP remap[8][2] = {
+		/* Line side  - Slice 0, Slice 1 */
+		{ {marvell_5123_priv.port[0].tx_line_lane, marvell_5123_priv.port[0].rx_line_lane},
+			{marvell_5123_priv.port[4].tx_line_lane, marvell_5123_priv.port[4].rx_line_lane} },
+		{ {marvell_5123_priv.port[1].tx_line_lane, marvell_5123_priv.port[1].rx_line_lane},
+			{marvell_5123_priv.port[5].tx_line_lane, marvell_5123_priv.port[5].rx_line_lane} },
+		{ {marvell_5123_priv.port[2].tx_line_lane, marvell_5123_priv.port[2].rx_line_lane},
+			{marvell_5123_priv.port[6].tx_line_lane, marvell_5123_priv.port[6].rx_line_lane} },
+		{ {marvell_5123_priv.port[3].tx_line_lane, marvell_5123_priv.port[3].rx_line_lane},
+			{marvell_5123_priv.port[7].tx_line_lane, marvell_5123_priv.port[7].rx_line_lane} },
+		/* Host side, unused. Swapping done in CGX */
+		{ {0, 0}, {0, 0} },
+		{ {1, 1}, {1, 1} },
+		{ {2, 2}, {2, 2} },
+		{ {3, 3}, {3, 3} }
+	};
+
+	/* Call the remapping API separately for both the slices */
+	status = mcdSetLaneRemapping(&marvell_5123_priv.mcddev, MCD_LINE_SIDE, 0, remap);
+	if (status != MCD_OK) {
+		ERROR("%s: mcdSetLaneRemapping() failed for slice 0\n", __func__);
+		return;
+	}
+	status = mcdSetLaneRemapping(&marvell_5123_priv.mcddev, MCD_LINE_SIDE, 1, remap);
+	if (status != MCD_OK) {
+		ERROR("%s: mcdSetLaneRemapping() failed for slice 1\n", __func__);
+		return;
+	}
 }
 
 /* To set the operating mode of the PHY if required */
