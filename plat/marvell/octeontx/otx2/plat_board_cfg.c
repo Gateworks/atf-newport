@@ -716,16 +716,16 @@ static int octeontx2_fdt_get_bus(const void *fdt, int offset,
 	return bus;
 }
 
-static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
+static int octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 		i2c_info_t *i2c_info, int cgx_idx, int lmac_idx)
 {
-	int parent;
+	int parent, ret;
 
 	parent = fdt_parent_offset(fdt, offset);
 	if (parent < 0) {
 		ERROR("CGX%d.LMAC%d: couldn't find i2c type\n",
 				cgx_idx, lmac_idx);
-		return;
+		return -1;
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(i2c_compat_list); i++) {
@@ -736,8 +736,12 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 			i2c_info->type = i2c_compat_list[i].type;
 			if (i2c_info->type == I2C_BUS_DEFAULT) {
 				/* TWSI bus */
-				i2c_info->bus = octeontx2_fdt_get_bus(fdt,
+				ret = octeontx2_fdt_get_bus(fdt,
 					offset, cgx_idx, lmac_idx);
+				if (ret != -1)
+					i2c_info->bus = ret;
+				else
+					return ret;
 			} else { /* all other MUX/SWITCH cases */
 				i2c_info->is_mux = i2c_compat_list[i].mux_type;
 				i2c_info->enable_bit =
@@ -747,8 +751,12 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 				i2c_info->addr = octeontx2_fdt_get_int32(fdt,
 							"reg", parent);
 				/* TWSI bus */
-				i2c_info->bus = octeontx2_fdt_get_bus(fdt,
+				ret = octeontx2_fdt_get_bus(fdt,
 					parent, cgx_idx, lmac_idx);
+				if (ret != -1)
+					i2c_info->bus = ret;
+				else
+					return ret;
 				debug_dts(
 					"CGX%d.LMAC%d: I2C SWITCH %d: channel %d addr 0x%x bus %d\n",
 					cgx_idx, lmac_idx, !i2c_info->is_mux,
@@ -758,12 +766,15 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 			break;
 		}
 	}
-	if (i2c_info->type == I2C_BUS_NONE)
+	if (i2c_info->type == I2C_BUS_NONE) {
 		debug_dts("CGX%d.LMAC%d: couldn't find valid I2C BUS type\n",
 				cgx_idx, lmac_idx);
+		return -1;
+	}
+	return 0;
 }
 
-static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
+static int octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 		const char *propname, gpio_info_t *gpio_info,
 		int cgx_idx, int lmac_idx)
 {
@@ -776,13 +787,13 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 	if (!prop) {
 		WARN("CGX%d.LMAC%d: couldn't find %s property\n",
 				cgx_idx, lmac_idx, propname);
-		return;
+		return -1;
 	}
 
 	if (len != 3 * sizeof(unsigned int)) {
 		ERROR("CGX%d.LMAC%d: %s property is of wrong format : must contain phandle, pin & flags\n",
 				cgx_idx, lmac_idx, propname);
-		return;
+		return -1;
 	}
 
 	data = (const uint32_t *)prop->data;
@@ -848,6 +859,8 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 				octeontx2_fdt_get_i2c_bus_info(fdt, parent,
 					&gpio_info->i2c_info,
 					cgx_idx, lmac_idx);
+				if (gpio_info->i2c_info.type == I2C_BUS_NONE)
+					return -1;
 			}
 			gpio_info->i2c_bus = gpio_info->i2c_info.bus;
 			debug_dts("CGX%d.LMAC%d: GPIO controller : addr 0x%x bus %d num pins %d\n",
@@ -857,9 +870,12 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 			break;
 		}
 	}
-	if (gpio_info->type == GPIO_PIN_NONE)
+	if (gpio_info->type == GPIO_PIN_NONE) {
 		WARN("CGX%d.LMAC%d: couldn't find any valid GPIO type\n",
 				cgx_idx, lmac_idx);
+		return -1;
+	}
+	return 0;
 }
 
 static void octeontx2_fdt_parse_qsfp_info(const void *fdt, int offset,
@@ -869,7 +885,7 @@ static void octeontx2_fdt_parse_qsfp_info(const void *fdt, int offset,
 	i2c_info_t *i2c_info;
 	sfp_slot_info_t *qsfp_info;
 	cgx_lmac_config_t *lmac;
-	int eeprom, parent;
+	int eeprom, parent, ret;
 
 	lmac = &(plat_octeontx_bcfg->cgx_cfg[cgx_idx].lmac_cfg[lmac_idx]);
 	qsfp_info = &lmac->sfp_info;
@@ -878,8 +894,6 @@ static void octeontx2_fdt_parse_qsfp_info(const void *fdt, int offset,
 	if (fdt_node_check_compatible(fdt, offset, "qsfp-slot"))
 		return;
 
-	lmac->sfp_slot = 1;	/* SFP slot is present */
-	qsfp_info->is_qsfp = 1;	/* To indicate slot is QSFP */
 	qsfp_info->is_sfp = 0;
 	name = fdt_get_name(fdt, offset, NULL);
 	strncpy(qsfp_info->name, name, sizeof(qsfp_info->name));
@@ -894,7 +908,7 @@ static void octeontx2_fdt_parse_qsfp_info(const void *fdt, int offset,
 	if (eeprom < 0) {
 		ERROR("CGX%d.LMAC%d: Couldn't find EEPROM info for SFP\n",
 				cgx_idx, lmac_idx);
-		return;
+		goto qsfp_update;
 	}
 
 	parent = fdt_parent_offset(fdt, eeprom);
@@ -904,20 +918,49 @@ static void octeontx2_fdt_parse_qsfp_info(const void *fdt, int offset,
 	debug_dts("CGX%d.LMAC%d: EEPROM addr 0x%x\n", cgx_idx, lmac_idx,
 					qsfp_info->eeprom_addr);
 
-	octeontx2_fdt_get_i2c_bus_info(fdt, parent, i2c_info,
+	ret = octeontx2_fdt_get_i2c_bus_info(fdt, parent, i2c_info,
 					cgx_idx, lmac_idx);
+	if (ret == -1)
+		goto qsfp_update;
 
 	/* Parse GPIO info for QSFP interface */
-	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "mod_sel",
+	ret = octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "mod_sel",
 			&qsfp_info->select, cgx_idx, lmac_idx);
-	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "reset",
+	if (ret == -1)
+		goto qsfp_update;
+
+	ret = octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "reset",
 			&qsfp_info->reset, cgx_idx, lmac_idx);
-	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "lowpow_mode",
+	if (ret == -1)
+		goto qsfp_update;
+
+	ret = octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "lowpow_mode",
 			&qsfp_info->lp_mode, cgx_idx, lmac_idx);
-	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "mod_present",
+	if (ret == -1)
+		goto qsfp_update;
+
+	ret = octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "mod_present",
 			&qsfp_info->mod_prs, cgx_idx, lmac_idx);
-	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "int",
+	if (ret == -1)
+		goto qsfp_update;
+
+	ret = octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "int",
 			&qsfp_info->interrupt, cgx_idx, lmac_idx);
+	if (ret == -1)
+		goto qsfp_update;
+
+	/* Set is_qsfp only when all the required info
+	 * are parsed from DTS related to QSFP slot
+	 */
+	lmac->sfp_slot = 1;	/* SFP slot is present */
+	qsfp_info->is_qsfp = 1;	/* To indicate slot is QSFP */
+
+	return;
+
+qsfp_update:
+	ERROR("%s: %d:%d QSFP slot info not parsed fully\n",
+			__func__, cgx_idx, lmac_idx);
+	return;
 }
 
 static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
@@ -927,7 +970,7 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 	i2c_info_t *i2c_info;
 	sfp_slot_info_t *sfp_info;
 	cgx_lmac_config_t *lmac;
-	int eeprom, parent;
+	int eeprom, parent, ret;
 
 	lmac = &(plat_octeontx_bcfg->cgx_cfg[cgx_idx].lmac_cfg[lmac_idx]);
 	sfp_info = &lmac->sfp_info;
@@ -936,8 +979,6 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 	if (fdt_node_check_compatible(fdt, offset, "sfp-slot"))
 		return;
 
-	lmac->sfp_slot = 1;	/* SFP slot is present */
-	sfp_info->is_sfp = 1;	/* To indicate slot is SFP */
 	sfp_info->is_qsfp = 0;
 	name = fdt_get_name(fdt, offset, NULL);
 	strncpy(sfp_info->name, name, sizeof(sfp_info->name));
@@ -952,7 +993,7 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 	if (eeprom < 0) {
 		ERROR("CGX%d.LMAC%d: Couldn't find EEPROM info for SFP\n",
 				cgx_idx, lmac_idx);
-		return;
+		goto sfp_update;
 	}
 
 	parent = fdt_parent_offset(fdt, eeprom);
@@ -962,17 +1003,39 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 	debug_dts("CGX%d.LMAC%d: EEPROM addr 0x%x\n", cgx_idx, lmac_idx,
 					sfp_info->eeprom_addr);
 
-	octeontx2_fdt_get_i2c_bus_info(fdt, parent, i2c_info, cgx_idx, lmac_idx);
+	ret = octeontx2_fdt_get_i2c_bus_info(fdt, parent, i2c_info,
+						cgx_idx, lmac_idx);
+	if (ret == -1)
+		goto sfp_update;
 
 	/* Parse GPIO info for SFP interface */
-	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "detect",
+	ret = octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "detect",
 			&sfp_info->mod_abs, cgx_idx, lmac_idx);
-	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "tx_disable",
+	if (ret == -1)
+		goto sfp_update;
+
+	ret = octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "tx_disable",
 			&sfp_info->tx_disable, cgx_idx, lmac_idx);
-	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "tx_fault",
+	if (ret == -1)
+		goto sfp_update;
+	ret = octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "tx_fault",
 			&sfp_info->tx_fault, cgx_idx, lmac_idx);
-	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "rx_los",
+	if (ret == -1)
+		goto sfp_update;
+
+	ret = octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "rx_los",
 			&sfp_info->rx_los, cgx_idx, lmac_idx);
+	if (ret == -1)
+		goto sfp_update;
+	lmac->sfp_slot = 1;	/* SFP slot is present */
+	sfp_info->is_sfp = 1;	/* To indicate slot is SFP */
+
+	return;
+
+sfp_update:
+	ERROR("%s: %d:%d SFP slot info not parsed fully\n",
+			__func__, cgx_idx, lmac_idx);
+	return;
 }
 
 /* This routine sets a number of LMACs to initialize and the size to use.
