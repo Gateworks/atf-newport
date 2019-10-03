@@ -60,7 +60,8 @@ struct sh_fwdata {
 	uint64_t rclk;
 	uint64_t mcam_addr;
 	uint64_t mcam_sz;
- #define FWDATA_RESERVED_MEM 1024
+	uint64_t rvu_af_msixtr_base;
+ #define FWDATA_RESERVED_MEM 1023
 	uint64_t reserved[FWDATA_RESERVED_MEM];
 	/* Do not add new fields below this line */
 #define CGX_MAX		4

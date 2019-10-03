@@ -88,6 +88,7 @@ void sh_fwdata_init(void)
 	cavm_rst_boot_t.u = CSR_READ(CAVM_RST_BOOT);
 	fwdata->rclk = cavm_rst_boot_t.s.c_mul * RST_REF_CLK;
 	fwdata->sclk = cavm_rst_boot_t.s.pnr_mul * RST_REF_CLK;
+	fwdata->rvu_af_msixtr_base = CSR_READ(CAVM_RVU_AF_MSIXTR_BASE);
 
 #ifdef NT_FW_CONFIG
 	fwdata->mcam_addr = otx2_get_npc_profile_addr(0);
