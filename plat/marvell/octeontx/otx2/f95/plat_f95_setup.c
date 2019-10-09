@@ -275,6 +275,7 @@ void plat_add_mmio()
 	}
 
 	add_map_record(CAVM_GPIO_BAR_E_GPIO_PF_BAR0_CN9, CAVM_GPIO_BAR_E_GPIO_PF_BAR0_CN9_SIZE, attr);
+	add_map_record(CAVM_GPIO_BAR_E_GPIO_PF_BAR4, CAVM_GPIO_BAR_E_GPIO_PF_BAR4_SIZE, attr);
 
 	device_type_count = plat_octeontx_get_uaa_count();
 	for (i = 0; i < device_type_count; i++) {
