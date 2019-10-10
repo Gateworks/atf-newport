@@ -65,6 +65,7 @@
 	smc	#0
 interrupt_exit_\label:
 	restore_caller_regs_and_lr
+	before_eret
 	eret
 	.endm
 

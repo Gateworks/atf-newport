@@ -47,6 +47,7 @@ endfunc mpidr_mask_lower_afflvls
 
 
 func eret
+	before_eret
 	eret
 endfunc eret
 

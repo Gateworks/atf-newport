@@ -364,6 +364,7 @@ func restore_gp_registers_callee_eret
 	dsb sy
 	isb
 
+	before_eret
 	eret
 endfunc	restore_gp_registers_callee_eret
 
@@ -579,6 +580,7 @@ func el3_start_el0_isr
 	mov x29, xzr; mov x30, xzr;
 	dsb sy
 	isb
+	before_eret
 	eret
 endfunc el3_start_el0_isr
 
@@ -640,6 +642,7 @@ func el3_invoke_elx_kernel_callback
 
 	dsb sy
 	isb
+	before_eret
 	eret
 
 endfunc el3_invoke_elx_kernel_callback
