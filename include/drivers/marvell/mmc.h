@@ -20,7 +20,10 @@
  * 500ms. The 750ms values is to give a 50% margin
  */
 #define MMC_WATCHDOG_MS 750 /* In milliseconds */
-#define MMC_CLOCK_HZ    10000000
+#define MMC_CLOCK_HZ    35000000
+#define MMC_TIMEOUT_SHORT       20      /* in ms */
+#define MMC_TIMEOUT_LONG        1000
+#define MMC_TIMEOUT_ERASE       10000
 
 #define SIZE_2GB	0x80000000
 
@@ -42,6 +45,7 @@
 #define BUS_1_BIT	0
 #define BUS_4_BIT	1
 #define BUS_8_BIT	2
+#define BUS_8_BIT_DDR	6
 
 #define MMC_CMD_GO_IDLE_STATE		0
 #define MMC_CMD_SEND_OP_COND		1

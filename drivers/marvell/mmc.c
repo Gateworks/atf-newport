@@ -35,6 +35,20 @@ static void mmc_mdelay(uint64_t ms)
 		mdelay(ms);
 }
 
+static void sdmmc_set_watchdog(unsigned int time_in_ms)
+{
+	unsigned int wdog_value;
+	uint64_t rst_boot;
+	uint64_t mio_emm_modex;
+
+	mio_emm_modex = CSR_READ(CAVM_MIO_EMM_MODEX(mmc_drv.bus_id));
+	rst_boot = CSR_READ(CAVM_RST_BOOT);
+	wdog_value = RST_BOOT_GET_PNR_MUL(rst_boot) * REF_FREQ * time_in_ms;
+	wdog_value /= (MIO_EMM_MODEX_GET_CLK_LO(mio_emm_modex) +
+				MIO_EMM_MODEX_GET_CLK_HI(mio_emm_modex));
+	CSR_WRITE(CAVM_MIO_EMM_WDOG, wdog_value);
+}
+
 static int print_rsp_sts_errors(uint64_t emm_rsp_sts, int suppress_warning)
 {
 	int error_count = 0;
@@ -77,6 +91,17 @@ static uint64_t mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor,
 	uint64_t cmd;
 	int cmd_error = 0;
 	uint64_t emm_rsp_sts = 0;
+	static const uint64_t timeout_short = 0xFFFFFFA4FCF9FFDFull;
+	int timeout;
+	if (timeout_short & (1ull << cmd_idx))
+		timeout = MMC_TIMEOUT_SHORT;
+	else if (cmd_idx == MMC_CMD_SWITCH && mmc_drv.is_sd)
+		timeout = 2560;
+	else if (cmd_idx == MMC_CMD_ERASE)
+		timeout = MMC_TIMEOUT_ERASE;
+	else
+		timeout = MMC_TIMEOUT_LONG;
+	sdmmc_set_watchdog(timeout);
 
 	cmd = 0;
 	cmd = MIO_EMM_CMD_SET_CMD_VAL(cmd);
@@ -140,6 +165,7 @@ static int sdmmc_rw_block(int write, uint64_t addr, uint32_t blk_cnt,
 	/* DMA engine address must be 64-bit aligned */
 	assert(!((uintptr_t)buf & 0x7));
 
+	sdmmc_set_watchdog(MMC_WATCHDOG_MS);
 	while (blk_cnt > 0) {
 		blks = (blk_cnt > 8) ? 8 : blk_cnt;
 		transfer_size = blks * mmc_drv.sector_size;
@@ -469,23 +495,11 @@ static int emmc_block_close(io_entity_t *entity)
 	return 0;
 }
 
-static void sdmmc_set_watchdog(unsigned int time_in_ms)
-{
-	unsigned int wdog_value;
-	uint64_t rst_boot;
-	uint64_t mio_emm_modex;
-
-	mio_emm_modex = CSR_READ(CAVM_MIO_EMM_MODEX(mmc_drv.bus_id));
-	rst_boot = CSR_READ(CAVM_RST_BOOT);
-	wdog_value = RST_BOOT_GET_PNR_MUL(rst_boot) * REF_FREQ * time_in_ms;
-	wdog_value /= (MIO_EMM_MODEX_GET_CLK_LO(mio_emm_modex) +
-				MIO_EMM_MODEX_GET_CLK_HI(mio_emm_modex));
-	CSR_WRITE(CAVM_MIO_EMM_WDOG, wdog_value);
-}
-
 static inline void sdmmc_power_cycle(void)
 {
 	uint64_t gpio_bit_cfgx;
+// Don't do any of this as we have already done it in the BDK
+#if 0
 	uint64_t mio_emm_modex;
 
 	/*
@@ -499,7 +513,7 @@ static inline void sdmmc_power_cycle(void)
 		mio_emm_modex = CSR_READ(CAVM_MIO_EMM_MODEX(mmc_drv.bus_id));
 	}
 	mmc_mdelay(200);
-
+#endif
 	// Disable buses and reset device using GPIO8
 	CSR_WRITE(CAVM_MIO_EMM_CFG, 0x0);
 	gpio_bit_cfgx = CSR_READ(CAVM_GPIO_BIT_CFGX(8));
@@ -507,7 +521,7 @@ static inline void sdmmc_power_cycle(void)
 	CSR_WRITE(CAVM_GPIO_BIT_CFGX(8), gpio_bit_cfgx);
 	mmc_mdelay(1);
 	CSR_WRITE(CAVM_GPIO_TX_CLR, 0x1 << 8);
-	mmc_mdelay(200);
+	mmc_mdelay(20);
 	CSR_WRITE(CAVM_GPIO_TX_SET, 0x1 << 8);
 	mmc_mdelay(2);
 
@@ -748,11 +762,13 @@ static void sdmmc_switch_clock(int clock_hz)
 	CSR_WRITE(CAVM_MIO_EMM_SWITCH, emm_switch);
 	mmc_mdelay(2);
 
-	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "emul-", 5)) {
+//	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "emul-", 5)) {
+	if (!mmc_drv.is_sd) {
+		sdmmc_set_watchdog(MMC_TIMEOUT_LONG);
 		emm_switch = MIO_EMM_SWITCH_SET_SWITCH_EXE(emm_switch, 1);
 		/* 8 bit single data rate */
 		emm_switch = MIO_EMM_SWITCH_SET_BUS_WIDTH(emm_switch,
-							BUS_8_BIT);
+							BUS_8_BIT_DDR);
 		CSR_WRITE(CAVM_MIO_EMM_SWITCH, emm_switch);
 		mmc_mdelay(2);
 	}
